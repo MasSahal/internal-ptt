@@ -264,4 +264,3 @@
 		return $query->num_rows();
 	}
 }
-?>

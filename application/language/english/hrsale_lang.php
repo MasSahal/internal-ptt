@@ -1,5 +1,6 @@
 <?php
- /**
+
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the HRSALE License
@@ -16,7 +17,7 @@
  */
 
 if (!defined('BASEPATH')) exit('No direct script access allowed');
-	
+
 // Dashboard
 $lang['dashboard_title'] = 'Dashboard';
 $lang['dashboard_main'] = 'Main';
@@ -626,7 +627,7 @@ $lang['xin_e_details_lnkdin'] = "LinkedIn";
 $lang['xin_e_details_blgr'] = "Blogger";
 
 $lang['xin_role_urole'] = 'Roles & Privileges';
-$lang['xin_role_all_menu'] = 'All Menu Access'; 
+$lang['xin_role_all_menu'] = 'All Menu Access';
 $lang['xin_role_cmenu'] = 'Custom Menu Access';
 $lang['xin_role_set'] = "Set New";
 $lang['xin_roles'] = "Roles";
@@ -2489,7 +2490,7 @@ $lang['xin_projects_notifications'] = 'Projects notifications';
 $lang['xin_tasks_notifications'] = 'Tasks notifications';
 $lang['xin_e_details_exp_documents'] = "Expired Documents";
 $lang['xin_assets_warranty'] = 'Assets Warranty';
-/*//////*//////
+/*//////*/ /////
 $lang['xin_title_tax'] = 'Tax';
 $lang['xin_title_tax_name'] = 'Tax Name';
 $lang['xin_title_tax_rate'] = 'Tax Rate';
@@ -2903,6 +2904,10 @@ $lang['xin_salary_commission_options'] = 'Commission Option';
 $lang['xin_salary_otherpayment_options'] = 'Other Payment Option';
 $lang['xin_hrsale_dashboard_2light'] = 'Dashboard 2 Light Version';
 $lang['xin_hrsale_dashboard_2dark'] = 'Dashboard 2 Dark Version';
+
+//update
+$lang['xin_project_cost'] = 'Costs Project';
+
 ///////////////////////////////////////////////// end hrsale v2.0.1
 /* End of file hrsale_lang.php */
 /* Location: ./system/language/english/hrsale_lang.php */

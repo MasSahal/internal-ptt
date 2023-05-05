@@ -339,7 +339,7 @@ $lang['xin_choose_status'] = 'Pilih Status';
 $lang['xin_view_project'] = 'Lihat Proyek';
 $lang['xin_project_users'] = 'Pengguna yang ditetapkan';
 
-
+//new role
 
 
 
@@ -1996,7 +1996,8 @@ $lang['xin_hr_m_project_task'] = 'Proyek & Tugas';
 $lang['xin_setting_module_project_details'] = 'Manajemen Proyek adalah fitur penting yang dibutuhkan setiap perusahaan untuk menyelesaikan berbagai proyek. Proyek telah disediakan dalam %s untuk memfasilitasi admin dan karyawan untuk membuat, melacak, dan mendiskusikan di antara berbagai proyek. ';
 $lang['xin_setting_module_task_details'] = 'Manajemen Tugas adalah fitur penting yang dibutuhkan setiap perusahaan untuk menyelesaikan berbagai tugas. Tugas telah disediakan dalam %s untuk memfasilitasi admin dan karyawan untuk membuat, melacak, dan mendiskusikan di antara berbagai tugas. ';
 $lang['xin_setting_module_assets_details'] = 'Simpan jejak aset organisasi Anda dan berikan kepada karyawan. Simpan dan simpan informasi aset yang komprehensif dan karyawan dapat mengajukan permintaan untuk mengganti atau memperbaiki aset yang telah berhenti bekerja. ';
-$lang['xin_hr_chat_box'] = 'Kotak Obrolan';
+// $lang['xin_hr_chat_box'] = 'Kotak Obrolan';
+$lang['xin_hr_chat_box'] = "<span class='text-danger'>WEB SEDANG DALAM TAHAP DEVELOPMENT</span>";
 $lang['xin_hr_string_error'] = 'Hanya huruf yang diizinkan !!!';
 $lang['xin_hr_special_charactors_not_allowed'] = 'Karakter Khusus tidak diizinkan.';
 $lang['xin_hr_date_format_error'] = 'Format tanggal salah. Seharusnya Tahun-Bulan-Hari ';
@@ -2905,6 +2906,12 @@ $lang['xin_salary_commission_options'] = 'Opsi Komisi';
 $lang['xin_salary_otherpayment_options'] = 'Opsi Pembayaran Lainnya';
 $lang['xin_hrsale_dashboard_2light'] = 'Dasbor 2 Versi Ringan';
 $lang['xin_hrsale_dashboard_2dark'] = 'Dasbor 2 Versi Gelap';
+
+
+// new update cost proyek
+$lang['dashboard_cost_control'] = "Pembelian";
+$lang['xin_tab_menu'] = "";
+
 /////////////////////////////////////////////////// akhir hrsale v2.0.1
 
 /* End of file hrsale_lang.php */

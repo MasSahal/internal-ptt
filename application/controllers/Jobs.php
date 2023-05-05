@@ -1,5 +1,6 @@
 <?php
- /**
+
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the HRSALE License
@@ -14,12 +15,14 @@
  * @author-email  hrsalesoft@gmail.com
  * @copyright  Copyright © hrsale.com. All Rights Reserved
  */
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Jobs extends MY_Controller {
-	
-	 public function __construct() {
-        parent::__construct();
+class Jobs extends MY_Controller
+{
+
+	public function __construct()
+	{
+		parent::__construct();
 		//load the model
 		$this->load->model("Job_post_model");
 		$this->load->model("Xin_model");
@@ -30,23 +33,25 @@ class Jobs extends MY_Controller {
 		$this->load->library('email');
 		$this->load->model("Users_model");
 	}
-	
+
 	/*Function to set JSON output*/
-	public function output($Return=array()){
+	public function output($Return = array())
+	{
 		/*Set response header*/
 		header("Access-Control-Allow-Origin: *");
 		header("Content-Type: application/json; charset=UTF-8");
 		/*Final JSON response*/
 		exit(json_encode($Return));
 	}
-	
-	public function index() {
-		
+
+	public function index()
+	{
+
 		$system = $this->Xin_model->read_setting_info(1);
-		if($system[0]->module_recruitment!='true'){
+		if ($system[0]->module_recruitment != 'true') {
 			redirect('admin/');
 		}
-		$data['title'] = 'Jobs | '.$this->Xin_model->site_title();
+		$data['title'] = 'Jobs | ' . $this->Xin_model->site_title();
 		$data['all_designations'] = $this->Designation_model->all_designations();
 		$data['all_job_types'] = $this->Xin_model->get_job_type();
 		$data['all_jobs'] = $this->Recruitment_model->get_all_jobs_desc();
@@ -54,10 +59,10 @@ class Jobs extends MY_Controller {
 		$data['all_job_categories'] = $this->Recruitment_model->all_job_categories();
 		$data['count_search_jobs'] = '';
 		$session = $this->session->userdata('c_user_id');
-		if($this->input->get("search")) {
-        	$type_record_count = $this->Recruitment_model->job_search_record_count($this->input->get("search"));
+		if ($this->input->get("search")) {
+			$type_record_count = $this->Recruitment_model->job_search_record_count($this->input->get("search"));
 			$data['count_search_jobs'] = $this->Recruitment_model->job_search_record_count($this->input->get("search"));
-			$baseUrl = site_url() . "jobs/?search=".$this->input->get("search");
+			$baseUrl = site_url() . "jobs/?search=" . $this->input->get("search");
 		} else {
 			$type_record_count = $this->Recruitment_model->job_record_count();
 			$data['count_search_jobs'] = $this->Recruitment_model->job_record_count();
@@ -92,26 +97,27 @@ class Jobs extends MY_Controller {
 			'num_tag_close'     => '</li>'
 		);
 
-        $this->pagination->initialize($config);
+		$this->pagination->initialize($config);
 
-        $page = ($this->input->get("per_page")) ? $this->input->get("per_page") : 0;
-       // $data["results"] = $this->Xin_recruitment_model->fetch_all_jobs($config["per_page"], $page);
-		if($this->input->get("search")) {
-        	$data["results"] = $this->Recruitment_model->search_fetch_all_jobs($config["per_page"], $page, $this->input->get("search"));
+		$page = ($this->input->get("per_page")) ? $this->input->get("per_page") : 0;
+		// $data["results"] = $this->Xin_recruitment_model->fetch_all_jobs($config["per_page"], $page);
+		if ($this->input->get("search")) {
+			$data["results"] = $this->Recruitment_model->search_fetch_all_jobs($config["per_page"], $page, $this->input->get("search"));
 		} else {
 			$data["results"] = $this->Recruitment_model->fetch_all_jobs($config["per_page"], $page);
 		}
-        $str_links = $this->pagination->create_links();
-		$data["links"] = explode('&nbsp;',$str_links );
-		
+		$str_links = $this->pagination->create_links();
+		$data["links"] = explode('&nbsp;', $str_links);
+
 		$data['subview'] = $this->load->view("frontend/hrsale/jobs_list", $data, TRUE);
 		$this->load->view('frontend/hrsale/job_layout/job_layout', $data); //page load
-     }
-	 	 
-	 public function search() {
-		
+	}
+
+	public function search()
+	{
+
 		$system = $this->Xin_model->read_setting_info(1);
-		if($system[0]->module_recruitment!='true'){
+		if ($system[0]->module_recruitment != 'true') {
 			redirect('admin/');
 		}
 		$data['title'] = $this->Xin_model->site_title();
@@ -122,21 +128,21 @@ class Jobs extends MY_Controller {
 		$data['all_featured_jobs'] = $this->Recruitment_model->get_featured_jobs_last_desc();
 		$data['all_job_categories'] = $this->Recruitment_model->all_job_categories();
 		$session = $this->session->userdata('c_user_id');
-		if($this->uri->segment(3) == 'category') {
-        	$type_record_count = $this->Recruitment_model->job_category_record_count($this->uri->segment(4));
-			if($type_record_count < 1){
+		if ($this->uri->segment(3) == 'category') {
+			$type_record_count = $this->Recruitment_model->job_category_record_count($this->uri->segment(4));
+			if ($type_record_count < 1) {
 				redirect('jobs/');
 			}
 			$data['count_search_jobs'] = $this->Recruitment_model->job_category_record_count($this->uri->segment(4));
 		} else {
 			$type_record_count = $this->Recruitment_model->job_type_record_count($this->uri->segment(4));
-			if($type_record_count < 1){
+			if ($type_record_count < 1) {
 				redirect('jobs/');
 			}
 			$data['count_search_jobs'] = $this->Recruitment_model->job_type_record_count($this->uri->segment(4));
 		}
 		$config = array(
-			'base_url'          => site_url() . "jobs/search/".$this->uri->segment(3).'/'.$this->uri->segment(4).'/',
+			'base_url'          => site_url() . "jobs/search/" . $this->uri->segment(3) . '/' . $this->uri->segment(4) . '/',
 			'total_rows'        => $type_record_count,
 			'per_page'          => 10,
 			'num_links'         => 10,
@@ -163,42 +169,43 @@ class Jobs extends MY_Controller {
 			'num_tag_close'     => '</li>'
 		);
 
-        $this->pagination->initialize($config);
+		$this->pagination->initialize($config);
 
-        $page = ($this->uri->segment(5)) ? $this->uri->segment(5) : 0;
-		if($this->uri->segment(3) == 'category') {
-        	$data["results"] = $this->Recruitment_model->fetch_all_category_jobs($config["per_page"], $page, $this->uri->segment(4));
+		$page = ($this->uri->segment(5)) ? $this->uri->segment(5) : 0;
+		if ($this->uri->segment(3) == 'category') {
+			$data["results"] = $this->Recruitment_model->fetch_all_category_jobs($config["per_page"], $page, $this->uri->segment(4));
 		} else {
 			$data["results"] = $this->Recruitment_model->fetch_all_type_jobs($config["per_page"], $page, $this->uri->segment(4));
 		}
-        $str_links = $this->pagination->create_links();
-		$data["links"] = explode('&nbsp;',$str_links );
-		
+		$str_links = $this->pagination->create_links();
+		$data["links"] = explode('&nbsp;', $str_links);
+
 		$data['subview'] = $this->load->view("frontend/hrsale/jobs_search", $data, TRUE);
 		$this->load->view('frontend/hrsale/job_layout/job_layout', $data); //page load
-     }	 
-	 
-	 public function categories() {
+	}
+
+	public function categories()
+	{
 		$system = $this->Xin_model->read_setting_info(1);
-		if($system[0]->module_recruitment!='true'){
+		if ($system[0]->module_recruitment != 'true') {
 			redirect('admin/');
 		}
 		$data['title'] = 'Browser Job Categories';
 		$data['path_url'] = 'job_create';
 		$session = $this->session->userdata('c_user_id');
-		
+
 		//$data['all_job_types'] = $this->Job_post_model->all_job_types();
 		$data['all_job_categories'] = $this->Recruitment_model->all_job_categories();
 		$data['subview'] = $this->load->view("frontend/hrsale/job_categories", $data, TRUE);
 		$this->load->view('frontend/hrsale/job_layout/job_layout', $data); //page load
-     }
-	 
-	 public function detail()
+	}
+
+	public function detail()
 	{
 		$data['title'] = $this->Xin_model->site_title();
 		$id = $this->uri->segment(3);
 		$result = $this->Job_post_model->read_job_infor_by_url($id);
-		if(is_null($result)){
+		if (is_null($result)) {
 			redirect('jobs');
 		}
 		$data = array(
@@ -219,125 +226,126 @@ class Jobs extends MY_Controller {
 			'created_at' => $result[0]->created_at,
 			'all_designations' => $this->Designation_model->all_designations(),
 			'all_job_types' => $this->Job_post_model->all_job_types()
-		);		
+		);
 		$session = $this->session->userdata('c_user_id');
 		//$role_resources_ids = $this->Xin_model->user_role_resource();
 		$data['subview'] = $this->load->view("frontend/hrsale/jobs_detail", $data, TRUE);
 		$this->load->view('frontend/hrsale/job_layout/job_layout', $data); //page load
 	}
-	
+
 	public function apply()
 	{
 		$system = $this->Xin_model->read_setting_info(1);
-		if($system[0]->module_recruitment!='true'){
+		if ($system[0]->module_recruitment != 'true') {
 			redirect('admin/');
 		}
 		$data['title'] = $this->Xin_model->site_title();
 		$id = $this->input->get('job_id');
 		$result = $this->Job_post_model->read_job_information($id);
 		$data = array(
-				'job_id' => $result[0]->job_id,
-				'job_title' => $result[0]->job_title,
-				'designation_id' => $result[0]->designation_id,
-				'job_type_id' => $result[0]->job_type,
-				'job_vacancy' => $result[0]->job_vacancy,
-				'gender' => $result[0]->gender,
-				'minimum_experience' => $result[0]->minimum_experience,
-				'date_of_closing' => $result[0]->date_of_closing,
-				'short_description' => $result[0]->short_description,
-				'long_description' => $result[0]->long_description,
-				'status' => $result[0]->status,
-				'all_designations' => $this->Designation_model->all_designations(),
-				'all_job_types' => $this->Job_post_model->all_job_types()
-				);
+			'job_id' => $result[0]->job_id,
+			'job_title' => $result[0]->job_title,
+			'designation_id' => $result[0]->designation_id,
+			'job_type_id' => $result[0]->job_type,
+			'job_vacancy' => $result[0]->job_vacancy,
+			'gender' => $result[0]->gender,
+			'minimum_experience' => $result[0]->minimum_experience,
+			'date_of_closing' => $result[0]->date_of_closing,
+			'short_description' => $result[0]->short_description,
+			'long_description' => $result[0]->long_description,
+			'status' => $result[0]->status,
+			'all_designations' => $this->Designation_model->all_designations(),
+			'all_job_types' => $this->Job_post_model->all_job_types()
+		);
 		$session = $this->session->userdata('username');
-		if(!empty($session)){ 
+		if (!empty($session)) {
 			$this->load->view('frontend/dialog_job_apply', $data);
 		} else {
 			redirect('home');
 		}
 	}
-	
+
 	// Validate and add info in database
-	public function apply_job() {
-	
-		if($this->input->post('add_type')=='apply_job') {		
-		/* Define return | here result is used to return user data and error for error message */
-		$Return = array('result'=>'', 'error'=>'', 'csrf_hash'=>'');
-		$Return['csrf_hash'] = $this->security->get_csrf_hash();
-		
-		$user_id = $this->input->post('user_id');
-		$job_id = $this->input->post('job_id');
-		$message = $this->input->post('message');	
-		
-		// settting
-		$system_setting = $this->Xin_model->read_setting_info(1);
-		/* Server side PHP input validation */
-		$result = $this->Recruitment_model->check_apply_job_wlog($job_id,$this->input->post('email'));
-		if($result->num_rows() > 0) {
-			$Return['error'] = $this->lang->line('xin_already_applied_for_this_job');
-		}
-		if($Return['error']!=''){
-       		$this->output($Return);
-    	}
-		
-		if($this->input->post('full_name')==='') {
-			$Return['error'] = $this->lang->line('xin_full_name_field_error');
-		} else if($this->input->post('email')==='') {
-			$Return['error'] = $this->lang->line('xin_employee_error_email');
-		} else if (!filter_var($this->input->post('email'), FILTER_VALIDATE_EMAIL)) {
-			$Return['error'] = $this->lang->line('xin_employee_error_invalid_email');
-		} else if($message === '') {
-			$Return['error'] = $this->lang->line('xin_error_recovering_message');
-		} else if($_FILES['resume']['size'] == 0) {
-			$Return['error'] = $this->lang->line('xin_upload_your_resume');
-		} else {
-		
-			if(is_uploaded_file($_FILES['resume']['tmp_name'])) {
-				//checking image type
-				$allowed =  explode( ',',$system_setting[0]->job_application_format);
-				$filename = $_FILES['resume']['name'];
-				$ext = pathinfo($filename, PATHINFO_EXTENSION);
-				
-				if(in_array($ext,$allowed)){
-					$tmp_name = $_FILES["resume"]["tmp_name"];
-					$resume = "uploads/resume/";
-					// basename() may prevent filesystem traversal attacks;
-					// further validation/sanitation of the filename may be appropriate
-					$name = basename($_FILES["resume"]["name"]);
-					$newfilename = 'resume_'.round(microtime(true)).'.'.$ext;
-					move_uploaded_file($tmp_name, $resume.$newfilename);
-					$fname = $newfilename;
-				} else {
-					$Return['error'] = $this->lang->line('xin_resume_attachment_must_be').': '.$system_setting[0]->job_application_format;
+	public function apply_job()
+	{
+
+		if ($this->input->post('add_type') == 'apply_job') {
+			/* Define return | here result is used to return user data and error for error message */
+			$Return = array('result' => '', 'error' => '', 'csrf_hash' => '');
+			$Return['csrf_hash'] = $this->security->get_csrf_hash();
+
+			$user_id = $this->input->post('user_id');
+			$job_id = $this->input->post('job_id');
+			$message = $this->input->post('message');
+
+			// settting
+			$system_setting = $this->Xin_model->read_setting_info(1);
+			/* Server side PHP input validation */
+			$result = $this->Recruitment_model->check_apply_job_wlog($job_id, $this->input->post('email'));
+			if ($result->num_rows() > 0) {
+				$Return['error'] = $this->lang->line('xin_already_applied_for_this_job');
+			}
+			if ($Return['error'] != '') {
+				$this->output($Return);
+			}
+
+			if ($this->input->post('full_name') === '') {
+				$Return['error'] = $this->lang->line('xin_full_name_field_error');
+			} else if ($this->input->post('email') === '') {
+				$Return['error'] = $this->lang->line('xin_employee_error_email');
+			} else if (!filter_var($this->input->post('email'), FILTER_VALIDATE_EMAIL)) {
+				$Return['error'] = $this->lang->line('xin_employee_error_invalid_email');
+			} else if ($message === '') {
+				$Return['error'] = $this->lang->line('xin_error_recovering_message');
+			} else if ($_FILES['resume']['size'] == 0) {
+				$Return['error'] = $this->lang->line('xin_upload_your_resume');
+			} else {
+
+				if (is_uploaded_file($_FILES['resume']['tmp_name'])) {
+					//checking image type
+					$allowed =  explode(',', $system_setting[0]->job_application_format);
+					$filename = $_FILES['resume']['name'];
+					$ext = pathinfo($filename, PATHINFO_EXTENSION);
+
+					if (in_array($ext, $allowed)) {
+						$tmp_name = $_FILES["resume"]["tmp_name"];
+						$resume = "uploads/resume/";
+						// basename() may prevent filesystem traversal attacks;
+						// further validation/sanitation of the filename may be appropriate
+						$name = basename($_FILES["resume"]["name"]);
+						$newfilename = 'resume_' . round(microtime(true)) . '.' . $ext;
+						move_uploaded_file($tmp_name, $resume . $newfilename);
+						$fname = $newfilename;
+					} else {
+						$Return['error'] = $this->lang->line('xin_resume_attachment_must_be') . ': ' . $system_setting[0]->job_application_format;
+					}
 				}
 			}
-		}
-				
-		if($Return['error']!=''){
-       		$this->output($Return);
-    	}
-		$job = $this->Job_post_model->read_job_information($job_id);
-		if(!is_null($job)){
-			$employer_id = $job[0]->employer_id;
-		} else {
-			$employer_id = 0;	
-		}
-		$data = array(
-		'job_id' => $job_id,
-		'user_id' => $employer_id,
-		'full_name' => $this->input->post('full_name'),
-		'email' => $this->input->post('email'),
-		'message' => $message,
-		'job_resume' => $fname,
-		'application_status' => 'Applied',
-		'created_at' => date('Y-m-d h:i:s')
-		);
-		$result = $this->Job_post_model->add_resume($data);
-		if ($result == TRUE) {			
-			//get setting info 
-			$setting = $this->Xin_model->read_setting_info(1);
-			/*if($setting[0]->enable_email_notification == 'yes') {
+
+			if ($Return['error'] != '') {
+				$this->output($Return);
+			}
+			$job = $this->Job_post_model->read_job_information($job_id);
+			if (!is_null($job)) {
+				$employer_id = $job[0]->employer_id;
+			} else {
+				$employer_id = 0;
+			}
+			$data = array(
+				'job_id' => $job_id,
+				'user_id' => $employer_id,
+				'full_name' => $this->input->post('full_name'),
+				'email' => $this->input->post('email'),
+				'message' => $message,
+				'job_resume' => $fname,
+				'application_status' => 'Applied',
+				'created_at' => date('Y-m-d h:i:s')
+			);
+			$result = $this->Job_post_model->add_resume($data);
+			if ($result == TRUE) {
+				//get setting info 
+				$setting = $this->Xin_model->read_setting_info(1);
+				/*if($setting[0]->enable_email_notification == 'yes') {
 			
 				$this->email->set_mailtype("html");
 				//get company info
@@ -364,12 +372,12 @@ class Jobs extends MY_Controller {
 				
 				$this->email->send();
 			}*/
-			$Return['result'] = $this->lang->line('xin_resume_submitted_success');			
-		} else {
-			$Return['error'] = $this->lang->line('xin_error_msg');
-		}
-		$this->output($Return);
-		exit;
+				$Return['result'] = $this->lang->line('xin_resume_submitted_success');
+			} else {
+				$Return['error'] = $this->lang->line('xin_error_msg');
+			}
+			$this->output($Return);
+			exit;
 		}
 	}
 }
