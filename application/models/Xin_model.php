@@ -1952,6 +1952,14 @@ class Xin_model extends CI_Model
 		return  $query = $this->db->query("SELECT * from xin_currencies");
 	}
 
+
+	// update 9-5-2023
+	// get all table rows
+	public function get_all_vendor()
+	{
+		return  $query = $this->db->query("SELECT * from ms_vendors");
+	}
+
 	/*  ADD CONSTANTS */
 
 	// Function to add record in table
@@ -2915,6 +2923,8 @@ class Xin_model extends CI_Model
 		$role_user = $this->read_user_role_info($user[0]->user_role_id);
 
 		$role_resources_ids = explode(',', $role_user[0]->role_resources);
+		// var_dump($role_resources_ids);
+
 		return $role_resources_ids;
 	}
 
@@ -3913,5 +3923,32 @@ ORDER BY `expiry_date`");
 		$query = $this->db->query($sql);
 		$res = $query->result();
 		return $res;
+	}
+
+	// update 9-5-2023
+	// Function to add record in table
+	public function add_vendor($data)
+	{
+		$this->db->insert('ms_vendors', $data);
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	// get single record > db table > constant
+	public function read_vendor($id)
+	{
+
+		$sql = 'SELECT * FROM ms_vendors where vendor_id = ?';
+		$binds = array($id);
+		$query = $this->db->query($sql, $binds);
+
+		if ($query->num_rows() > 0) {
+			return $query->result();
+		} else {
+			return null;
+		}
 	}
 }

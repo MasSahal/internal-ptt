@@ -2909,6 +2909,21 @@ $lang['xin_hrsale_dashboard_2dark'] = 'Dasbor 2 Versi Gelap';
 
 
 // new update cost proyek
+
+$lang['ms_vendors'] = "Data Vendor";
+$lang['ms_vendor_name'] = 'Nama Vendor';
+$lang['ms_vendor_contact'] = 'Kontak Vendor';
+$lang['ms_vendor_address'] = 'Alamat Vendor';
+$lang['ms_vendor_loc_region'] = 'Wilayah Administrasi Vendor';
+$lang['ms_vendor_added'] = "Data vendor berhasil ditambahkan.";
+$lang['ms_error_vendor_name_field'] = "Bidang Nama Vendor diperlukan.";
+$lang['ms_error_vendor_contact_field'] = "Bidang Kontak Vendor diperlukan.";
+$lang['ms_error_vendor_address_field'] = "Bidang Alamat Vendor diperlukan.";
+$lang['ms_error_vendor_loc_region_field'] = "Bidang Wilayah Administrasi Vendor diperlukan.";
+$lang['ms_error_vendor_loc_country_field'] = "Bidang Negara Vendor diperlukan.";
+$lang['ms_vendor_added'] = "Data Vendor ditambahkan.";
+
+
 $lang['dashboard_cost_control'] = "Pembelian";
 $lang['xin_tab_menu'] = "";
 

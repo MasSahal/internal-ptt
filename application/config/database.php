@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
 | -------------------------------------------------------------------
@@ -78,7 +78,8 @@ $db['default'] = array(
 	'hostname' => "localhost",
 	'username' => "root",
 	'password' => "",
-	'database' => "n1576493_hrm",
+	// 'database' => "n1576493_hrm",
+	'database' => "n1576493_hrm_debug",
 	'dbdriver' => 'pdo',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
@@ -94,4 +95,3 @@ $db['default'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
-

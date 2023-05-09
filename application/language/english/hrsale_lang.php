@@ -2906,6 +2906,8 @@ $lang['xin_hrsale_dashboard_2light'] = 'Dashboard 2 Light Version';
 $lang['xin_hrsale_dashboard_2dark'] = 'Dashboard 2 Dark Version';
 
 //update
+$lang['ms_vendors'] = 'Project Vendors';
+$lang['ms_vendor_name'] = 'Vendor Name';
 $lang['xin_project_cost'] = 'Costs Project';
 
 ///////////////////////////////////////////////// end hrsale v2.0.1
