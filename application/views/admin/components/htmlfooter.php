@@ -397,3 +397,22 @@
 		});
 	</script>
 <?php } ?>
+
+<?php if ($this->router->fetch_class() == 'project_costs' && $this->router->fetch_method() == 'transactions') { ?>
+	<script>
+		var form_select_tax = '<select class="form-control form-control-sm tax_type" name="tax_type[]" id="tax_type">'
+		<?php foreach ($all_taxes as $_tax) { ?>
+			<?php
+			if ($_tax->type == 'percentage') {
+				$_tax_type = $_tax->rate . '%';
+			} else {
+				$_tax_type = $this->Xin_model->currency_sign($_tax->rate);
+			}
+			?>
+				+
+				'<option tax-type="<?php echo $_tax->type; ?>" tax-rate="<?php echo $_tax->rate; ?>" value="<?php echo $_tax->tax_id; ?>"> <?php echo $_tax->name; ?> (<?php echo $_tax_type; ?>)</option>'
+		<?php } ?>
+			+
+			'</select>'
+	</script>
+<?php } ?>

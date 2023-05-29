@@ -79,14 +79,26 @@ $reports_to = get_reports_team_data($session['user_id']);
 	<?php } ?>
 
 	<!-- update  -->
-	<?php if (in_array('14', $role_resources_ids) || in_array('7', $role_resources_ids) || in_array('422', $role_resources_ids) || $reports_to > 0 || $user_info[0]->user_role_id == 1) { ?>
-		<li class="<?php if (!empty($arr_mod['stff_open'])) echo $arr_mod['stff_open']; ?> sidenav-item"> <a href="#" class="sidenav-link sidenav-toggle"> <i class="sidenav-icon fas fa-money-bill-wave"></i>
-				<div><?php echo $this->lang->line('dashboard_cost_control'); ?></div>
+	<?php if (in_array('486', $role_resources_ids) || in_array('487', $role_resources_ids) || in_array('488', $role_resources_ids) || $reports_to > 0 || $user_info[0]->user_role_id == 1) { ?>
+		<li class="<?php if (!empty($arr_mod['cost_open'])) echo $arr_mod['cost_open']; ?> sidenav-item"> <a href="#" class="sidenav-link sidenav-toggle"> <i class="sidenav-icon fas fa-money-bill-wave"></i>
+				<div><?php echo $this->lang->line('ms_cost'); ?></div>
 			</a>
 			<ul class="sidenav-menu">
 
-				<?php if (in_array('14', $role_resources_ids) || $reports_to > 0) { ?>
-					<li class="sidenav-item <?php if (!empty($arr_mod['hremp_active'])) echo $arr_mod['hremp_active']; ?>"> <a class="sidenav-link" href="<?php echo site_url('admin/cost_control/'); ?>"> <?php echo $this->lang->line('dashboard_cost_control'); ?> </a> </li>
+				<?php if (in_array('486', $role_resources_ids) || $reports_to > 0) { ?>
+					<li class="sidenav-item <?php if (!empty($arr_mod['hremp_active'])) echo $arr_mod['hremp_active']; ?>"> <a class="sidenav-link" href="<?php echo site_url('admin/project_costs'); ?>"> <?php echo $this->lang->line('ms_cost_dashboard'); ?> </a> </li>
+				<?php } ?>
+				<?php if (in_array('487', $role_resources_ids) || $reports_to > 0) { ?>
+					<li class="sidenav-item <?php if (!empty($arr_mod['hremp_active'])) echo $arr_mod['hremp_active']; ?>"> <a class="sidenav-link" href="<?php echo site_url('admin/project_costs/transactions'); ?>"> <?php echo $this->lang->line('ms_project_trans'); ?> </a> </li>
+				<?php } ?>
+				<?php if (in_array('487', $role_resources_ids) || $reports_to > 0) { ?>
+					<li class="sidenav-item <?php if (!empty($arr_mod['hremp_active'])) echo $arr_mod['hremp_active']; ?>"> <a class="sidenav-link" href="<?php echo site_url('admin/vendors/'); ?>"> <?php echo $this->lang->line('ms_vendors'); ?> </a> </li>
+				<?php } ?>
+				<?php if (in_array('487', $role_resources_ids) || $reports_to > 0) { ?>
+					<li class="sidenav-item <?php if (!empty($arr_mod['hremp_active'])) echo $arr_mod['hremp_active']; ?>"> <a class="sidenav-link" href="<?php echo site_url('admin/products/'); ?>"> <?php echo $this->lang->line('ms_products'); ?> </a> </li>
+				<?php } ?>
+				<?php if (in_array('487', $role_resources_ids) || $reports_to > 0) { ?>
+					<li class="sidenav-item <?php if (!empty($arr_mod['hremp_active'])) echo $arr_mod['hremp_active']; ?>"> <a class="sidenav-link" href="<?php echo site_url('admin/product_categories'); ?>"> <?php echo $this->lang->line('ms_product_categories'); ?> </a> </li>
 				<?php } ?>
 
 			</ul>

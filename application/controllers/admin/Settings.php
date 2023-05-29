@@ -203,6 +203,8 @@ class Settings extends MY_Controller
 		$data['breadcrumbs'] = $this->lang->line('left_constants');
 		$data['all_companies'] = $this->Xin_model->get_companies();
 		$data['path_url'] = 'constants';
+		// $data['all_countries'] = $this->Xin_model->get_countries();
+
 		$role_resources_ids = $this->Xin_model->user_role_resource();
 		if (in_array('61', $role_resources_ids)) {
 			if (!empty($session)) {
@@ -2165,48 +2167,6 @@ class Settings extends MY_Controller
 		exit();
 	}
 
-	// update 9-5-2023
-	// Vendors
-	public function vendor_list()
-	{
-		$data['title'] = $this->Xin_model->site_title();
-		$session = $this->session->userdata('username');
-		if (!empty($session)) {
-			$this->load->view("admin/settings/settings", $data);
-		} else {
-			redirect('admin/');
-		}
-		// Datatables Variables
-		$draw = intval($this->input->get("draw"));
-		$start = intval($this->input->get("start"));
-		$length = intval($this->input->get("length"));
-
-
-		$constant = $this->Xin_model->get_all_vendor();
-
-		$data = array();
-
-		foreach ($constant->result() as $r) {
-
-			$data[] = array(
-				'<span data-toggle="tooltip" data-placement="top" title="' . $this->lang->line('xin_edit') . '"><button type="button" class="btn icon-btn btn-sm btn-outline-secondary waves-effect waves-light" data-toggle="modal" data-target=".edit_setting_datail" data-field_id="' . $r->vendor_id . '" data-field_type="job_category"><span class="fas fa-pencil-alt"></span></button></span> <span data-toggle="tooltip" data-placement="top" title="' . $this->lang->line('xin_delete') . '"><button type="button" class="btn icon-btn btn-sm btn-outline-danger waves-effect waves-light delete" data-toggle="modal" data-target=".delete-modal" data-record-id="' . $r->vendor_id . '" data-token_type="job_category"><span class="fas fa-trash-restore"></span></button></span>',
-				$r->vendor_name,
-				$r->vendor_contact,
-				$r->vendor_address
-			);
-		}
-
-		$output = array(
-			"draw" => $draw,
-			"recordsTotal" => $constant->num_rows(),
-			"recordsFiltered" => $constant->num_rows(),
-			"data" => $data
-		);
-
-		echo json_encode($output);
-		exit();
-	}
-
 	/*  Add constant data */
 
 	// Validate and add info in database
@@ -2900,50 +2860,86 @@ class Settings extends MY_Controller
 		}
 	}
 
-	// update feature 9-5-2023
-	// Validate and add info in database
-	public function vendors()
-	{
+	// // update feature 9-5-2023
+	// // Validate and add info in database
+	// public function vendors()
+	// {
 
-		if ($this->input->post('type') == 'vendors') {
-			/* Define return | here result is used to return user data and error for error message */
-			$Return = array('result' => '', 'error' => '', 'csrf_hash' => '');
-			$Return['csrf_hash'] = $this->security->get_csrf_hash();
+	// 	if ($this->input->post('type') == 'vendors') {
+	// 		/* Define return | here result is used to return user data and error for error message */
+	// 		$Return = array('result' => '', 'error' => '', 'csrf_hash' => '');
+	// 		$Return['csrf_hash'] = $this->security->get_csrf_hash();
 
-			/* Server side PHP input validation */
-			if ($this->input->post('vendor_name') === '') {
-				$Return['error'] = $this->lang->line('ms_error_vendor_name_field');
-			} else if ($this->input->post('vendor_name') === '') {
-				$Return['error'] = $this->lang->line('ms_error_vendor_name_field');
-			} else if ($this->input->post('vendor_contact') === '') {
-				$Return['error'] = $this->lang->line('ms_error_vendor_contact_field');
-			} else if ($this->input->post('vendor_address') === '') {
-				$Return['error'] = $this->lang->line('ms_error_vendor_address_field');
-			}
+	// 		/* Server side PHP input validation */
+	// 		if ($this->input->post('vendor_name') === '') {
+	// 			$Return['error'] = $this->lang->line('ms_error_vendor_name_field');
+	// 		} else if ($this->input->post('vendor_name') === '') {
+	// 			$Return['error'] = $this->lang->line('ms_error_vendor_name_field');
+	// 		} else if ($this->input->post('vendor_contact') === '') {
+	// 			$Return['error'] = $this->lang->line('ms_error_vendor_contact_field');
+	// 		} else if ($this->input->post('vendor_address') === '') {
+	// 			$Return['error'] = $this->lang->line('ms_error_vendor_address_field');
+	// 		}
 
-			if ($Return['error'] != '') {
-				$this->output($Return);
-			}
+	// 		if ($Return['error'] != '') {
+	// 			$this->output($Return);
+	// 		}
 
-			$data = array(
-				'vendor_name' => $this->input->post('vendor_name'),
-				'vendor_contact' => $this->input->post('vendor_contact'),
-				'vendor_address' => $this->input->post('vendor_address'),
-				'vendor_loc_region' => $this->input->post('vendor_address'),
-				'vendor_loc_country' => $this->input->post('vendor_address'),
-				'created_at' => date('d-m-Y h:i:s')
-			);
+	// 		$data = array(
+	// 			'vendor_name' => $this->input->post('vendor_name'),
+	// 			'vendor_contact' => $this->input->post('vendor_contact'),
+	// 			'vendor_address' => $this->input->post('vendor_address'),
+	// 			'city' => $this->input->post('city'),
+	// 			'state' => $this->input->post('state'),
+	// 			'zipcode' => $this->input->post('zipcode'),
+	// 			'country' => $this->input->post('country'),
+	// 			'created_at' => date('d-m-Y h:i:s')
+	// 		);
 
-			$result = $this->Xin_model->add_vendor($data);
-			if ($result == TRUE) {
-				$Return['result'] = $this->lang->line('ms_vendor_added');
-			} else {
-				$Return['error'] = $this->lang->line('xin_error_msg');
-			}
-			$this->output($Return);
-			exit;
-		}
-	}
+	// 		$result = $this->Xin_model->add_vendor($data);
+	// 		if ($result == TRUE) {
+	// 			$Return['result'] = $this->lang->line('ms_vendor_added');
+	// 		} else {
+	// 			$Return['error'] = $this->lang->line('xin_error_msg');
+	// 		}
+	// 		$this->output($Return);
+	// 		exit;
+	// 	}
+	// }
+
+	// // Validate and add info in database
+	// public function cost_categories_info()
+	// {
+
+	// 	if ($this->input->post('type') == 'cost_categories_info') {
+	// 		/* Define return | here result is used to return user data and error for error message */
+	// 		$Return = array('result' => '', 'error' => '', 'csrf_hash' => '');
+	// 		$Return['csrf_hash'] = $this->security->get_csrf_hash();
+
+	// 		/* Server side PHP input validation */
+	// 		if ($this->input->post('category_name') === '') {
+	// 			$Return['error'] = $this->lang->line('ms_error_category_name_field');
+	// 		}
+
+	// 		if ($Return['error'] != '') {
+	// 			$this->output($Return);
+	// 		}
+
+	// 		$data = array(
+	// 			'category_name' => $this->input->post('category_name'),
+	// 			'created_at' => date('d-m-Y h:i:s')
+	// 		);
+
+	// 		$result = $this->Xin_model->add_cost_category($data);
+	// 		if ($result == TRUE) {
+	// 			$Return['result'] = $this->lang->line('ms_vendor_added');
+	// 		} else {
+	// 			$Return['error'] = $this->lang->line('xin_error_msg');
+	// 		}
+	// 		$this->output($Return);
+	// 		exit;
+	// 	}
+	// }
 
 	/*  DELETE CONSTANTS */
 	// delete constant record > table
@@ -3309,7 +3305,6 @@ class Settings extends MY_Controller
 	// delete constant record > table
 	public function delete_security_level()
 	{
-
 		if ($this->input->post('type') == 'delete_record') {
 			/* Define return | here result is used to return user data and error for error message */
 			$Return = array('result' => '', 'error' => '', 'csrf_hash' => '');
@@ -3324,6 +3319,29 @@ class Settings extends MY_Controller
 			$this->output($Return);
 		}
 	}
+
+	
+
+	// delete constant record > table
+	public function delete_cost_categories()
+	{
+		// $this->output($this->input->post());
+
+		if ($this->input->post('type') == 'delete_record') {
+			/* Define return | here result is used to return user data and error for error message */
+			$Return = array('result' => '', 'error' => '', 'csrf_hash' => '');
+			$id = $this->uri->segment(4);
+			$Return['csrf_hash'] = $this->security->get_csrf_hash();
+			$result = $this->Xin_model->delete_cost_category_record($id);
+			if (isset($id)) {
+				$Return['result'] = $this->lang->line('ms_vendor_deleted');
+			} else {
+				$Return['error'] = $this->lang->line('xin_error_msg');
+			}
+			$this->output($Return);
+		}
+	}
+
 	// read and view all constants data > modal form
 	public function constants_read()
 	{

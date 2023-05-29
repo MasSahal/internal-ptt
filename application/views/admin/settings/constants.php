@@ -69,6 +69,9 @@ $actshow464 = '';
 $active470 = '';
 $actshow470 = '';
 
+$active474 = '';
+$actshow474 = '';
+
 $active = '';
 $actshow = '';
 if (in_array('448', $role_resources_ids)) {
@@ -128,6 +131,9 @@ if (in_array('448', $role_resources_ids)) {
 } else if (in_array('470', $role_resources_ids)) {
 	$active470 = 'active';
 	$actshow470 = 'active show';
+} else if (in_array('474', $role_resources_ids)) {
+	$active474 = 'active';
+	$actshow474 = 'active show';
 }
 ?>
 <div class="card overflow-hidden">
@@ -191,6 +197,10 @@ if (in_array('448', $role_resources_ids)) {
 				<!-- update feature 9-5-2023 -->
 				<?php if (in_array('470', $role_resources_ids)) { ?>
 					<a class="list-group-item list-group-item-action <?php echo $active470; ?>" data-toggle="list" href="#account-vendors"><i class="lnr lnr-car text-lightest"></i> &nbsp; <?php echo $this->lang->line('ms_vendors'); ?></a>
+				<?php } ?>
+
+				<?php if (in_array('474', $role_resources_ids)) { ?>
+					<a class="list-group-item list-group-item-action <?php echo $active474; ?>" data-toggle="list" href="#account-cost_categories"><i class="lnr lnr-car text-lightest"></i> &nbsp; <?php echo $this->lang->line('ms_cost_categories'); ?></a>
 				<?php } ?>
 
 			</div>
@@ -1020,6 +1030,32 @@ if (in_array('448', $role_resources_ids)) {
 										<label class="form-label"><?php echo $this->lang->line('ms_vendor_address'); ?></label>
 										<textarea class="form-control" name="vendor_address" placeholder="<?php echo $this->lang->line('ms_vendor_address'); ?>"></textarea>
 									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="col-md-4">
+												<!-- <label class="form-label"><?php echo $this->lang->line('xin_city'); ?></label> -->
+												<input class="form-control" placeholder="<?php echo $this->lang->line('xin_city'); ?>" name="city" type="text">
+											</div>
+											<div class="col-md-4">
+												<!-- <label class="form-label"><?php echo $this->lang->line('xin_state'); ?></label> -->
+												<input class="form-control" placeholder="<?php echo $this->lang->line('xin_state'); ?>" name="state" type="text">
+											</div>
+											<div class="col-md-4">
+												<!-- <label class="form-label"><?php echo $this->lang->line('xin_zipcode'); ?></label> -->
+												<input class="form-control" placeholder="<?php echo $this->lang->line('xin_zipcode'); ?>" name="zipcode" type="text">
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<!-- <label class="form-label"><?php echo $this->lang->line('xin_country'); ?></label> -->
+										<select class="form-control" name="country" data-plugin="select_hrm" data-placeholder="<?php echo $this->lang->line('xin_country'); ?>">
+											<option value=""><?php echo $this->lang->line('xin_select_one'); ?></option>
+											<?php foreach ($all_countries as $country) { ?>
+												<option value="<?php echo $country->country_id; ?>"> <?php echo $country->country_name; ?></option>
+											<?php } ?>
+										</select>
+									</div>
+
 									<div class="form-actions box-footer">
 										<button type="submit" class="btn btn-primary"> <i class="far fa-check-square"></i> <?php echo $this->lang->line('xin_save'); ?> </button>
 									</div>
@@ -1032,13 +1068,15 @@ if (in_array('448', $role_resources_ids)) {
 								<div class="card-header with-elements"> <span class="card-header-title mr-2"> <strong> <?php echo $this->lang->line('xin_list_all'); ?></strong> <?php echo $this->lang->line('ms_vendors'); ?> </span> </div>
 								<div class="card-body">
 									<div class="card-datatable table-responsive">
-										<table class="datatables-demo table table-striped table-bordered" id="ms_vendor_list">
+										<table class="datatables-demo table table-striped table-bordered" id="xin_table_vendors">
 											<thead>
 												<tr>
 													<th><?php echo $this->lang->line('xin_action'); ?></th>
-													<th><?php echo $this->lang->line('ms_vendor_name'); ?></th>
+													<th><?php echo $this->lang->line('xin_name'); ?></th>
 													<th><?php echo $this->lang->line('ms_vendor_contact'); ?></th>
-													<th><?php echo $this->lang->line('ms_vendor_address'); ?></th>
+													<th><?php echo $this->lang->line('xin_address'); ?></th>
+													<th><?php echo $this->lang->line('xin_address'); ?></th>
+													<th><?php echo $this->lang->line('xin_country'); ?></th>
 												</tr>
 											</thead>
 										</table>
@@ -1048,6 +1086,110 @@ if (in_array('448', $role_resources_ids)) {
 						</div>
 					</div>
 				</div>
+
+				<div class="tab-pane fade <?php echo $actshow474; ?>" id="account-cost_categories">
+					<div class="row">
+						<div class="col-xl-12">
+
+							<div class="nav-tabs-top mb-4">
+								<ul class="nav nav-tabs">
+									<li class="nav-item">
+										<a class="nav-link active" data-toggle="tab" href="#ms_e_details_cost_categories"><?php echo $this->lang->line('ms_e_details_cost_categories'); ?></a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" data-toggle="tab" href="#ms_e_details_cost_sub_categories"><?php echo $this->lang->line('ms_e_details_cost_sub_categories'); ?></a>
+									</li>
+								</ul>
+								<div class="tab-content">
+									<div class="tab-pane fade show active" id="ms_e_details_cost_categories">
+										<div class="card-body">
+											<div class="row mb-4">
+												<div class="col-md-12">
+													<div class="box">
+														<div class="card-header with-elements"> <span class="card-header-title mr-2"> <strong><?php echo $this->lang->line('xin_add_new'); ?></strong> <?php echo $this->lang->line('ms_e_details_cost_categories'); ?></span> </div>
+														<div class="card-body">
+															<?php $attributes = array('name' => 'cost_categories_info', 'id' => 'cost_categories_info', 'autocomplete' => 'off', 'class' => 'm-b-1 add'); ?>
+															<?php $hidden = array('cost_categories_info' => 'UPDATE'); ?>
+															<?php echo form_open('admin/settings/cost_categories_info/', $attributes, $hidden); ?>
+															<div class="form-group">
+																<label class="form-label"><?php echo $this->lang->line('ms_e_details_cost_categories'); ?></label>
+																<input type="text" class="form-control" name="category_name" placeholder="<?php echo $this->lang->line('ms_e_details_cost_categories'); ?>">
+															</div>
+															<div class="form-actions box-footer">
+																<button type="submit" class="btn btn-primary"> <i class="far fa-check-square"></i> <?php echo $this->lang->line('xin_save'); ?> </button>
+															</div>
+															<?php echo form_close(); ?>
+														</div>
+													</div>
+												</div>
+												<div class="col-md-12">
+													<div class="box">
+														<div class="card-header with-elements"> <span class="card-header-title mr-2"> <strong><?php echo $this->lang->line('xin_list_all'); ?></strong> <?php echo $this->lang->line('ms_e_details_cost_categories'); ?></span> </div>
+														<div class="card-body">
+															<div class="card-datatable table-responsive">
+																<table class="datatables-demo table table-striped table-bordered" id="xin_table_cost_categories">
+																	<thead>
+																		<tr>
+																			<th><?php echo $this->lang->line('xin_action'); ?></th>
+																			<th><?php echo $this->lang->line('ms_e_details_cost_categories'); ?></th>
+																			<th><?php echo $this->lang->line('xin_created_at'); ?></th>
+																		</tr>
+																	</thead>
+																</table>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane fade" id="ms_e_details_cost_sub_categories">
+										<div class="card-body">
+											<div class="row mb-4">
+												<div class="col-md-12">
+													<div class="box">
+														<div class="card-header with-elements"> <span class="card-header-title mr-2"> <strong><?php echo $this->lang->line('xin_add_new'); ?></strong> <?php echo $this->lang->line('xin_e_details_language'); ?></span> </div>
+														<div class="card-body">
+															<?php $attributes = array('name' => 'edu_language_info', 'id' => 'edu_language_info', 'autocomplete' => 'off', 'class' => 'm-b-1 add'); ?>
+															<?php $hidden = array('set_edu_language' => 'UPDATE'); ?>
+															<?php echo form_open('admin/settings/edu_language_info/', $attributes, $hidden); ?>
+															<div class="form-group">
+																<label class="form-label"><?php echo $this->lang->line('xin_e_details_language'); ?></label>
+																<input type="text" class="form-control" name="name" placeholder="<?php echo $this->lang->line('xin_e_details_language'); ?>">
+															</div>
+															<div class="form-actions box-footer">
+																<button type="submit" class="btn btn-primary"> <i class="far fa-check-square"></i> <?php echo $this->lang->line('xin_save'); ?> </button>
+															</div>
+															<?php echo form_close(); ?>
+														</div>
+													</div>
+												</div>
+												<div class="col-md-12">
+													<div class="box">
+														<div class="card-header with-elements"> <span class="card-header-title mr-2"> <strong><?php echo $this->lang->line('xin_list_all'); ?></strong> <?php echo $this->lang->line('xin_e_details_language'); ?></span> </div>
+														<div class="card-body">
+															<div class="card-datatable table-responsive">
+																<table class="datatables-demo table table-striped table-bordered" id="xin_table_qualification_language">
+																	<thead>
+																		<tr>
+																			<th><?php echo $this->lang->line('xin_action'); ?></th>
+																			<th><?php echo $this->lang->line('xin_e_details_language'); ?></th>
+																		</tr>
+																	</thead>
+																</table>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
 			</div>
 		</div>
 	</div>

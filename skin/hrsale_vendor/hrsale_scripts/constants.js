@@ -365,7 +365,7 @@ $(document).ready(function () {
 	});
 
 	// update 9-5-2023
-	var ms_vendor_list = $("#ms_vendor_list").dataTable({
+	var ms_vendor_list = $("#xin_table_vendors").dataTable({
 		bDestroy: true,
 		bFilter: false,
 		bLengthChange: false,
@@ -376,6 +376,24 @@ $(document).ready(function () {
 		],
 		ajax: {
 			url: site_url + "settings/vendor_list/",
+			type: "GET",
+		},
+		fnDrawCallback: function (settings) {
+			$('[data-toggle="tooltip"]').tooltip();
+		},
+	});
+
+	var xin_table_cost_categories = $("#xin_table_cost_categories").dataTable({
+		bDestroy: true,
+		bFilter: false,
+		bLengthChange: false,
+		iDisplayLength: 10,
+		aLengthMenu: [
+			[10, 30, 50, 100, -1],
+			[10, 30, 50, 100, "All"],
+		],
+		ajax: {
+			url: site_url + "settings/cost_categories_list/",
 			type: "GET",
 		},
 		fnDrawCallback: function (settings) {
@@ -1145,10 +1163,6 @@ $(document).ready(function () {
 			action = obj.attr("name");
 		jQuery(".save").prop("disabled", true);
 		$(".icon-spinner3").show();
-
-		console.log(
-			obj.serialize() + "&is_ajax=471&data=vendors&type=vendors&form=" + action
-		);
 		jQuery.ajax({
 			type: "POST",
 			url: e.target.action,
@@ -1178,10 +1192,47 @@ $(document).ready(function () {
 		});
 	});
 
-	/* Delete data */
+	jQuery("#cost_categories_info").submit(function (e) {
+		/*Form Submit*/
+		e.preventDefault();
+		var obj = jQuery(this),
+			action = obj.attr("name");
+		jQuery(".save").prop("disabled", true);
+		$(".icon-spinner3").show();
+		jQuery.ajax({
+			type: "POST",
+			url: e.target.action,
+			data:
+				obj.serialize() +
+				"&is_ajax=475&data=cost_categories_info&type=cost_categories_info&form=" +
+				action,
+			cache: false,
+			success: function (JSON) {
+				if (JSON.error != "") {
+					toastr.error(JSON.error);
+					$('input[name="csrf_hrsale"]').val(JSON.csrf_hash);
+					jQuery(".save").prop("disabled", false);
+					$(".icon-spinner3").hide();
+					Ladda.stopAll();
+				} else {
+					xin_table_cost_categories.api().ajax.reload(function () {
+						toastr.success(JSON.result);
+					}, true);
+					$('input[name="csrf_hrsale"]').val(JSON.csrf_hash);
+					$(".icon-spinner3").hide();
+					jQuery("#vendors")[0].reset(); // To reset form fields
+					jQuery(".save").prop("disabled", false);
+					Ladda.stopAll();
+				}
+			},
+		});
+	});
+
+	/* Delete data dari del_dialog.php */
 	$("#delete_record").submit(function (e) {
 		var tk_type = $("#token_type").val();
 		$(".icon-spinner3").show();
+
 		if (tk_type == "document_type") {
 			var field_add =
 				"&is_ajax=9&data=delete_document_type&type=delete_record&";
@@ -1257,6 +1308,16 @@ $(document).ready(function () {
 			var field_add =
 				"&is_ajax=47&data=delete_security_level&type=delete_record&";
 			var tb_name = "xin_table_" + tk_type;
+
+			// update 9-5-2023
+		} else if (tk_type == "vendors") {
+			var field_add = "&is_ajax=473&data=delete_vendors&type=delete_record&";
+			var tb_name = "xin_table_" + tk_type; // nama id tabel view record
+			//
+		} else if (tk_type == "cost_categories") {
+			var field_add =
+				"&is_ajax=477&data=delete_cost_categories&type=delete_record&";
+			var tb_name = "xin_table_" + tk_type; // nama id tabel view record
 		}
 
 		/*Form Submit*/
@@ -1336,6 +1397,10 @@ $(document).ready(function () {
 			var field_add = "&data=ed_income_type&type=ed_income_type&";
 		} else if (field_type == "security_level") {
 			var field_add = "&data=ed_security_level&type=ed_security_level&";
+
+			// update feature 9-5-2023
+		} else if (field_type == "vendor") {
+			var field_add = "&data=ed_vendors&type=ed_vendors&";
 		}
 
 		var modal = $(this);
@@ -1361,6 +1426,8 @@ $(document).ready(function () {
 		$("#" + profile_block).show();
 	});
 });
+
+// delete record dari button tabel
 $(document).on("click", ".delete", function () {
 	$("input[name=_token]").val($(this).data("record-id"));
 	$("input[name=token_type]").val($(this).data("token_type"));

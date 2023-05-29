@@ -1358,6 +1358,7 @@ if (isset($_GET['jd']) && isset($_GET['field_id']) && $_GET['data'] == 'ed_docum
 			});
 		});
 	</script>
+
 <?php } else if (isset($_GET['jd']) && isset($_GET['field_id']) && $_GET['data'] == 'ed_security_level' && $_GET['type'] == 'ed_security_level') {
 	$row = $this->Xin_model->read_security_level($_GET['field_id']);
 ?>
@@ -1435,6 +1436,90 @@ if (isset($_GET['jd']) && isset($_GET['field_id']) && $_GET['data'] == 'ed_docum
 			});
 		});
 	</script>
+
+	<!-- //update 5-8-2023 -->
+<?php } else if (isset($_GET['jd']) && isset($_GET['field_id']) && $_GET['data'] == 'ed_vendors' && $_GET['type'] == 'ed_vendors') {
+	$row = $this->Xin_model->read_vendor($_GET['field_id']);
+?>
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">×</span> </button>
+		<h4 class="modal-title" id="edit-modal-data"><?php echo $this->lang->line('xin_edit_vendor'); ?></h4>
+	</div>
+	<?php $attributes = array('name' => 'ed_vendor', 'id' => 'ed_vendor', 'autocomplete' => 'off', 'class' => 'm-b-1'); ?>
+	<?php $hidden = array('_method' => 'EDIT', '_token' => $row[0]->vendor_id, 'ext_name' => $row[0]->vendor_name); ?>
+	<?php echo form_open('admin/settings/update_vendor/' . $row[0]->vendor_id, $attributes, $hidden); ?>
+	<div class="modal-body">
+		<div class="form-group">
+			<label for="name" class="form-control-label"><?php echo $this->lang->line('ms_vendor_name'); ?>:</label>
+			<input type="text" class="form-control" name="vendor_name" placeholder="<?php echo $this->lang->line('ms_vendor_name'); ?>" value="<?php echo $row[0]->vendor_name; ?>">
+		</div>
+		<div class="form-group">
+			<label for="name" class="form-control-label"><?php echo $this->lang->line('ms_vendor_name'); ?>:</label>
+			<input type="text" class="form-control" name="vendor_name" placeholder="<?php echo $this->lang->line('ms_vendor_name'); ?>" value="<?php echo $row[0]->vendor_name; ?>">
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo $this->lang->line('xin_close'); ?></button>
+		<button type="submit" class="btn btn-primary"><?php echo $this->lang->line('xin_update'); ?></button>
+	</div>
+	<?php echo form_close(); ?>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('[data-plugin="select_hrm"]').select2($(this).attr('data-options'));
+			$('[data-plugin="select_hrm"]').select2({
+				width: '100%'
+			});
+			Ladda.bind('button[type=submit]');
+			/* Edit data */
+			$("#ed_security_level_info").submit(function(e) {
+				/*Form Submit*/
+				e.preventDefault();
+				var obj = $(this),
+					action = obj.attr('name');
+				$('.save').prop('disabled', true);
+				$.ajax({
+					type: "POST",
+					url: e.target.action,
+					data: obj.serialize() + "&is_ajax=46&type=edit_record&data=ed_security_level_info&form=" + action,
+					cache: false,
+					success: function(JSON) {
+						if (JSON.error != '') {
+							toastr.error(JSON.error);
+							$('input[name="csrf_hrsale"]').val(JSON.csrf_hash);
+							$('.save').prop('disabled', false);
+							Ladda.stopAll();
+						} else {
+							$('.edit_setting_datail').modal('toggle');
+							// On page load: datatable
+							var exin_table_security_level = $('#xin_table_security_level').dataTable({
+								"bDestroy": true,
+								"bFilter": false,
+								"iDisplayLength": 5,
+								"aLengthMenu": [
+									[5, 10, 30, 50, 100, -1],
+									[5, 10, 30, 50, 100, "All"]
+								],
+								"ajax": {
+									url: "<?php echo site_url("admin/settings/security_level_list") ?>",
+									type: 'GET'
+								},
+								"fnDrawCallback": function(settings) {
+									$('[data-toggle="tooltip"]').tooltip();
+								}
+							});
+							exin_table_security_level.api().ajax.reload(function() {
+								toastr.success(JSON.result);
+							}, true);
+							$('input[name="csrf_hrsale"]').val(JSON.csrf_hash);
+							$('.save').prop('disabled', false);
+							Ladda.stopAll();
+						}
+					}
+				});
+			});
+		});
+	</script>
+
 <?php } else if (isset($_GET['jd']) && isset($_GET['user_id']) && $_GET['data'] == 'password' && $_GET['type'] == 'password') { ?>
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">×</span> </button>

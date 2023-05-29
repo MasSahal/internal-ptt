@@ -74,7 +74,8 @@ $active_group = 'default';
 $query_builder = TRUE;
 
 $db['default'] = array(
-	'dsn'	=> 'mysql:host=localhost;dbname=n1576493_hrm',
+	// 'dsn'	=> 'mysql:host=localhost;dbname=n1576493_hrm',
+	'dsn'	=> 'mysql:host=localhost;dbname=n1576493_hrm_debug',
 	'hostname' => "localhost",
 	'username' => "root",
 	'password' => "",

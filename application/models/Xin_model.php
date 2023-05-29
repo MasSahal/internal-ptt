@@ -674,6 +674,12 @@ class Xin_model extends CI_Model
 		} else if ($mClass == 'invoices') {
 			$arr['hr_client_invoices_active'] = 'active';
 			return $arr;
+
+			// update
+
+		} else if ($mClass == 'product') {
+			$arr['product_open'] = 'active';
+			return $arr;
 		}
 	}
 
@@ -1960,6 +1966,18 @@ class Xin_model extends CI_Model
 		return  $query = $this->db->query("SELECT * from ms_vendors");
 	}
 
+	// get all table rows
+	public function get_all_product_categories()
+	{
+		return  $query = $this->db->query("SELECT * from ms_product_categories");
+	}
+
+	// get all table rows
+	public function get_all_uoms()
+	{
+		return  $query = $this->db->query("SELECT * from ms_measurement_units");
+	}
+
 	/*  ADD CONSTANTS */
 
 	// Function to add record in table
@@ -2661,6 +2679,21 @@ class Xin_model extends CI_Model
 	{
 
 		$sql = 'SELECT * FROM xin_currencies where currency_id = ?';
+		$binds = array($id);
+		$query = $this->db->query($sql, $binds);
+
+		if ($query->num_rows() > 0) {
+			return $query->result();
+		} else {
+			return null;
+		}
+	}
+
+	// get single record > db table > constant
+	public function read_category_information($id)
+	{
+
+		$sql = 'SELECT * FROM ms_product_categories where category_id = ?';
 		$binds = array($id);
 		$query = $this->db->query($sql, $binds);
 
@@ -3785,7 +3818,7 @@ ORDER BY `expiry_date`");
 	// actual hours for timelog > project
 	public function actual_hours_timelog($project_id)
 	{
-		$sql = 'SELECT * FROM xin_projects_timelogs WHERE project_id = ?';
+		$sql = 'SELECT * FROM xin_projects_timelogs WHERE project_id = ? ORDER BY timelogs_id DESC';
 		$binds = array($project_id);
 		$query = $this->db->query($sql, $binds);
 		$qry_ac = $query->result();
@@ -3950,5 +3983,61 @@ ORDER BY `expiry_date`");
 		} else {
 			return null;
 		}
+	}
+
+	// Function to Delete selected record from table
+	public function delete_vendor_record($id)
+	{
+		$this->db->where('vendor_id', $id);
+		$this->db->delete('ms_vendors');
+	}
+
+
+	// Function to add record in table
+	public function add_product_category($data)
+	{
+		$this->db->insert('ms_product_categories', $data);
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	// get single record > db table > constant
+	public function read_product_category($id)
+	{
+
+		$sql = 'SELECT * FROM ms_product_categories where category_id = ?';
+		$binds = array($id);
+		$query = $this->db->query($sql, $binds);
+
+		if ($query->num_rows() > 0) {
+			return $query->result();
+		} else {
+			return null;
+		}
+	}
+
+	// get single record > db table > constant
+	public function read_uom($id)
+	{
+
+		$sql = 'SELECT * FROM ms_measurement_units where uom_id = ?';
+		$binds = array($id);
+		$query = $this->db->query($sql, $binds);
+
+		if ($query->num_rows() > 0) {
+			return $query->result();
+		} else {
+			return null;
+		}
+	}
+
+	// Function to Delete selected record from table
+	public function delete_product_category_record($id)
+	{
+		$this->db->where('category_id', $id);
+		return $this->db->delete('ms_product_categories');
 	}
 }

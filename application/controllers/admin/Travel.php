@@ -115,7 +115,6 @@ class Travel extends MY_Controller {
 		$data = array();
 
         foreach($travel->result() as $r) {
-			 			  	
 		// get user > employee_
 		$employee = $this->Xin_model->read_user_info($r->employee_id);
 		// employee full name

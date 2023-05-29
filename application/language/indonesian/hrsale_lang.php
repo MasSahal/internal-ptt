@@ -226,7 +226,7 @@ $lang['xin_address_2'] = 'Baris Alamat 2';
 $lang['xin_contact_number'] = 'Nomor Kontak';
 $lang['xin_city'] = 'Kota';
 $lang['xin_state'] = 'Negara Bagian / Provinsi';
-$lang['xin_zipcode'] = 'Kode Pos / Kode Pos';
+$lang['xin_zipcode'] = 'Kode Pos';
 $lang['xin_gtax'] = 'Nomor Pajak / EIN';
 $lang['xin_country'] = 'Negara';
 $lang['xin_companies'] = 'Perusahaan';
@@ -2910,10 +2910,10 @@ $lang['xin_hrsale_dashboard_2dark'] = 'Dasbor 2 Versi Gelap';
 
 // new update cost proyek
 
-$lang['ms_vendors'] = "Data Vendor";
+$lang['ms_vendors'] = "Vendor";
 $lang['ms_vendor_name'] = 'Nama Vendor';
-$lang['ms_vendor_contact'] = 'Kontak Vendor';
-$lang['ms_vendor_address'] = 'Alamat Vendor';
+$lang['ms_vendor_contact'] = 'Kontak/Fax';
+$lang['ms_vendor_address'] = 'Detail Alamat';
 $lang['ms_vendor_loc_region'] = 'Wilayah Administrasi Vendor';
 $lang['ms_vendor_added'] = "Data vendor berhasil ditambahkan.";
 $lang['ms_error_vendor_name_field'] = "Bidang Nama Vendor diperlukan.";
@@ -2922,10 +2922,58 @@ $lang['ms_error_vendor_address_field'] = "Bidang Alamat Vendor diperlukan.";
 $lang['ms_error_vendor_loc_region_field'] = "Bidang Wilayah Administrasi Vendor diperlukan.";
 $lang['ms_error_vendor_loc_country_field'] = "Bidang Negara Vendor diperlukan.";
 $lang['ms_vendor_added'] = "Data Vendor ditambahkan.";
+$lang['ms_vendor_deleted'] = "Data Vendor dihapus.";
 
+
+$lang['ms_cost_categories'] = "Jenis Kategori Pembiayaan";
+$lang['ms_e_details_cost_categories'] = "Parent Kategori";
+
+
+$lang['ms_e_details_cost_sub_categories'] = "Child Kategori";
 
 $lang['dashboard_cost_control'] = "Pembelian";
 $lang['xin_tab_menu'] = "";
+
+
+// cost
+$lang['ms_cost'] = "Pembelian";
+$lang['ms_cost_dashboard'] = "Dashbor Pembelian";
+$lang['ms_cost_category'] = "Kategori";
+
+// product
+$lang['ms_products'] = "Produk";
+$lang['ms_product_name'] = "Nama Produk";
+$lang['ms_product_price'] = "Harga";
+$lang['ms_product_last_price'] = "Harga Terbaru";
+$lang['ms_product_old_price'] = "Harga Lama";
+$lang['ms_product_number'] = "SKU/Part Produk";
+$lang['ms_product_desc'] = "Deskripsi Produk";
+$lang['ms_product_uom'] = "Satuan Unit";
+$lang['ms_product_category'] = "Kategori";
+$lang['ms_product_error_product_number'] = "Bidang SKU/Part Produk diperlukan!";
+$lang['ms_product_error_product_name'] = "Bidang Nama Produk diperlukan!";
+$lang['ms_product_error_uom_id'] = "Bidang Satuan Produk diperlukan!";
+$lang['ms_product_error_category_id'] = "Bidang Katgori Produk diperlukan!";
+$lang['ms_product_error_price'] = "Bidang Harga Produk diperlukan!";
+$lang['ms_product_success_deleted'] = "Produk berhasil dihapus!";
+$lang['ms_product_success_added'] = "Produk berhasil ditambahkan!";
+
+// product transaksi
+$lang['ms_project_trans'] = "Transaksi Projek";
+$lang['ms_project_trans_detail'] = "Detail Transaksi";
+
+// product cat
+$lang['ms_product_categories'] = "Kategori Produk";
+$lang['ms_product_category_added'] = "Kategori Produk";
+$lang['ms_product_category_success_deleted'] = "Kategori Produk berhasil dihapus!";
+$lang['ms_error_product_category_name_field'] = "Bidang Nama Kategori diperlukan.";
+
+// global
+$lang['ms_reference'] = "Referensi.";
+$lang['ms_date'] = "Tanggal";
+$lang['ms_invoice_number'] = "Invoice";
+$lang['ms_invoice_date'] = "Tanggal Invoice";
+$lang['ms_measurement_units'] = "Pilih Satuan Unit.";
 
 /////////////////////////////////////////////////// akhir hrsale v2.0.1
 

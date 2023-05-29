@@ -2908,7 +2908,44 @@ $lang['xin_hrsale_dashboard_2dark'] = 'Dashboard 2 Dark Version';
 //update
 $lang['ms_vendors'] = 'Project Vendors';
 $lang['ms_vendor_name'] = 'Vendor Name';
-$lang['xin_project_cost'] = 'Costs Project';
+$lang['ms_cost'] = 'Cost';
+
+
+// new update cost proyek
+
+$lang['ms_vendors'] = "Data Vendor";
+$lang['ms_vendor_name'] = 'Nama Vendor';
+$lang['ms_vendor_contact'] = 'Kontak/Fax';
+$lang['ms_vendor_address'] = 'Detail Alamat';
+$lang['ms_vendor_loc_region'] = 'Wilayah Administrasi Vendor';
+$lang['ms_vendor_added'] = "Data vendor berhasil ditambahkan.";
+$lang['ms_error_vendor_name_field'] = "Bidang Nama Vendor diperlukan.";
+$lang['ms_error_vendor_contact_field'] = "Bidang Kontak Vendor diperlukan.";
+$lang['ms_error_vendor_address_field'] = "Bidang Alamat Vendor diperlukan.";
+$lang['ms_error_vendor_loc_region_field'] = "Bidang Wilayah Administrasi Vendor diperlukan.";
+$lang['ms_error_vendor_loc_country_field'] = "Bidang Negara Vendor diperlukan.";
+$lang['ms_vendor_added'] = "Data Vendor ditambahkan.";
+$lang['ms_vendor_deleted'] = "Data Vendor dihapus.";
+
+
+$lang['ms_cost_categories'] = "Jenis Kategori Pembiayaan";
+$lang['ms_e_details_cost_categories'] = "Parent Kategori";
+
+
+$lang['ms_e_details_cost_sub_categories'] = "Child Kategori";
+
+$lang['dashboard_cost_control'] = "Pembelian";
+$lang['xin_tab_menu'] = "";
+
+
+// cost project
+$lang['ms_product_number'] = "Product Code";
+
+// 
+$lang['ms_project_transaction'] = "Project Cost";
+$lang['ms_project_transaction_invoice_number'] = "Invoice Number";
+$lang['ms_project_transaction_date'] = "Transaction Date";
+$lang['ms_project_transaction_amount'] = "Invoice Number";
 
 ///////////////////////////////////////////////// end hrsale v2.0.1
 /* End of file hrsale_lang.php */
