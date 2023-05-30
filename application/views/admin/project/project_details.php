@@ -16,6 +16,7 @@ $system_setting = $this->Xin_model->read_setting_info(1);
 <?php
 $id = $this->uri->segment(4);
 $result = $this->Project_model->read_project_information($id);
+$recently = $this->Xin_model->read_recently_product($id)->result();
 if (is_null($result)) {
 	redirect('admin/project');
 }
@@ -544,6 +545,7 @@ $projectBugs = $this->Project_model->completed_project_bugs($project_id);
 						<thead>
 							<tr>
 								<th><?php echo $this->lang->line('xin_action'); ?></th>
+								<th><?php echo $this->lang->line('xin_projects'); ?></th>
 								<th><?php echo $this->lang->line('xin_employee'); ?></th>
 								<th><?php echo $this->lang->line('xin_start_date'); ?></th>
 								<th><?php echo $this->lang->line('xin_end_date'); ?></th>
@@ -678,400 +680,40 @@ $projectBugs = $this->Project_model->completed_project_bugs($project_id);
 	</div>
 
 	<div class="col current-tab" id="cost" aria-expanded="false" style="display:none;">
-		<div class="card md-4">
-			<h6 class="card-header"><?php echo $this->lang->line('xin_project'); ?> <?php echo $this->lang->line('ms_cost'); ?></h6>
+		<div class="card mt-4">
+			<h6 class="card-header"><?php echo $this->lang->line('ms_cost'); ?></h6>
 			<div class="card-body">
-				<?php $attributes = array('name' => 'set_bug', 'id' => 'set_bug', 'autocomplete' => 'off', 'class' => 'm-b-1'); ?>
-				<?php $hidden = array('_method' => 'EDIT'); ?>
-				<?php echo form_open_multipart('admin/project/set_bug/', $attributes, $hidden); ?>
-				<?php
-				$data5 = array(
-					'name'        => 'user_id',
-					'type'        => 'hidden',
-					'value'  	   => $session['user_id'],
-					'class'       => 'form-control',
-				);
-				echo form_input($data5);
-				?>
-
-				<div class="box-block">
-
-					<div class="row">
-						<div class="col-md-6">
-							<div class="row">
-								<div class="col-md-12">
-									<div class="form-group">
-										<label for="ms_vendor" class="control-label"><?php echo $this->lang->line('ms_vendor_name'); ?></label>
-										<select class="form-control" name="vendor" data-plugin="select_hrm" data-placeholder="<?php echo $this->lang->line('ms_vendor_name'); ?>">
-											<option value=""></option>
-											<?php foreach ($vresult as $vendor) { ?>
-												<option value="<?php echo $vendor->vendor_id ?>"> <?php echo $vendor->vendor_name ?></option>
-											<?php } ?>
-										</select>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="form-group">
-								<label for="invoice_date"><?php echo $this->lang->line('xin_invoice_number'); ?></label>
-								<input class="form-control" placeholder="<?php echo $this->lang->line('xin_invoice_number'); ?>" name="invoice_number" type="text" value="INV-<?php echo '000' . rand(1, 10000); ?>">
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="form-group">
-								<label for="invoice_date"><?php echo $this->lang->line('xin_invoice_date'); ?></label>
-								<input class="form-control date" placeholder="<?php echo $this->lang->line('xin_invoice_date'); ?>" readonly="readonly" name="invoice_date" type="text" value="">
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="form-group">
-								<label for="invoice_due_date"><?php echo $this->lang->line('xin_invoice_due_date'); ?></label>
-								<input class="form-control date" placeholder="<?php echo $this->lang->line('xin_invoice_due_date'); ?>" readonly="readonly" name="invoice_due_date" type="text" value="">
-							</div>
-						</div>
-					</div>
-
-					<hr>
-					<div class="row">
-						<div class="col-md-12">
-							<table class="table table-sm table-stripped">
-								<thead>
-									<tr>
-										<th>No</th>
-										<th style="min-width:200px">Item</th>
-										<th>Jenis Pajak</th>
-										<th>Tarif Pajak</th>
-										<th>Qty/Hr</th>
-										<th>Latest Price</th>
-										<th>Subtotal</th>
-										<th>Action</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>1</td>
-										<td>
-											<input type="text" class="form-control form-control-sm item_name" name="item_name[]" id="item_name" placeholder="Item Name">
-										</td>
-										<td>
-											<select class="form-control form-control-sm tax_type" name="tax_type[]" id="tax_type" data-plugin="">
-												<!--<option tax-type="0" tax-rate="0" value="0"><?php echo $this->lang->line('xin_performance_none'); ?></option>-->
-												<?php foreach ($all_taxes as $_tax) { ?>
-													<?php
-													if ($_tax->type == 'percentage') {
-														$_tax_type = $_tax->rate . '%';
-													} else {
-														$_tax_type = $this->Xin_model->currency_sign($_tax->rate);
-													}
-													?>
-													<option tax-type="<?php echo $_tax->type; ?>" tax-rate="<?php echo $_tax->rate; ?>" value="<?php echo $_tax->tax_id; ?>"> <?php echo $_tax->name; ?> (<?php echo $_tax_type; ?>)</option>
-												<?php } ?>
-											</select>
-										</td>
-										<td>
-											<input type="text" readonly="readonly" class="form-control form-control-sm tax-rate-item" name="tax_rate_item[]" value="0" />
-										</td>
-										<td>
-											<input type="text" class="form-control form-control-sm qty_hrs" name="qty_hrs[]" id="qty_hrs" value="1">
-										</td>
-										<td>
-											<input class="form-control form-control-sm unit_price " type="text" name="unit_price[]" value="0" id="unit_price" />
-										</td>
-										<td>
-											<input type="text" class="form-control form-control-sm sub-total-item" readonly="readonly" name="sub_total_item[]" value="0" />
-										</td>
-										<td>
-											<button type="button" class="btn icon-btn btn-xs btn-danger waves-effect waves-light remove-invoice-item" data-repeater-delete=""> <span class="fa fa-trash"></span></button>
-										</td>
-									</tr>
-								</tbody>
-								<tfoot>
-									<tr>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td style="border-bottom:1px solid #dddddd; text-align:left"><strong><?php echo $this->lang->line('xin_discount_type'); ?></strong></td>
-										<td style="border-bottom:1px solid #dddddd; text-align:center"><strong><?php echo $this->lang->line('xin_discount'); ?></strong></td>
-										<td colspan="2" style="border-bottom:1px solid #dddddd; text-align:left"><strong><?php echo $this->lang->line('xin_discount_amount'); ?></strong></td>
-									</tr>
-									<tr>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td>
-											<div class="form-group">
-												<select name="discount_type" class="form-control form-control-sm discount_type">
-													<option value="1"> <?php echo $this->lang->line('xin_flat'); ?></option>
-													<option value="2"> <?php echo $this->lang->line('xin_percent'); ?></option>
-												</select>
-											</div>
-										</td>
-										<td align="right">
-											<div class="form-group">
-												<input style="text-align:right" type="text" name="discount_figure" class="form-control form-control-sm discount_figure" value="0" data-valid-num="required">
-											</div>
-										</td>
-										<td align="right" colspan="2">
-											<div class="form-group">
-												<input type="text" style="text-align:right" readonly="" name="discount_amount" value="0" class="discount_amount form-control form-control-sm">
-											</div>
-										</td>
-									</tr>
-								</tfoot>
-							</table>
-
-							<!-- <div class="form-group">
-								<div class="hrsale-item-values">
-									<div data-repeater-list="items">
-										<div data-repeater-item="">
-											<div class="row item-row">
-												<div class="form-group mb-1 col-sm-12 col-md-3">
-													<label for="item_name"><?php echo $this->lang->line('xin_title_item'); ?></label>
-													<br>
-													<input type="text" class="form-control item_name" name="item_name[]" id="item_name" placeholder="Item Name">
-												</div>
-												<div class="form-group mb-1 col-sm-12 col-md-2">
-													<label for="tax_type"><?php echo $this->lang->line('xin_invoice_tax_type'); ?></label>
-													<br>
-													<select class="form-control tax_type" name="tax_type[]" id="tax_type" data-plugin="select_hrm">
-														<option tax-type="0" tax-rate="0" value="0"><?php echo $this->lang->line('xin_performance_none'); ?></option>
-														<?php foreach ($all_taxes as $_tax) { ?>
-															<?php
-															if ($_tax->type == 'percentage') {
-																$_tax_type = $_tax->rate . '%';
-															} else {
-																$_tax_type = $this->Xin_model->currency_sign($_tax->rate);
-															}
-															?>
-															<option tax-type="<?php echo $_tax->type; ?>" tax-rate="<?php echo $_tax->rate; ?>" value="<?php echo $_tax->tax_id; ?>"> <?php echo $_tax->name; ?> (<?php echo $_tax_type; ?>)</option>
-														<?php } ?>
-													</select>
-												</div>
-												<div class="form-group mb-1 col-sm-12 col-md-1">
-													<label for="xin_title_tax_rate"><?php echo $this->lang->line('xin_title_tax_rate'); ?></label>
-													<br>
-													<input type="text" readonly="readonly" class="form-control tax-rate-item" name="tax_rate_item[]" value="0" />
-												</div>
-												<div class="form-group mb-1 col-sm-12 col-md-1">
-													<label for="qty_hrs" class="cursor-pointer"><?php echo $this->lang->line('xin_title_qty_hrs'); ?></label>
-													<br>
-													<input type="text" class="form-control qty_hrs" name="qty_hrs[]" id="qty_hrs" value="1">
-												</div>
-												<div class="skin skin-flat form-group mb-1 col-sm-12 col-md-2">
-													<label for="unit_price"><?php echo $this->lang->line('xin_title_unit_price'); ?></label>
-													<br>
-													<input class="form-control unit_price" type="text" name="unit_price[]" value="0" id="unit_price" />
-												</div>
-												<div class="form-group mb-1 col-sm-12 col-md-2">
-													<label for="profession"><?php echo $this->lang->line('xin_title_sub_total'); ?></label>
-													<input type="text" class="form-control sub-total-item" readonly="readonly" name="sub_total_item[]" value="0" />
-													<p style="display:none" class="form-control-static"><span class="amount-html">0</span></p>
-												</div>
-												<div class="form-group col-sm-12 col-md-1 text-xs-center mt-2">
-													<label for="profession">&nbsp;</label>
-													<br>
-													<button type="button" class="btn icon-btn btn-xs btn-danger waves-effect waves-light remove-invoice-item" data-repeater-delete=""> <span class="fa fa-trash"></span></button>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div id="item-list"></div>
-								<div class="form-group overflow-hidden1">
-									<div class="col-xs-12">
-										<button type="button" data-repeater-create="" class="btn btn-primary" id="add-invoice-item"> <i class="fa fa-plus"></i> <?php echo $this->lang->line('xin_title_add_item'); ?></button>
-									</div>
-								</div>
-								<?php
-								$ar_sc = explode('- ', $system_setting[0]->default_currency_symbol);
-								$sc_show = $ar_sc[1];
-								?>
-								<input type="hidden" class="items-sub-total" name="items_sub_total" value="0" />
-								<input type="hidden" class="items-tax-total" name="items_tax_total" value="0" />
-								<div class="row">
-									<div class="col-md-7 col-sm-12 text-xs-center text-md-left">&nbsp; </div>
-									<div class="col-md-5 col-sm-12">
-										<div class="table-responsive">
-											<table class="table">
-												<tbody>
-													<tr>
-														<td><?php echo $this->lang->line('xin_title_sub_total2'); ?></td>
-														<td class="text-xs-right"><?php echo $sc_show; ?> <span class="sub_total">0</span></td>
-													</tr>
-													<tr>
-														<td><?php echo $this->lang->line('xin_title_tax_c'); ?></td>
-														<td class="text-xs-right"><?php echo $sc_show; ?> <span class="tax_total">0</span></td>
-													</tr>
-													<tr>
-														<td colspan="2" style="border-bottom:1px solid #dddddd; padding:0px !important; text-align:left">
-															<table class="table table-bordered">
-																<tbody>
-																	<tr>
-																		<td width="30%" style="border-bottom:1px solid #dddddd; text-align:left"><strong><?php echo $this->lang->line('xin_discount_type'); ?></strong></td>
-																		<td style="border-bottom:1px solid #dddddd; text-align:center"><strong><?php echo $this->lang->line('xin_discount'); ?></strong></td>
-																		<td style="border-bottom:1px solid #dddddd; text-align:left"><strong><?php echo $this->lang->line('xin_discount_amount'); ?></strong></td>
-																	</tr>
-																	<tr>
-																		<td>
-																			<div class="form-group">
-																				<select name="discount_type" class="form-control discount_type">
-																					<option value="1"> <?php echo $this->lang->line('xin_flat'); ?></option>
-																					<option value="2"> <?php echo $this->lang->line('xin_percent'); ?></option>
-																				</select>
-																			</div>
-																		</td>
-																		<td align="right">
-																			<div class="form-group">
-																				<input style="text-align:right" type="text" name="discount_figure" class="form-control discount_figure" value="0" data-valid-num="required">
-																			</div>
-																		</td>
-																		<td align="right">
-																			<div class="form-group">
-																				<input type="text" style="text-align:right" readonly="" name="discount_amount" value="0" class="discount_amount form-control">
-																			</div>
-																		</td>
-																	</tr>
-																</tbody>
-															</table>
-														</td>
-													</tr>
-													<input type="hidden" class="fgrand_total" name="fgrand_total" value="0" />
-													<tr>
-														<td><?php echo $this->lang->line('xin_grand_total'); ?></td>
-														<td class="text-xs-right"><?php echo $sc_show; ?> <span class="grand_total">0</span></td>
-													</tr>
-												</tbody>
-
-											</table>
-										</div>
-									</div>
-								</div>
-								<div class="form-group col-xs-12 mb-2 file-repeaters"> </div>
-								<div class="row">
-									<div class="col-lg-12">
-										<label for="invoice_note"><?php echo $this->lang->line('xin_invoice_note'); ?></label>
-										<textarea name="invoice_note" class="form-control"></textarea>
-									</div>
-								</div>
-							</div> -->
-						</div>
-					</div>
-
-
-					<div class="row">
-						<div class="col-md-6">
-							<div class="row">
-								<div class="col-md-12">
-									<div class="form-group">
-										<label for="ms_vendor" class="control-label"><?php echo $this->lang->line('ms_vendor_name'); ?></label>
-										<select class="form-control" name="vendor" data-plugin="select_hrm" data-placeholder="<?php echo $this->lang->line('ms_vendor_name'); ?>">
-											<option value=""></option>
-											<?php foreach ($vresult as $vendor) { ?>
-												<option value="<?php echo $vendor->vendor_id ?>"> <?php echo $vendor->vendor_name ?></option>
-											<?php } ?>
-										</select>
-									</div>
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="transaction_date"><?php echo $this->lang->line('ms_project_transaction_date'); ?></label>
-								<input class="form-control" placeholder="<?php echo $this->lang->line('ms_project_transaction_date'); ?>" name="transaction_date" type="date" value="<?= date('d/m/Y') ?>">
-							</div>
-							<div class="row">
-								<input type="hidden" name="project_id" id="tproject_id" value="<?php echo $project_id; ?>" />
-								<input type="hidden" name="company_id" id="company_id" value="<?php echo $co_info[0]->company_id; ?>" />
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="form-group">
-								<label for="invoice_number"><?php echo $this->lang->line('ms_project_transaction_invoice_number'); ?></label>
-								<input class="form-control" placeholder="<?php echo $this->lang->line('ms_project_transaction_invoice_number'); ?>" name="invoice_number" type="text" value="">
-							</div>
-							<div class="form-group">
-								<label for="description"><?php echo $this->lang->line('xin_description'); ?></label>
-								<textarea class="form-control textarea" placeholder="<?php echo $this->lang->line('xin_description'); ?>" name="description" id="description"></textarea>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="transaction_date"><?php echo $this->lang->line('ms_product_name'); ?></label>
-								<input class="form-control" id="select_product" placeholder="<?php echo $this->lang->line('ms_product_name'); ?>" name="" type="date" value="<?= date('d/m/Y') ?>">
-							</div>
-
-							<div class="form-group">
-								<label for="ms_vendor_name" class="control-label"><?php echo $this->lang->line('ms_vendor_name'); ?></label>
-								<select multiple class="form-conproduct_nametrol" name="vendor[]" data-plugin="select_hrm" data-placeholder="<?php echo $this->lang->line('ms_vendor_name'); ?>">
-									<option value=""></option>
-									<?php foreach ($eresult as $employee) { ?>
-										<option value="<?php echo $employee->user_id ?>"> <?php echo $employee->first_name . ' ' . $employee->last_name; ?></option>
-									<?php } ?>
-								</select>
-							</div>
-						</div>
-					</div>
-					<hr>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="ms_vendor_name" class="control-label"><?php echo $this->lang->line('ms_product'); ?></label>
-								<select class="form-control" name="product[]" data-plugin="select_hrm" data-placeholder="<?php echo $this->lang->line('ms_product'); ?>">
-									<option value=""></option>
-									<?php foreach ($presult as $product) { ?>
-										<option value="<?php echo $product->product_id ?>"> <?php echo $product->product_name . ' | Rp' . $product->latest_price; ?></option>
-									<?php } ?>
-								</select>
-							</div>
-							<button data-toggle="modal" data-target="#data_product" class="btn btn-primary" type="button"> <i class="fa fa-plus" aria-hidden="true"></i> Add Product</button>
-						</div>
-						<h6 class="card-header"><?php echo $this->lang->line('ms_product'); ?></h6>
-						<div class="card-datatable table-responsive">
-							<table class="table table-hover table-striped table-bordered table-ajax-load" id="xin_attachment_table" style="width:100%;">
-								<thead>
-									<tr>
-										<th><?php echo $this->lang->line('xin_option'); ?></th>
-										<th><?php echo $this->lang->line('dashboard_xin_title'); ?></th>
-										<th><?php echo $this->lang->line('xin_description'); ?></th>
-										<th><?php echo $this->lang->line('xin_date_and_time'); ?></th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>
-											<span data-toggle="tooltip" data-placement="top"><button type="button" class="btn icon-btn btn-sm btn-outline-secondary waves-effect waves-light" data-toggle="modal" data-target=".edit_setting_datail" data-field_id="1" data-field_type="cost_categories"><i class="fa fa-plus" aria-hidden="true"></i></button></span>
-										</td>
-										<td>Haloewfwf</td>
-										<td>Haloewfwfwefwefwe</td>
-										<td>Haloewfwfwefwefwwfefwe</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-actions">
-									<button type="submit" class="btn btn-primary"> <i class="fa fa-check-square-o"></i> <?php echo $this->lang->line('xin_save'); ?> </button>
-								</div>
-							</div>
-						</div>
-					</div>
-					<?php echo form_close(); ?>
-				</div>
-			</div>
-			<div class="card mt-4">
-				<h6 class="card-header"><?php echo $this->lang->line('xin_all_bugs_issues'); ?></h6>
 				<div class="card-datatable table-responsive">
-					<table class="datatables-demo table table-striped table-bordered" id="xin_bug_table">
+					<table class="datatables-demo table table-striped table-bordered" id="ms_cost_project">
 						<thead>
 							<tr>
-								<th><?php echo $this->lang->line('xin_all_bugs_issues'); ?></th>
+								<th><?php echo $this->lang->line('ms_product_name'); ?></th>
+								<th><?php echo $this->lang->line('ms_product_category'); ?></th>
+								<th><?php echo $this->lang->line('ms_product_number'); ?></th>
+								<th><?php echo $this->lang->line('ms_product_price'); ?></th>
+								<th><?php echo $this->lang->line('ms_product_uom'); ?></th>
+								<th><?php echo $this->lang->line('ms_product_qty'); ?></th>
+								<th><?php echo $this->lang->line('ms_amount'); ?></th>
 							</tr>
 						</thead>
+						<tbody>
+							<?php foreach ($record as $r) { ?>
+								<tr>
+									<td><?= $r->product_name; ?></td>
+									<td><?= $r->category; ?></td>
+									<td><?= $r->product_number; ?></td>
+									<td><?= $r->price; ?></td>
+									<td><?= $r->uom; ?></td>
+									<td><?= $r->qty; ?></td>
+									<td><?= $r->amount; ?></td>
+								</tr>
+							<?php } ?>
+							<tr>
+								<td colspan="6" align="right">Total</td>
+								<td><?= $total; ?></td>
+							</tr>
+
+						</tbody>
 					</table>
 				</div>
 			</div>
@@ -1171,4 +813,6 @@ $projectBugs = $this->Project_model->completed_project_bugs($project_id);
 			</ul>
 		</div>
 		<!-- / Participants -->
+
 	</div>
+</div>

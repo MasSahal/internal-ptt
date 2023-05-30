@@ -394,6 +394,47 @@ class Project extends MY_Controller
 			$client_name = '--';
 		}
 
+		$record = [];
+		$total = 0;
+		// dd($this->Xin_model->read_recently_product($id)->result());
+		foreach ($this->Xin_model->read_recently_product($id)->result() as $r) {
+
+			$kategori = $this->Xin_model->read_product_category($r->category_id);
+			if ($kategori) {
+				$category_name = $kategori[0]->category_name;
+			} else {
+				$category_name = "--";
+			}
+
+			$unit = $this->Xin_model->read_uom($r->uom_id);
+			if ($unit == true) {
+				$uom_name = $unit[0]->uom_name;
+			} else {
+				$uom_name = "--";
+			}
+
+			$d_project = $this->Project_model->read_project_information($r->project_id);
+			// dd($d_project);
+			if ($d_project) {
+				$project_name = $d_project[0]->title;
+			} else {
+				$project_name = "--";
+			}
+
+			$res = new stdClass;
+			$res->category = $category_name;
+			$res->product_name = $r->product_name;
+			$res->product_number = $r->product_number;
+			$res->uom = $uom_name;
+			$res->project_name = $project_name;
+			$res->qty = $r->qty;
+			$res->price = $this->Xin_model->currency_sign($r->price);
+			$res->amount = $this->Xin_model->currency_sign($r->amount);
+
+			$record[] = $res;
+			$total = $total  + ($r->qty * $r->amount);
+		}
+
 		$data = array(
 			'breadcrumbs' => $this->lang->line('xin_project_detail'),
 			'project_id' => $result[0]->project_id,
@@ -417,8 +458,11 @@ class Project extends MY_Controller
 			'path_url' => 'project_detail',
 			'all_clients' => $this->Clients_model->get_all_clients(),
 			'all_employees' => $this->Xin_model->all_employees(),
-			'all_companies' => $this->Xin_model->get_companies()
+			'all_companies' => $this->Xin_model->get_companies(),
+			'record' => $record,
+			'total' => $this->Xin_model->currency_sign($total),
 		);
+		// dd($data);
 
 		//$role_resources_ids = $this->Xin_model->user_role_resource();
 		//if(in_array('7',$role_resources_ids)) {
@@ -1176,6 +1220,52 @@ class Project extends MY_Controller
 		$length = intval($this->input->get("length"));
 	}
 
+	public function cost_project_list()
+	{
+
+		$session = $this->session->userdata('username');
+		if (empty($session)) {
+			redirect('admin/');
+		}
+
+		$data['title'] = $this->Xin_model->site_title();
+		$id = $this->uri->segment(4);
+
+		$ses_user = $this->Xin_model->read_user_info($session['user_id']);
+		// $this->load->view("admin/project/project_details", $data);
+		// Datatables Variables
+		$draw = intval($this->input->get("draw"));
+		$start = intval($this->input->get("start"));
+		$length = intval($this->input->get("length"));
+
+		$id_project = $id;
+		$result = $this->Xin_model->read_recently_product($id_project);
+
+		// dd($result);
+		$data = array();
+
+		foreach ($result->result() as $r) {
+			$data[] = array(
+				'product_name' => $r->product_name,
+				'category' => $r->category,
+				'product_number' => $r->product_number,
+				'qty' => $r->qty,
+				'price' => $r->price,
+				'uom_id' => $r->uom_id,
+				'amount' => $r->amount,
+			);
+		}
+
+		$output = array(
+			"draw" => $draw,
+			"recordsTotal" => $data->num_rows(),
+			"recordsFiltered" => $data->num_rows(),
+			"data" => $data
+		);
+		echo json_encode($output);
+		exit();
+	}
+
 	public function discussion_list()
 	{
 
@@ -1771,6 +1861,8 @@ class Project extends MY_Controller
 			$timelogs = $this->Project_model->get_all_project_employee_timelogs($session['user_id']);
 		}
 		$role_resources_ids = $this->Xin_model->user_role_resource();
+		// var_dump($timelogs->result());
+		// die;
 		$data = array();
 
 		foreach ($timelogs->result() as $r) {

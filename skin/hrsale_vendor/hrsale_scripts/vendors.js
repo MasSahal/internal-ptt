@@ -85,6 +85,23 @@ $(document).ready(function () {
 			},
 		});
 	});
+
+	// edit
+	$(".edit-modal-data").on("show.bs.modal", function (event) {
+		var button = $(event.relatedTarget);
+		var vendor_id = button.data("vendor_id");
+		var modal = $(this);
+		$.ajax({
+			url: base_url + "/read/",
+			type: "GET",
+			data: "jd=1&is_ajax=1&mode=modal&data=vendors&vendor_id=" + vendor_id,
+			success: function (response) {
+				if (response) {
+					$("#ajax_modal").html(response);
+				}
+			},
+		});
+	});
 });
 
 $(document).on("click", ".delete", function () {

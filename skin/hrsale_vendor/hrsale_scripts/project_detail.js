@@ -428,6 +428,19 @@ $(document).ready(function () {
 		},
 	});
 
+	var ms_cost_project = $("#ms_cost_project").dataTable();
+	// 	({
+	// 	bDestroy: true,
+	// 	ajax: {
+	// 		url:
+	// 			site_url + "project/project_timelogs_list/" + $("#f_project_id").val(),
+	// 		type: "GET",
+	// 	},
+	// 	fnDrawCallback: function (settings) {
+	// 		$('[data-toggle="tooltip"]').tooltip();
+	// 	},
+	// });
+
 	$("#xin-form").submit(function (e) {
 		e.preventDefault();
 		var obj = $(this),

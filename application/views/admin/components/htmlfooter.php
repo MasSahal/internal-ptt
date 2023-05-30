@@ -147,7 +147,7 @@
 		}
 	});
 </script>
-<?php if ($this->router->fetch_class() == 'employees' || $this->router->fetch_class() == 'dashboard' || $this->router->fetch_method() == 'accounting_dashboard' || $this->router->fetch_method() == 'attendance_dashboard' || $this->router->fetch_class() == 'project') { ?>
+<?php if ($this->router->fetch_class() == 'employees' || $this->router->fetch_class() == 'dashboard' || $this->router->fetch_method() == 'accounting_dashboard' || $this->router->fetch_method() == 'attendance_dashboard' || $this->router->fetch_class() == 'project' || $this->router->fetch_class() == 'project_costs') { ?>
 	<script src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/libs/chartjs/chartjs.js"></script>
 <?php } ?>
 <?php if ($this->router->fetch_class() == 'events' || $this->router->fetch_class() == 'meetings') { ?>
@@ -398,7 +398,12 @@
 	</script>
 <?php } ?>
 
+<?php if ($this->router->fetch_class() == 'project_costs') { ?>
+	<script src="<?php echo base_url(); ?>skin/hrsale_vendor/hrsale_scripts/hrsale_charts/hrsale_payroll.js"></script>
+
+<?php } ?>
 <?php if ($this->router->fetch_class() == 'project_costs' && $this->router->fetch_method() == 'transactions') { ?>
+
 	<script>
 		var form_select_tax = '<select class="form-control form-control-sm tax_type" name="tax_type[]" id="tax_type">'
 		<?php foreach ($all_taxes as $_tax) { ?>

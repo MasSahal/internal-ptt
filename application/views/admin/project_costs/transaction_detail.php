@@ -67,7 +67,7 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
 				<tr>
 					<th>
 						<strong><?php echo $this->lang->line('ms_date'); ?></strong> <br>
-						<?= $result->date; ?>
+						<?= $result->invoice_date; ?>
 					</th>
 					<th>
 						<strong> <?php echo $this->lang->line('ms_reference'); ?></strong> <br>
@@ -77,35 +77,50 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
 			</table>
 			<br>
 			<input type="hidden" name="project_cost_id" id="project_cost_id" value="<?php echo $result->id; ?>" />
-			<table class="datatables-demo table table-striped table-bordered" id="xin_table_project_cost_sdetail">
+			<table class="datatables-demo table table-striped table-borderles table-hover" id="xin_table_php">
 				<thead>
 					<tr>
+						<th><?php echo $this->lang->line('xin_projects'); ?></th>
 						<th><?php echo $this->lang->line('ms_products'); ?></th>
-						<th><?php echo $this->lang->line('xin_qty'); ?>qty</th>
-						<th><?php echo $this->lang->line('ss'); ?> satuan</th>
-						<th><?php echo $this->lang->line('xin_discount'); ?></th>
+						<th><?php echo $this->lang->line('xin_qty'); ?>Qty</th>
+						<th><?php echo $this->lang->line('ss'); ?> Satuan</th>
 						<th><?php echo $this->lang->line('ddddd'); ?>Harga</th>
 						<th><?php echo $this->lang->line('xin_tax'); ?>Pajak</th>
 						<th><?php echo $this->lang->line('xin_amount'); ?></th>
 					</tr>
 				</thead>
 				<tbody>
-					<?php foreach ($products as $detail) { ?>
+					<?php foreach ($record as $detail) {
+
+						$pajak = 2000;
+						$total_pajak = 2000 * count($record);
+					?>
 						<tr>
+							<td><?= $detail->project_title; ?></td>
 							<td>
 								<?php echo $detail->product_name; ?>
 								<br>
-								<small><?= $detail->product_number; ?></small>
+								<small><strong><?php echo $this->lang->line('ms_product_number'); ?>: </strong><?= $detail->product_number; ?></small>
 							</td>
-							<!-- <td>4</td> -->
-							<td><?php echo $detail->uom_id; ?></td>
-							<td><?php echo $detail->product_desc; ?></td>
-							<td><?php echo $detail->latest_price; ?></td>
-							<td><?php echo $detail->old_price; ?></td>
-							<td>2000</td>
-							<td><?php echo $detail->latest_price * 4 ?> </td>
+							<td><?= $detail->qty; ?></td>
+							<td><?= $detail->uom_id; ?></td>
+							<td><?php echo $detail->price; ?></td>
+							<td><?= $this->Xin_model->currency_sign($pajak); ?></td>
+							<td><?php echo $this->Xin_model->currency_sign($detail->amount * $detail->qty) ?> </td>
 						</tr>
 					<?php } ?>
+					<tr>
+						<td colspan="6" align="right">Pajak</td>
+						<td><?= $this->Xin_model->currency_sign($total_pajak); ?></td>
+					</tr>
+					<tr>
+						<td colspan="6" align="right">Diskon</td>
+						<td><?= $this->Xin_model->currency_sign($total_diskon); ?></td>
+					</tr>
+					<tr>
+						<td colspan="6" align="right">Total</td>
+						<td><?= $this->Xin_model->currency_sign($total + $total_pajak); ?></td>
+					</tr>
 				</tbody>
 			</table>
 		</div>

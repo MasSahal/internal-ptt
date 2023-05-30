@@ -86,68 +86,20 @@ $(document).ready(function () {
 		});
 	});
 
-	$("#edit_setting_datail").on("show.bs.modal", function (event) {
+	// edit
+	$(".edit-modal-data").on("show.bs.modal", function (event) {
 		var button = $(event.relatedTarget);
-		var field_id = button.data("field_id");
-		var field_type = button.data("field_type");
-		$(".icon-spinner3").show();
-		if (field_type == "document_type") {
-			var field_add = "&data=ed_document_type&type=ed_document_type&";
-		} else if (field_type == "contract_type") {
-			var field_add = "&data=ed_contract_type&type=ed_contract_type&";
-		} else if (field_type == "payment_method") {
-			var field_add = "&data=ed_payment_method&type=ed_payment_method&";
-		} else if (field_type == "education_level") {
-			var field_add = "&data=ed_education_level&type=ed_education_level&";
-		} else if (field_type == "qualification_language") {
-			var field_add =
-				"&data=ed_qualification_language&type=ed_qualification_language&";
-		} else if (field_type == "qualification_skill") {
-			var field_add =
-				"&data=ed_qualification_skill&type=ed_qualification_skill&";
-		} else if (field_type == "award_type") {
-			var field_add = "&data=ed_award_type&type=ed_award_type&";
-		} else if (field_type == "leave_type") {
-			var field_add = "&data=ed_leave_type&type=ed_leave_type&";
-		} else if (field_type == "warning_type") {
-			var field_add = "&data=ed_warning_type&type=ed_warning_type&";
-		} else if (field_type == "termination_type") {
-			var field_add = "&data=ed_termination_type&type=ed_termination_type&";
-		} else if (field_type == "expense_type") {
-			var field_add = "&data=ed_expense_type&type=ed_expense_type&";
-		} else if (field_type == "job_type") {
-			var field_add = "&data=ed_job_type&type=ed_job_type&";
-		} else if (field_type == "exit_type") {
-			var field_add = "&data=ed_exit_type&type=ed_exit_type&";
-		} else if (field_type == "travel_arr_type") {
-			var field_add = "&data=ed_travel_arr_type&type=ed_travel_arr_type&";
-		} else if (field_type == "currency_type") {
-			var field_add = "&data=ed_currency_type&type=ed_currency_type&";
-		} else if (field_type == "company_type") {
-			var field_add = "&data=ed_company_type&type=ed_company_type&";
-		} else if (field_type == "job_category") {
-			var field_add = "&data=ed_job_category&type=ed_job_category&";
-		} else if (field_type == "ethnicity_type") {
-			var field_add = "&data=ed_ethnicity_type&type=ed_ethnicity_type&";
-		} else if (field_type == "income_type") {
-			var field_add = "&data=ed_income_type&type=ed_income_type&";
-		} else if (field_type == "security_level") {
-			var field_add = "&data=ed_security_level&type=ed_security_level&";
-
-			// update feature 9-5-2023
-		} else if (field_type == "vendor") {
-			var field_add = "&data=ed_product_categories&type=ed_product_categories&";
-		}
-
+		var category_id = button.data("category_id");
 		var modal = $(this);
 		$.ajax({
-			url: site_url + "settings/constants_read/",
+			url: base_url + "/read/",
 			type: "GET",
-			data: "jd=1" + field_add + "field_id=" + field_id,
+			data:
+				"jd=1&is_ajax=1&mode=modal&data=product_category&category_id=" +
+				category_id,
 			success: function (response) {
 				if (response) {
-					$(".icon-spinner3").hide();
-					$("#ajax_setting_info").html(response);
+					$("#ajax_modal").html(response);
 				}
 			},
 		});

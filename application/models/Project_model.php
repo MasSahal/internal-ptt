@@ -39,8 +39,6 @@ class Project_model extends CI_Model
 		$sql = "SELECT * FROM xin_projects_timelogs where project_id = ? ORDER BY timelogs_id DESC";
 		$binds = array($project_id);
 		$query = $this->db->query($sql, $binds);
-		var_dump($query);
-		die;
 		return $query;
 	}
 	public function get_all_project_timelogs()

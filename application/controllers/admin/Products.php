@@ -46,25 +46,6 @@ class Products extends MY_Controller
 		}
 	}
 
-	public function read()
-	{
-		// $id = $this->input->get('role_id');
-		// $result = $this->Roles_model->read_role_information($id);
-		// $data = array(
-		// 	'role_id' => $result[0]->role_id,
-		// 	'role_name' => $result[0]->role_name,
-		// 	'role_access' => $result[0]->role_access,
-		// 	'role_resources' => $result[0]->role_resources,
-		// 	'get_all_companies' => $this->Xin_model->get_companies(),
-		// );
-		// $session = $this->session->userdata('username');
-		// if (!empty($session)) {
-		// 	$this->load->view('admin/roles/dialog_role', $data);
-		// } else {
-		// 	redirect('admin/');
-		// }
-	}
-
 	public function ajax_get_products()
 	{
 		$output = '';
@@ -228,29 +209,78 @@ class Products extends MY_Controller
 		$this->output($Return);
 	}
 
-
-	// category
-	public function categories()
+	public function read()
 	{
+		if (!$this->input->is_ajax_request()) {
+			exit('No direct script access allowed');
+		}
+
+		$data['title'] = $this->Xin_model->site_title();
+		$id = $this->input->get('product_id');
+		$result = $this->Product_model->read_info($id);
+		// var_dump($result);
+		// die;
+		$data = array(
+			'product_id' => $result[0]->product_id,
+			'uom_id' => $result[0]->uom_id,
+			'category_id' => $result[0]->category_id,
+			'product_name' => $result[0]->product_name,
+			'price' => $result[0]->price,
+			'product_number' => $result[0]->product_number,
+			'product_desc' => $result[0]->product_desc,
+			'categories' => $this->Xin_model->get_all_product_categories(),
+			'uoms' => $this->Xin_model->get_all_uoms(),
+		);
 		$session = $this->session->userdata('username');
-		if (empty($session)) {
+		if (!empty($session)) {
+			$this->load->view('admin/products/dialog_product', $data);
+		} else {
 			redirect('admin/');
 		}
-		$data['title'] = $this->lang->line('ms_categories') . ' | ' . $this->Xin_model->site_title();
-		$data['breadcrumbs'] = $this->lang->line('ms_categories');
-		$data['all_countries'] = $this->Xin_model->get_countries();
+	}
 
-		$data['path_url'] = 'categories';
-		$role_resources_ids = $this->Xin_model->user_role_resource();
-		if (in_array('19', $role_resources_ids)) {
-			if (!empty($session)) {
-				$data['subview'] = $this->load->view("admin/products/categories/category_list", $data, TRUE);
-				$this->load->view('admin/layout/layout_main', $data); //page load
-			} else {
-				redirect('admin/');
+	public function update()
+	{
+		if ($this->input->post('edit_type') == 'products') {
+
+			$id = $this->uri->segment(4);
+
+			/* Define return | here result is used to return user data and error for error message */
+			$Return = array('result' => '', 'error' => '', 'csrf_hash' => '');
+			$Return['csrf_hash'] = $this->security->get_csrf_hash();
+
+			/* Server side PHP input validation */
+			if ($this->input->post('product_number') === '') {
+				$Return['error'] = $this->lang->line('ms_product_error_product_number');
+			} else if ($this->input->post('product_name') === '') {
+				$Return['error'] = $this->lang->line('ms_product_error_product_name');
+			} else if ($this->input->post('uom_id') === '') {
+				$Return['error'] = $this->lang->line('ms_product_error_uom_id');
+			} else if ($this->input->post('category_id') === '') {
+				$Return['error'] = $this->lang->line('ms_product_error_category_id');
+			} else if ($this->input->post('price') === '') {
+				$Return['error'] = $this->lang->line('ms_product_error_price');
 			}
-		} else {
-			redirect('admin/dashboard');
+
+
+
+			$data = array(
+				'product_number' => $this->input->post('product_number'),
+				'product_name' => $this->input->post('product_name'),
+				'uom_id' => $this->input->post('uom_id'),
+				'category_id' => $this->input->post('category_id'),
+				'price' => $this->input->post('price'),
+				'product_desc' => $this->input->post('product_desc')
+			);
+
+			$result = $this->Product_model->update($data, $id);
+			if ($result) {
+				$Return['result'] = $this->lang->line('ms_product_success_updated');
+			} else {
+				$Return['error'] = $this->lang->line('xin_error_msg');
+			}
+
+			$this->output($Return);
 		}
 	}
 }

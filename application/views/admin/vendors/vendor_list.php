@@ -71,21 +71,21 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
 							<div class="form-group">
 								<div class="row">
 									<div class="col-md-4">
-										<!-- <label class="form-label"><?php echo $this->lang->line('xin_city'); ?></label> -->
+										<label class="form-label"><?php echo $this->lang->line('xin_city'); ?></label>
 										<input class="form-control" placeholder="<?php echo $this->lang->line('xin_city'); ?>" name="city" type="text">
 									</div>
 									<div class="col-md-4">
-										<!-- <label class="form-label"><?php echo $this->lang->line('xin_state'); ?></label> -->
+										<label class="form-label"><?php echo $this->lang->line('xin_state'); ?></label>
 										<input class="form-control" placeholder="<?php echo $this->lang->line('xin_state'); ?>" name="state" type="text">
 									</div>
 									<div class="col-md-4">
-										<!-- <label class="form-label"><?php echo $this->lang->line('xin_zipcode'); ?></label> -->
+										<label class="form-label"><?php echo $this->lang->line('xin_zipcode'); ?></label>
 										<input class="form-control" placeholder="<?php echo $this->lang->line('xin_zipcode'); ?>" name="zipcode" type="text">
 									</div>
 								</div>
 							</div>
 							<div class="form-group">
-								<!-- <label class="form-label"><?php echo $this->lang->line('xin_country'); ?></label> -->
+								<label class="form-label"><?php echo $this->lang->line('xin_country'); ?></label>
 								<select class="form-control" name="country" data-plugin="select_hrm" data-placeholder="<?php echo $this->lang->line('xin_country'); ?>">
 									<option value=""><?php echo $this->lang->line('xin_select_one'); ?></option>
 									<?php foreach ($all_countries as $country) { ?>
@@ -108,9 +108,6 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
 
 <div class="card <?php echo $get_animate; ?>">
 	<div class="card-header with-elements"> <span class="card-header-title mr-2"><strong><?php echo $this->lang->line('xin_list_all'); ?></strong> <?php echo $this->lang->line('ms_vendors'); ?></span>
-		<div class="card-header-elements ml-md-auto"> <a href="<?php echo site_url('admin/reports/'); ?>" class="text-dark collapsed">
-				<button type="button" class="btn btn-xs btn-primary"> <span class="fas fa-chart-bar"></span> <?php echo $this->lang->line('xin_report'); ?></button>
-			</a> </div>
 	</div>
 	<div class="card-body">
 		<div class="box-datatable table-responsive">

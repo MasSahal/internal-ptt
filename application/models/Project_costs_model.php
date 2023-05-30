@@ -91,4 +91,26 @@ class Project_costs_model extends CI_Model
 			return false;
 		}
 	}
+
+	public function get_trans_last_month()
+	{
+		$sql = "SELECT SUM(amount) AS total_amount FROM ms_recently_products";
+		$query = $this->db->query($sql);
+		return $query->row()->total_amount;
+	}
+
+
+	public function get_trans_remaining_payment()
+	{
+		$sql = "SELECT SUM(prepayment) AS prepayment FROM ms_project_costs";
+		$query = $this->db->query($sql);
+		return $query->row()->prepayment;
+	}
+
+	public function get_trans_prepayment()
+	{
+		$sql = "SELECT SUM(prepayment) AS prepayment FROM ms_project_costs";
+		$query = $this->db->query($sql);
+		return $query->row()->prepayment;
+	}
 }

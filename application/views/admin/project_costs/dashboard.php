@@ -44,14 +44,14 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
 <?php if (in_array('13', $role_resources_ids) || in_array('36', $role_resources_ids) || in_array('14', $role_resources_ids) || in_array('46', $role_resources_ids)) { ?>
 	<div class="row">
 		<?php if (in_array('13', $role_resources_ids)) { ?>
-			<div class="col-sm-6 col-xl-3">
+			<div class="col-sm-6 col-xl-4">
 				<div class="card mb-4">
 					<div class="card-body">
 						<div class="d-flex align-items-center">
 							<div class="ion ion-ios-contacts display-4 text-success"></div>
 							<div class="ml-3">
-								<div class="text-muted small"><?php echo $this->lang->line('dashboard_employees'); ?></div>
-								<div class="text-large"><?php echo $this->Employees_model->get_total_employees(); ?></div>
+								<div class="text-muted small"><?php echo $this->lang->line('ms_trans_last_month'); ?></div>
+								<div class="text-large"><?php echo $this->Xin_model->currency_sign($this->Project_costs_model->get_trans_last_month()); ?></div>
 							</div>
 						</div>
 					</div>
@@ -59,14 +59,14 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
 			</div>
 		<?php  } ?>
 		<?php if (in_array('36', $role_resources_ids)) { ?>
-			<div class="col-sm-6 col-xl-3">
+			<div class="col-sm-6 col-xl-4">
 				<div class="card mb-4">
 					<div class="card-body">
 						<div class="d-flex align-items-center">
 							<div class="ion ion-ios-calculator display-4 text-info"></div>
 							<div class="ml-3">
-								<div class="text-muted small"><?php echo $this->lang->line('dashboard_total_salaries'); ?></div>
-								<div class="text-large"><?php echo $this->Xin_model->currency_sign(total_salaries_paid()); ?></div>
+								<div class="text-muted small"><?php echo $this->lang->line('ms_trans_remaining_payment'); ?></div>
+								<div class="text-large"><?php echo $this->Xin_model->currency_sign($this->Project_costs_model->get_trans_remaining_payment()); ?></div>
 							</div>
 						</div>
 					</div>
@@ -74,29 +74,14 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
 			</div>
 		<?php  } ?>
 		<?php if (in_array('14', $role_resources_ids)) { ?>
-			<div class="col-sm-6 col-xl-3">
+			<div class="col-sm-6 col-xl-4">
 				<div class="card mb-4">
 					<div class="card-body">
 						<div class="d-flex align-items-center">
 							<div class="ion ion-ios-trophy display-4 text-danger"></div>
 							<div class="ml-3">
-								<div class="text-muted small"><?php echo $this->lang->line('left_awards'); ?></div>
-								<div class="text-large"><?php echo $this->Exin_model->total_employee_awards_dash(); ?></div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		<?php  } ?>
-		<?php if (in_array('46', $role_resources_ids)) { ?>
-			<div class="col-sm-6 col-xl-3">
-				<div class="card mb-4">
-					<div class="card-body">
-						<div class="d-flex align-items-center">
-							<div class="ion ion-md-calendar display-4 text-warning"></div>
-							<div class="ml-3">
-								<div class="text-muted small"><?php echo $this->lang->line('xin_leave_request'); ?></div>
-								<div class="text-large"><?php echo employee_request_leaves(); ?></div>
+								<div class="text-muted small"><?php echo $this->lang->line('ms_trans_prepayment'); ?></div>
+								<div class="text-large"><?php echo $this->Xin_model->currency_sign($this->Project_costs_model->get_trans_prepayment()); ?></div>
 							</div>
 						</div>
 					</div>

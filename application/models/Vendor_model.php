@@ -50,8 +50,8 @@ class Vendor_model extends CI_Model
 	// Function to update record in table
 	public function update_record($data, $id)
 	{
-		$this->db->where('travel_id', $id);
-		if ($this->db->update('xin_employee_travels', $data)) {
+		$this->db->where('vendor_id', $id);
+		if ($this->db->update('ms_vendors', $data)) {
 			return true;
 		} else {
 			return false;

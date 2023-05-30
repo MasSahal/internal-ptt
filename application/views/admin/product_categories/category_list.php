@@ -82,7 +82,7 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
 				<thead>
 					<tr>
 						<th><?php echo $this->lang->line('xin_action'); ?></th>
-						<th><?php echo $this->lang->line('ms_e_details_product_categories'); ?></th>
+						<th><?php echo $this->lang->line('ms_product_categories'); ?></th>
 						<th><?php echo $this->lang->line('xin_created_at'); ?></th>
 					</tr>
 				</thead>

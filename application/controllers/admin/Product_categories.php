@@ -8,8 +8,8 @@ class Product_categories extends MY_Controller
 	{
 		parent::__construct();
 		//load the model
-		$this->load->model("Product_model");
 		$this->load->model("Xin_model");
+		$this->load->model("Product_model");
 	}
 
 	/*Function to set JSON output*/
@@ -103,7 +103,7 @@ class Product_categories extends MY_Controller
 		foreach ($constant->result() as $r) {
 
 			if (in_array('316', $role_resources_ids)) { //edit
-				$edit = '<span data-toggle="tooltip" data-placement="top" title="' . $this->lang->line('xin_edit') . '"><button type="button" class="btn icon-btn btn-sm btn-outline-secondary waves-effect waves-light" data-toggle="modal" data-target=".edit_setting_datail" data-field_id="' . $r->category_id . '" data-field_type="product_categories"><span class="fas fa-pencil-alt"></span></button></span>';
+				$edit = '<span data-toggle="tooltip" data-placement="top" title="' . $this->lang->line('xin_edit') . '"><button type="button" class="btn icon-btn btn-sm btn-outline-secondary waves-effect waves-light" data-toggle="modal" data-target=".edit-modal-data" data-category_id="' . $r->category_id . '" data-field_type="product_categories"><span class="fas fa-pencil-alt"></span></button></span>';
 			} else {
 				$edit = '';
 			}
@@ -135,21 +135,19 @@ class Product_categories extends MY_Controller
 
 	public function read()
 	{
-		// $id = $this->input->get('role_id');
-		// $result = $this->Roles_model->read_role_information($id);
-		// $data = array(
-		// 	'role_id' => $result[0]->role_id,
-		// 	'role_name' => $result[0]->role_name,
-		// 	'role_access' => $result[0]->role_access,
-		// 	'role_resources' => $result[0]->role_resources,
-		// 	'get_all_companies' => $this->Xin_model->get_companies(),
-		// );
-		// $session = $this->session->userdata('username');
-		// if (!empty($session)) {
-		// 	$this->load->view('admin/roles/dialog_role', $data);
-		// } else {
-		// 	redirect('admin/');
-		// }
+		$data['title'] = $this->Xin_model->site_title();
+		$id = $this->input->get('category_id');
+		$result = $this->Xin_model->read_category_information($id);
+		$data = array(
+			'category_id' => $result[0]->category_id,
+			'category_name' => $result[0]->category_name,
+		);
+		$session = $this->session->userdata('username');
+		if (!empty($session)) {
+			$this->load->view('admin/product_categories/dialog_category', $data);
+		} else {
+			redirect('admin/');
+		}
 	}
 
 	public function ajax_get_products()
@@ -196,6 +194,42 @@ class Product_categories extends MY_Controller
 				$Return['error'] = $this->lang->line('xin_error_msg');
 			}
 			$this->output($Return);
+		}
+	}
+
+	// Validate and update info in database
+	public function update()
+	{
+
+		if ($this->input->post('edit_type') == 'product_category') {
+
+			$id = $this->uri->segment(4);	
+
+			/* Define return | here result is used to return user data and error for error message */
+			$Return = array('result' => '', 'error' => '', 'csrf_hash' => '');
+			$Return['csrf_hash'] = $this->security->get_csrf_hash();
+
+			if ($this->input->post('category_name') === '') {
+				$Return['error'] = $this->lang->line('ms_error_product_category_name_field');
+			}
+
+			if ($Return['error'] != '') {
+				$this->output($Return);
+			}
+
+			$data = array(
+				'category_name' => $this->input->post('category_name'),
+			);
+
+			$result = $this->Xin_model->update_category_product_record($data, $id);
+
+			if ($result == TRUE) {
+				$Return['result'] = $this->lang->line('ms_product_category_updated');
+			} else {
+				$Return['error'] = $this->lang->line('xin_error_msg');
+			}
+			$this->output($Return);
+			exit;
 		}
 	}
 }

@@ -697,6 +697,34 @@ class Xin_model extends CI_Model
 			return null;
 		}
 	}
+	// get single country
+	public function read_recently_products($id)
+	{
+
+		$sql = 'SELECT * FROM ms_recently_products WHERE recently_id = ?';
+		$binds = array($id);
+		$query = $this->db->query($sql, $binds);
+
+		if ($query->num_rows() > 0) {
+			return $query;
+		} else {
+			return null;
+		}
+	}
+	// get single country
+	public function read_recently_product($id, $operand = "=")
+	{
+
+		$sql = 'SELECT * FROM ms_recently_products WHERE recently_id ' .  $operand . ' ?';
+		$binds = array($id);
+		$query = $this->db->query($sql, $binds);
+
+		if ($query->num_rows() > 0) {
+			return $query;
+		} else {
+			return null;
+		}
+	}
 
 	// Function to update record in table
 	public function login_update_record($data, $id)
@@ -2831,6 +2859,17 @@ class Xin_model extends CI_Model
 	{
 		$this->db->where('currency_id', $id);
 		if ($this->db->update('xin_currencies', $data)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	// Function to update record in table
+	public function update_category_product_record($data, $id)
+	{
+		$this->db->where('category_id', $id);
+		if ($this->db->update('ms_product_categories', $data)) {
 			return true;
 		} else {
 			return false;
