@@ -10,8 +10,8 @@
 <?php $presult = $this->Product_model->gel_all_product()->result(); ?>
 <?php $presult = $this->Project_model->get_projects()->result(); ?>
 <?php $system_setting = $this->Xin_model->read_setting_info(1); ?>
-
 <?php
+
 // reports to 
 // reports to 
 $reports_to = get_reports_team_data($session['user_id']); ?>
@@ -57,8 +57,8 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
 			<div class="card-body">
 				<div class="row m-b-1">
 					<div class="col-md-12">
-						<?php $attributes = array('name' => 'transaction', 'id' => 'transaction', 'autocomplete' => 'off', 'class' => 'm-b-1 add'); ?>
-						<?php $hidden = array('transaction' => 'UPDATE'); ?>
+						<?php $attributes = array('name' => 'transactions', 'id' => 'transactions', 'autocomplete' => 'off', 'class' => 'm-b-1 add'); ?>
+						<?php $hidden = array('transactions' => 'INSERT'); ?>
 						<?php echo form_open('admin/project_costs/create_transaction', $attributes, $hidden); ?>
 						<input type="hidden" class="items-sub-total" name="items_sub_total" value="0" />
 						<input type="hidden" class="items-tax-total" name="items_tax_total" value="0" />
@@ -100,6 +100,7 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
 								<div class="col-md-6" id="ms_prepayment">
 									<!--  -->
 								</div>
+
 							</div>
 
 							<div class="row">
@@ -110,12 +111,17 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
 										</div>
 									</div>
 									<hr>
+									<?php
+									$ar_sc = explode('- ', $system_setting[0]->default_currency_symbol);
+									$sc_show = $ar_sc[1];
+									?>
 									<div class="table-responsive">
 										<table class="datatables-demo table table-striped" id="item_product">
 											<thead class="thead-light">
 												<tr>
 													<!-- <th>No</th> -->
 													<th style="min-width:200px">Item</th>
+													<th>Project</th>
 													<th>Jenis Pajak</th>
 													<th>Tarif Pajak</th>
 													<th>Qty/Hr</th>
@@ -125,136 +131,63 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
 												</tr>
 											</thead>
 											<tbody id="formRow">
-												<!-- <tr>
-													<td><input type="text" class="form-control form-control-sm item_name" name="item_name[]" id="item_name" placeholder="Item Name"></td>
-													<td>
-														<select class="form-control form-control-sm tax_type" name="tax_type[]" id="tax_type">
-															<option tax-type="fixed" tax-rate="0" value="1"> No Tax (Rp. 0)</option>
-															<option tax-type="fixed" tax-rate="2" value="2"> IVU (Rp. 2)</option>
-															<option tax-type="percentage" tax-rate="5" value="3"> VAT (5%)</option>
-														</select>
-													</td>
-													<td><input type="number" readonly="readonly" class="form-control form-control-sm tax-rate-item" name="tax_rate_item[]" value="0"></td>
-													<td><input type="hidden" name="qty[]" value="1"><input type="text" class="form-control form-control-sm qty" name="qty[]" id="qty" value="1"></td>
-													<td><input type="number" name="price[]" class="form-control form-control-sm price" value="0" id="price"></td>
-													<td><input type="number" class="form-control form-control-sm amount_item" readonly="readonly" name="amount_item[]" value="0"></td>
-													<td style="text-align:center"><button type="button" class="btn icon-btn btn-xs btn-danger waves-effect waves-light remove-item" data-repeater-delete="" onclick="removeRow(row-0)"> <span class="fa fa-trash"></span></button></td>
-												</tr> -->
 											</tbody>
 											<tfoot>
 												<tr>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td style="border-bottom:1px solid #dddddd; text-align:left"><strong><?php echo $this->lang->line('xin_discount_type'); ?></strong></td>
-													<td style="border-bottom:1px solid #dddddd; text-align:center"><strong><?php echo $this->lang->line('xin_discount'); ?></strong></td>
-													<td colspan="2" style="border-bottom:1px solid #dddddd; text-align:left"><strong><?php echo $this->lang->line('xin_discount_amount'); ?></strong></td>
-												</tr>
-												<tr>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
+													<td colspan="4"></td>
 													<td>
 														<div class="form-group">
+															<label for=""><strong><?php echo $this->lang->line('xin_discount_type'); ?></strong></label>
 															<select name="discount_type" class="form-control form-control-sm discount_type">
 																<option value="1"> <?php echo $this->lang->line('xin_flat'); ?></option>
 																<option value="2"> <?php echo $this->lang->line('xin_percent'); ?></option>
 															</select>
 														</div>
 													</td>
-													<td align="right">
+													<td>
 														<div class="form-group">
+															<label for=""><strong><?php echo $this->lang->line('xin_discount'); ?></strong></label>
 															<input style="text-align:right" type="text" name="discount_figure" class="form-control form-control-sm discount_figure" value="0" data-valid-num="required">
 														</div>
 													</td>
-													<td align="right" colspan="2">
+													<td colspan="2">
 														<div class="form-group">
+															<label for=""><strong><?php echo $this->lang->line('xin_discount_amount'); ?></strong></label>
 															<input type="text" style="text-align:right" readonly="" name="discount_amount" value="0" class="discount_amount form-control form-control-sm">
 														</div>
 													</td>
 												</tr>
 												<tr>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td style="text-align:right"><?php echo $this->lang->line('xin_amount'); ?></td>
-													<td align="right" colspan="2">
+													<td colspan="6" style="text-align:right"><?php echo $this->lang->line('xin_title_sub_total2'); ?></td>
+													<td class="text-xs-right"><?php echo $sc_show; ?> <span class="sub_total">0</span></td>
+												</tr>
+												<tr>
+													<td colspan="6" style="text-align:right"><?php echo $this->lang->line('xin_title_tax_c'); ?></td>
+													<input type="hidden" class="ftax_total" name="ftax_total" value="0" />
+													<td class="text-xs-right"><?php echo $sc_show; ?> <span class="tax_total">0</span></td>
+												</tr>
+												<tr>
+													<td colspan="6" style="text-align:right"><?php echo $this->lang->line('xin_amount'); ?></td>
+													<td colspan="2">
 														<div class="form-group">
-															<input type="text" style="text-align:right" readonly="" name="amount" value="0" class="total form-control form-control-sm">
+															<input type="hidden" class="fgrand_total" name="fgrand_total" value="0" />
+															<?php echo $sc_show; ?> <strong class="grand_total text-danger">0</strong>
 														</div>
 													</td>
 												</tr>
 											</tfoot>
 										</table>
-										<div class="row">
-											<div class="col-md-7 col-sm-12 text-xs-center text-md-left">&nbsp; </div>
-											<div class="col-md-5 col-sm-12">
-												<div class="table-responsive">
-													<?php
-													$ar_sc = explode('- ', $system_setting[0]->default_currency_symbol);
-													$sc_show = $ar_sc[1];
-													?>
-													<table class="table">
-														<tbody>
-															<tr>
-																<td><?php echo $this->lang->line('xin_title_sub_total2'); ?></td>
-																<td class="text-xs-right"><?php echo $sc_show; ?> <span class="sub_total">0</span></td>
-															</tr>
-															<tr>
-																<td><?php echo $this->lang->line('xin_title_tax_c'); ?></td>
-																<td class="text-xs-right"><?php echo $sc_show; ?> <span class="tax_total">0</span></td>
-															</tr>
-															<tr>
-																<td colspan="2" style="border-bottom:1px solid #dddddd; padding:0px !important; text-align:left">
-																	<table class="table table-bordered">
-																		<tbody>
-																			<tr>
-																				<td width="30%" style="border-bottom:1px solid #dddddd; text-align:left"><strong><?php echo $this->lang->line('xin_discount_type'); ?></strong></td>
-																				<td style="border-bottom:1px solid #dddddd; text-align:center"><strong><?php echo $this->lang->line('xin_discount'); ?></strong></td>
-																				<td style="border-bottom:1px solid #dddddd; text-align:left"><strong><?php echo $this->lang->line('xin_discount_amount'); ?></strong></td>
-																			</tr>
-																			<tr>
-																				<td>
-																					<div class="form-group">
-																						<select name="discount_type" class="form-control discount_type">
-																							<option value="1"> <?php echo $this->lang->line('xin_flat'); ?></option>
-																							<option value="2"> <?php echo $this->lang->line('xin_percent'); ?></option>
-																						</select>
-																					</div>
-																				</td>
-																				<td align="right">
-																					<div class="form-group">
-																						<input style="text-align:right" type="text" name="discount_figure" class="form-control discount_figure" value="0" data-valid-num="required">
-																					</div>
-																				</td>
-																				<td align="right">
-																					<div class="form-group">
-																						<input type="text" style="text-align:right" readonly="" name="discount_amount" value="0" class="discount_amount form-control">
-																					</div>
-																				</td>
-																			</tr>
-																		</tbody>
-																	</table>
-																</td>
-															</tr>
-															<input type="hidden" class="fgrand_total" name="fgrand_total" value="0" />
-															<tr>
-																<td><?php echo $this->lang->line('xin_grand_total'); ?></td>
-																<td class="text-xs-right"><?php echo $sc_show; ?> <span class="grand_total">0</span></td>
-															</tr>
-														</tbody>
-
-													</table>
-												</div>
-											</div>
-										</div>
 									</div>
 								</div>
 
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="ref_code"><?php echo $this->lang->line('ms_ref_code'); ?></label>
+										<textarea class="form-control" placeholder="<?php echo $this->lang->line('ms_ref_code'); ?>" name="ref_code" rows="3"></textarea>
+									</div>
+								</div>
 							</div>
 							<hr>
 							<div class="row">
@@ -285,8 +218,9 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
 						<th><?php echo $this->lang->line('ms_invoice_date'); ?></th>
 						<th><?php echo $this->lang->line('ms_vendors'); ?></th>
 						<th><?php echo $this->lang->line('ms_status'); ?></th>
+						<th><?php echo $this->lang->line('ms_highlights'); ?></th>
 						<th><?php echo $this->lang->line('ms_reference'); ?></th>
-						<th><?php echo $this->lang->line('xin_amount'); ?></th>
+						<th style="min-width:100px"><?php echo $this->lang->line('xin_amount'); ?></th>
 					</tr>
 				</thead>
 			</table>
@@ -301,7 +235,7 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
 
 <script>
 	function getPrepayment(e) {
-		var html = '<div class="form-group"><label for="ms_prepayment"> <?php echo $this->lang->line('ms_prepayment'); ?></label><input class="form-control" placeholder="<?php echo $this->lang->line('ms_prepayment'); ?>" name="ms_prepayment" type="number" value = "0"></div>';
+		var html = '<div class="form-group"><label for="ms_prepayment"> <?php echo $this->lang->line('ms_prepayment'); ?></label><input class="form-control" placeholder="<?php echo $this->lang->line('ms_prepayment'); ?>" name="prepayment" type="number" value = "0"></div>';
 		var value = e.value;
 		if (value == 1) {
 			$('#ms_prepayment').html(html);

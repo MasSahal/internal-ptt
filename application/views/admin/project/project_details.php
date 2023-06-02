@@ -16,7 +16,7 @@ $system_setting = $this->Xin_model->read_setting_info(1);
 <?php
 $id = $this->uri->segment(4);
 $result = $this->Project_model->read_project_information($id);
-$recently = $this->Xin_model->read_recently_product($id)->result();
+// $recently = $this->Xin_model->read_recently_product($id)->result();
 if (is_null($result)) {
 	redirect('admin/project');
 }
@@ -684,36 +684,43 @@ $projectBugs = $this->Project_model->completed_project_bugs($project_id);
 			<h6 class="card-header"><?php echo $this->lang->line('ms_cost'); ?></h6>
 			<div class="card-body">
 				<div class="card-datatable table-responsive">
-					<table class="datatables-demo table table-striped table-bordered" id="ms_cost_project">
+					<table class="datatables-demo table table-striped table-borderles" id="ms_cost_project">
 						<thead>
 							<tr>
 								<th><?php echo $this->lang->line('ms_product_name'); ?></th>
 								<th><?php echo $this->lang->line('ms_product_category'); ?></th>
-								<th><?php echo $this->lang->line('ms_product_number'); ?></th>
 								<th><?php echo $this->lang->line('ms_product_price'); ?></th>
-								<th><?php echo $this->lang->line('ms_product_uom'); ?></th>
 								<th><?php echo $this->lang->line('ms_product_qty'); ?></th>
+								<th><?php echo $this->lang->line('ms_product_uom'); ?></th>
 								<th><?php echo $this->lang->line('ms_amount'); ?></th>
 							</tr>
 						</thead>
-						<tbody>
-							<?php foreach ($record as $r) { ?>
-								<tr>
-									<td><?= $r->product_name; ?></td>
-									<td><?= $r->category; ?></td>
-									<td><?= $r->product_number; ?></td>
-									<td><?= $r->price; ?></td>
-									<td><?= $r->uom; ?></td>
-									<td><?= $r->qty; ?></td>
-									<td><?= $r->amount; ?></td>
-								</tr>
-							<?php } ?>
-							<tr>
-								<td colspan="6" align="right">Total</td>
-								<td><?= $total; ?></td>
-							</tr>
+						<?php if (!is_null($record)) { ?>
 
-						</tbody>
+							<tbody>
+								<?php foreach ($record as $r) { ?>
+									<tr>
+										<td>
+											<?php echo $r->product_name; ?>
+											<br>
+											<small><strong><?php echo $this->lang->line('ms_product_number'); ?>: </strong><?= $r->product_number; ?></small>
+										</td>
+										<td><?= $r->category; ?></td>
+										<td><?= $r->price; ?></td>
+										<td><?= $r->qty; ?></td>
+										<td><?= $r->uom; ?></td>
+										<td><?= $r->amount; ?></td>
+									</tr>
+								<?php } ?>
+
+							</tbody>
+							<tfoot>
+								<tr>
+									<td colspan="5" align="right"><strong>Total</strong></td>
+									<td><?= $total; ?></td>
+								</tr>
+							</tfoot>
+						<?php }; ?>
 					</table>
 				</div>
 			</div>

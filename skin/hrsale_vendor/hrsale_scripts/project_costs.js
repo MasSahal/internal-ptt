@@ -58,6 +58,11 @@ $(document).ready(function () {
 			action = obj.attr("name");
 		jQuery(".save").prop("disabled", true);
 		$(".icon-spinner3").show();
+		console.log(
+			obj.serialize() +
+				"&is_ajax=471&data=transaction&type=transaction&form=" +
+				action
+		);
 		jQuery.ajax({
 			type: "POST",
 			url: e.target.action,
@@ -79,7 +84,10 @@ $(document).ready(function () {
 					}, true);
 					$('input[name="csrf_hrsale"]').val(JSON.csrf_hash);
 					$(".icon-spinner3").hide();
-					jQuery("#vendors")[0].reset(); // To reset form fields
+					jQuery("#transactions")[0].reset(); // To reset form fields
+					$("#item_product tbody").empty(); // To reset form fields table
+					$("#add_role_form").removeClass("show"); // To reset form fields table
+
 					jQuery(".save").prop("disabled", false);
 					Ladda.stopAll();
 				}
@@ -87,39 +95,26 @@ $(document).ready(function () {
 		});
 	});
 
-	/* Delete data dari del_dialog.php */
 	$("#delete_record").submit(function (e) {
-		var tk_type = $("#token_type").val();
-		$(".icon-spinner3").show();
-		if (tk_type == "vendors") {
-			var field_add = "&is_ajax=473&data=delete_vendors&type=delete_record&";
-			var tb_name = "xin_table_" + tk_type; // nama id tabel view record
-			//
-		}
-
 		/*Form Submit*/
 		e.preventDefault();
 		var obj = $(this),
 			action = obj.attr("name");
 		$.ajax({
+			type: "POST",
 			url: e.target.action,
-			type: "post",
-			data: "?" + obj.serialize() + field_add + "form=" + action,
+			data: obj.serialize() + "&is_ajax=2&type=delete&form=" + action,
+			cache: false,
 			success: function (JSON) {
 				if (JSON.error != "") {
 					toastr.error(JSON.error);
 					$('input[name="csrf_hrsale"]').val(JSON.csrf_hash);
-					$(".icon-spinner3").hide();
 					Ladda.stopAll();
 				} else {
 					$(".delete-modal").modal("toggle");
-					$(".icon-spinner3").hide();
-					$("#" + tb_name)
-						.dataTable()
-						.api()
-						.ajax.reload(function () {
-							toastr.success(JSON.result);
-						}, true);
+					ms_table_project_costs.api().ajax.reload(function () {
+						toastr.success(JSON.result);
+					}, true);
 					$('input[name="csrf_hrsale"]').val(JSON.csrf_hash);
 					Ladda.stopAll();
 				}
@@ -128,28 +123,120 @@ $(document).ready(function () {
 	});
 });
 
-// delete record dari button tabel
 $(document).on("click", ".delete", function () {
 	$("input[name=_token]").val($(this).data("record-id"));
-	$("input[name=token_type]").val($(this).data("token_type"));
 	$("#delete_record").attr(
 		"action",
-		site_url +
-			"settings/delete_" +
-			$(this).data("token_type") +
-			"/" +
-			$(this).data("record-id")
-	) + "/";
+		site_url + "project_costs/delete_transaction/"
+	);
 });
 
-function addFormRow() {
-	var table = document.getElementById("item_product");
-	var newRow = document.createElement("tr");
-	newRow.innerHTML =
-		'<td><input type="text" name="name[]" /></td>' +
-		'<td><input type="email" name="email[]" /></td>';
-	table.appendChild(newRow);
+function setupAutocomplete(element) {
+	element.autocomplete({
+		source: function (request, response) {
+			$.ajax({
+				url: site_url + "products/get_ajax_products", // Change this to the appropriate URL for your server-side code
+				method: "get",
+				data: { query: request.term },
+				dataType: "json",
+				success: function (data) {
+					response(data);
+				},
+			});
+		},
+		select: function (event, ui) {
+			var row = $(this).closest("tr");
+			row.find("input[name='qty[]']").val(ui.qty);
+		},
+	});
 }
+
+// function searchProduct(element) {
+// 	var searchTerm = element.value;
+// 	var row = $(element).closest("tr");
+// 	var quantityInput = row.find("input[name='item_name[]']");
+
+// 	$.ajax({
+// 		url: site_url + "products/get_ajax_products", // Change this to the appropriate URL for your server-side code
+// 		method: "GET",
+// 		data: { query: searchTerm },
+// 		dataType: "json",
+// 		success: function (data) {
+// 			if (data.length > 0) {
+// 				var selectedProduct = data[0];
+// 				quantityInput.val(selectedProduct.product_name);
+// 			} else {
+// 				quantityInput.val("");
+// 			}
+// 		},
+// 	});
+// }
+// // Inisialisasi autocomplete pada input pertama
+// setupAutocomplete($(".item_name"));
+
+$(document).ready(function () {
+	// Autocomplete function
+	function setupAutocomplete(element) {
+		element.on("input", function () {
+			var searchTerm = $(this).val();
+			var container = $(this).closest(".autocomplete-container");
+			var list = container.find(".autocomplete-list");
+			var quantityInput = container
+				.closest("tr")
+				.find("input[name='quantity[]']");
+
+			$.ajax({
+				url: site_url + "products/get_ajax_products", // Change this to the appropriate URL for your server-side code
+				method: "get",
+				data: { query: searchTerm },
+				dataType: "json",
+				success: function (data) {
+					var suggestions = "";
+					if (data.length > 0) {
+						for (var i = 0; i < data.length; i++) {
+							suggestions +=
+								"<li data-product='" +
+								JSON.stringify(data[i]) +
+								"'>" +
+								data[i].product_name +
+								"</li>";
+						}
+						list.html(suggestions);
+						list.show();
+					} else {
+						list.hide();
+					}
+				},
+			});
+		});
+
+		// Selecting a suggestion from the list
+		element
+			.closest(".autocomplete-container")
+			.on("click", ".autocomplete-list li", function () {
+				var selectedProduct = JSON.parse($(this).attr("data-product"));
+				var container = $(this).closest(".autocomplete-container");
+				var quantityInput = container
+					.closest("tr")
+					.find("input[name='price[]']");
+
+				element.val(selectedProduct.value);
+				quantityInput.val(selectedProduct.price);
+				container.find(".autocomplete-list").hide();
+			});
+	}
+
+	// Initialize autocomplete for the first input
+	setupAutocomplete($(".autocomplete"));
+
+	// Add a new row when "Add Row" button is clicked
+	// $(document).on("click", "#addRowBtn", function () {
+	// 	var newRow =
+	// 		'<tr><td><div class="autocomplete-container"><input type="text" class="autocomplete" name="product[]" placeholder="Product"><ul class="autocomplete-list"></ul></div></td><td><input type="text" name="quantity[]" placeholder="Quantity"></td></tr>';
+	// 	$("#formrow").append(newRow);
+	// 	setupAutocomplete($("#formrow").find("tr:last .autocomplete"));
+	// });
+});
 
 var rowCounter = $("#item_product >tbody >tr").length;
 function addRow() {
@@ -162,14 +249,19 @@ function addRow() {
 	newRow.id = rowId;
 	newRow.innerHTML =
 		"</td > " +
-		'<td><input type="text" class="form-control form-control-sm item_name" name="item_name[]" id="item_name" placeholder="Item Name"></td>' +
+		'<td><input type="hidden" name="product_id[]" value="11">' +
+		// '<td><input type="hidden" name="category_id[]" value="0">' +
+		'<input type="text" class="form-control form-control-sm item_name" name="item_name[]" id="item_name" placeholder="Item Name"></td>' +
+		"<td>" +
+		form_select_project +
+		"</td>" +
 		"<td>" +
 		form_select_tax +
 		"</td>" +
 		'<td><input type="number" readonly="readonly" class="form-control form-control-sm tax-rate-item" name="tax_rate_item[]" value="0" /></td>' +
-		'<td><input type="hidden" name="item_tax[]" value="1"><input type="text" class="form-control form-control-sm qty" name="qty[]" id="qty" value="1"></td>' +
+		'<td><input type="number" class="form-control form-control-sm qty" name="qty[]" id="qty" value="1"></td>' +
 		'<td><input type="number" name="price[]" class="form-control form-control-sm price" value="0" id="price" /></td>' +
-		'<td><input type="number" class="form-control form-control-sm sub_total" readonly="readonly" name="sub_total[]" value="0" /></td>' +
+		'<td><input type="number" class="form-control form-control-sm sub-total-item" readonly="readonly" name="sub-total-item[]" value="0" /></td>' +
 		'<td style="text-align:center"><button type="button" class="btn icon-btn btn-xs btn-danger waves-effect waves-light remove-item" data-repeater-delete="" onclick="removeRow(' +
 		rowId +
 		')"> <span class="fa fa-trash"></span></button></td>';
@@ -192,19 +284,6 @@ function updateFormCount() {
 	});
 }
 
-// $("#item_product").on("input", "input", function () {
-// 	var row = $(this).closest("tr");
-// 	var jumlah = row.find(".qty").val();
-// 	var hargaSatuan = row.find(".amount_item").val();
-// 	var pajak = row.find(".tax-rate-item").val();
-
-// 	var subTotal = parseFloat(jumlah) * parseFloat(hargaSatuan);
-// 	var totalPajak = subTotal * (parseFloat(pajak) / 100);
-// 	var grandTotal = subTotal + totalPajak;
-
-// 	row.find(".sub-total").val(grandTotal.toFixed(2));
-// });
-
 function update_total() {
 	var sub_total = 0;
 	var st_tax = 0;
@@ -215,13 +294,14 @@ function update_total() {
 	i = 1;
 
 	//
-	$(".sub_total").each(function (i) {
+	$(".sub-total-item").each(function (i) {
 		var total = $(this).val();
 
 		total = parseFloat(total);
 
 		sub_total = total + sub_total;
 	});
+
 	$(".tax-rate-item").each(function (i) {
 		var tax_rate = $(this).val();
 
@@ -229,9 +309,13 @@ function update_total() {
 
 		st_tax = tax_rate + st_tax;
 	});
+
+	// isi hasil kalkulasi pajak
 	$(".tax_total").html(st_tax.toFixed(2));
-	jQuery(".items-tax-total").val(st_tax.toFixed(2));
+	$(".ftax_total").val(st_tax.toFixed(2));
 	$(".sub_total").html(sub_total.toFixed(2));
+
+	jQuery(".items-tax-total").val(st_tax.toFixed(2));
 
 	var item_sub_total = sub_total;
 
@@ -269,22 +353,22 @@ jQuery(document).on("click", ".remove-invoice-item", function () {
 		});
 });
 
-jQuery(document).on("click", ".eremove-item", function () {
+jQuery(document).on("click", ".remove-item", function () {
 	var record_id = $(this).data("record-id");
 	var invoice_id = $(this).data("invoice-id");
 	$(this)
 		.closest(".item-row")
 		.fadeOut(300, function () {
-			jQuery.get(
-				base_url + "/delete_item/" + record_id + "/isajax/",
-				function (data, status) {}
-			);
+			// jQuery.get(
+			// 	base_url + "/delete_item/" + record_id + "/isajax/",
+			// 	function (data, status) {}
+			// );
 			$(this).remove();
 			update_total();
 		});
 });
 // for qty
-jQuery(document).on("click keyup change", ".qty,.price", function () {
+jQuery(document).on("click keyup change", ".qty, .price", function () {
 	var qty = 0;
 	var price = 0;
 	var tax_rate = 0;
@@ -328,8 +412,8 @@ jQuery(document).on("click keyup change", ".qty,.price", function () {
 			.val(singleTax.toFixed(2));
 	}
 	jQuery(this).closest(".item-row").find(".items-tax-total").val(tax_rate);
-	jQuery(this).closest(".item-row").find(".amount_item").val(sub_total);
-	jQuery(this).closest(".item-row").find(".amount_item").val(sub_total);
+	jQuery(this).closest(".item-row").find(".sub-total-item").val(sub_total);
+	jQuery(this).closest(".item-row").find(".sub-total-item").val(sub_total);
 	update_total();
 	//$('.tax-rate-item').html(taxPP.toFixed(2));
 });
@@ -366,7 +450,7 @@ jQuery(document).on("change click", ".tax_type", function () {
 			.closest(".item-row")
 			.find(".tax-rate-item")
 			.val(singleTax.toFixed(2));
-		jQuery(this).closest(".item-row").find(".amount_item").val(sub_total);
+		jQuery(this).closest(".item-row").find(".sub-total-item").val(sub_total);
 		update_total();
 	} else {
 		var taxPP = (sbT / 100) * tax_rate;
@@ -377,11 +461,11 @@ jQuery(document).on("change click", ".tax_type", function () {
 			.closest(".item-row")
 			.find(".tax-rate-item")
 			.val(singleTax.toFixed(2));
-		jQuery(this).closest(".item-row").find(".amount_item").val(sub_total);
+		jQuery(this).closest(".item-row").find(".sub-total-item").val(sub_total);
 		update_total();
 	}
 
-	jQuery(this).closest(".item-row").find(".amount_item").val(sub_total);
+	jQuery(this).closest(".item-row").find(".sub-total-item").val(sub_total);
 	update_total();
 });
 jQuery(document).on("click keyup change", ".discount_figure", function () {
@@ -437,4 +521,139 @@ jQuery(document).on("change click", ".discount_type", function () {
 	}
 
 	update_total();
+});
+
+// chart
+$(window).on("load", function () {
+	var ctx_trans_vendor = $("#last_month_trans_vendor");
+	Chart.defaults.global.legend.display = true;
+	$.ajax({
+		url: site_url + "project_costs/get_last_month_trans_vendor/",
+		type: "get",
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+		success: function (response_tv) {
+			console.log(response_tv);
+			var bgcolor_tv = [];
+			var final_tv = [];
+			var final_tv2 = [];
+			for (i = 0; i < response_tv.c_name.length; i++) {
+				final_tv.push(response_tv.chart_data[i].value);
+				final_tv2.push(response_tv.chart_data[i].label);
+				bgcolor_tv.push(response_tv.chart_data[i].bgcolor);
+			}
+
+			new Chart(ctx_trans_vendor, {
+				type: "pie",
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					responsiveAnimationDuration: 500,
+				},
+				data: {
+					labels: final_tv2,
+					datasets: [
+						{
+							label: "project status",
+							data: final_tv,
+							backgroundColor: bgcolor_tv,
+						},
+					],
+				},
+			});
+
+			var table = $(".table_last_month_trans_vendor tbody");
+			// Append rows to the table
+			$.each(response_tv.chart_data, function (index, item) {
+				var label_tv = item.label;
+				var value_tv = item.value;
+				var bgcolor_tv = item.bgcolor;
+
+				var row_tv =
+					"<tr>" +
+					"<td style='width:20px;height:20px;background: " +
+					bgcolor_tv +
+					"'></td><td>" +
+					label_tv +
+					" (" +
+					value_tv +
+					")" +
+					"</td>" +
+					"</tr>";
+
+				table.append(row_tv);
+				console.log(bgcolor_tv);
+			});
+		},
+		error: function (data) {
+			console.error(data);
+		},
+	});
+});
+
+$(window).on("load", function () {
+	var ctx_trans = $("#last_month_trans");
+	Chart.defaults.global.legend.display = true;
+	$.ajax({
+		url: site_url + "project_costs/get_last_month_trans/",
+		type: "get",
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+		success: function (response_t) {
+			console.log(response_t);
+			var bgcolor_t = [];
+			var final_t = [];
+			var final_t2 = [];
+			for (i = 0; i < response_t.c_name.length; i++) {
+				final_t.push(response_t.chart_data[i].value);
+				final_t2.push(response_t.chart_data[i].label);
+				bgcolor_t.push(response_t.chart_data[i].bgcolor);
+			}
+
+			new Chart(ctx_trans, {
+				type: "doughnut",
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					responsiveAnimationDuration: 500,
+				},
+				data: {
+					labels: final_t2,
+					datasets: [
+						{
+							label: "project status",
+							data: final_t,
+							backgroundColor: bgcolor_t,
+						},
+					],
+				},
+			});
+
+			var table = $(".table_last_month_trans tbody");
+			// Append rows to the table
+			$.each(response_t.chart_data, function (index, item) {
+				var label_t = item.label;
+				var value_t = item.format_value;
+				var bgcolor_t = item.bgcolor;
+
+				var row_t =
+					"<tr>" +
+					"<td style='width:20px;height:20px;background: " +
+					bgcolor_t +
+					"'></td><td>" +
+					label_t +
+					"<br><small>" +
+					value_t +
+					"</small>" +
+					"</td>" +
+					"</tr>";
+
+				table.append(row_t);
+				console.log(bgcolor_t);
+			});
+		},
+		error: function (data) {
+			console.error(data);
+		},
+	});
 });

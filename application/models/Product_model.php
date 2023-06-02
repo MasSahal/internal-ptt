@@ -65,4 +65,14 @@ class Product_model extends CI_Model
 			return false;
 		}
 	}
+
+	public function searchProduct($searchTerm)
+	{
+		// Query untuk mencari produk berdasarkan product_name atau product_number
+		$this->db->select('product_id, product_name, product_number, uom_id, category_id');
+		$this->db->like('product_name', $searchTerm);
+		$this->db->or_like('product_number', $searchTerm);
+		$result = $this->db->get('ms_products');
+		return $result->result();
+	}
 }

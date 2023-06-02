@@ -214,4 +214,3 @@ class Invoices_model extends CI_Model {
 	}
 	
 }
-?>

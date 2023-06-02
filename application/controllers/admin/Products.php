@@ -283,4 +283,12 @@ class Products extends MY_Controller
 			$this->output($Return);
 		}
 	}
+
+	public function get_ajax_products()
+	{
+		$searchTerm = $this->input->get('query');
+		$data = $this->Product_model->searchProduct($searchTerm);
+		echo json_encode($data);
+		exit();
+	}
 }

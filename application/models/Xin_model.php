@@ -701,6 +701,59 @@ class Xin_model extends CI_Model
 	public function read_recently_products($id)
 	{
 
+		$sql = 'SELECT * FROM ms_recently_products WHERE project_cost_id = ?';
+		$binds = array($id);
+		$query = $this->db->query($sql, $binds);
+
+		if ($query->num_rows() > 0) {
+			return $query;
+		} else {
+			return null;
+		}
+	}
+
+	public function read_id_recently_product($id)
+	{
+		$this->db->select('recently_id');
+		$this->db->from('ms_recently_products');
+		$this->db->where('project_cost_id', $id);
+
+		$data = $this->db->get()->result();
+
+		if ($data) {
+			$res = [];
+			foreach ($data as $key => $value) {
+				$res[] = $value->recently_id;
+			}
+			return $res;
+		} else {
+			return false;
+		}
+	}
+
+	public function read_id_category_recently_product($id)
+	{
+		$this->db->select('category_id');
+		$this->db->from('ms_recently_products');
+		$this->db->where('project_cost_id', $id);
+		$this->db->group_by('category_id');
+
+		$data = $this->db->get()->result();
+
+		if ($data) {
+			$res = [];
+			foreach ($data as $key => $value) {
+				$res[] = $value->category_id;
+			}
+			return $res;
+		} else {
+			return false;
+		}
+	}
+
+	public function read_recently_products2($id)
+	{
+
 		$sql = 'SELECT * FROM ms_recently_products WHERE recently_id = ?';
 		$binds = array($id);
 		$query = $this->db->query($sql, $binds);
@@ -716,6 +769,20 @@ class Xin_model extends CI_Model
 	{
 
 		$sql = 'SELECT * FROM ms_recently_products WHERE recently_id ' .  $operand . ' ?';
+		$binds = array($id);
+		$query = $this->db->query($sql, $binds);
+
+		if ($query->num_rows() > 0) {
+			return $query;
+		} else {
+			return null;
+		}
+	}
+
+	public function read_recently_product_by_id_project($id)
+	{
+
+		$sql = 'SELECT * FROM ms_recently_products WHERE project_id = ?';
 		$binds = array($id);
 		$query = $this->db->query($sql, $binds);
 
@@ -2300,6 +2367,14 @@ class Xin_model extends CI_Model
 		$this->db->delete('xin_company_type');
 	}
 
+	// update 
+	// Function to Delete selected record from table
+	public function delete_recently_product_record($id)
+	{
+		$this->db->where('project_cost_id', $id);
+		return $this->db->delete('ms_recently_products');
+	}
+
 	// get all last 5 employees
 	public function last_four_employees()
 	{
@@ -3595,6 +3670,21 @@ ORDER BY `expiry_date`");
 	public function add_security_level($data)
 	{
 		$this->db->insert('xin_security_level', $data);
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function add_recently_products($data, $batch = false)
+	{
+		if ($batch) {
+			$this->db->insert_batch('ms_recently_products', $data);
+		} else {
+			$this->db->insert('ms_recently_products', $data);
+		}
+
 		if ($this->db->affected_rows() > 0) {
 			return true;
 		} else {

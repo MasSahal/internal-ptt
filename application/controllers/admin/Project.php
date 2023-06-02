@@ -362,14 +362,8 @@ class Project extends MY_Controller
 		if ($system[0]->module_projects_tasks != 'true') {
 			redirect('admin/dashboard');
 		}
-		/*$role_resources_ids = $this->Xin_model->user_role_resource();
-		if(in_array('318',$role_resources_ids)) { //view
-			redirect('admin/project');
-		}*/
+
 		$data['title'] = $this->Xin_model->site_title();
-		//$data['all_employees'] = $this->Xin_model->all_employees();
-		//$data['all_companies'] = $this->Xin_model->get_companies();
-		//$data['breadcrumbs'] = $this->lang->line('xin_project_detail');
 		$id = $this->uri->segment(4);
 		$result = $this->Project_model->read_project_information($id);
 		if (is_null($result)) {
@@ -378,6 +372,7 @@ class Project extends MY_Controller
 		$edata = array(
 			'is_notify' => 0,
 		);
+
 		$this->Xin_model->update_notification_record($edata, $id, $session['user_id'], 'projects');
 		// get user > added by
 		$user = $this->Xin_model->read_user_info($result[0]->added_by);
@@ -396,43 +391,48 @@ class Project extends MY_Controller
 
 		$record = [];
 		$total = 0;
-		// dd($this->Xin_model->read_recently_product($id)->result());
-		foreach ($this->Xin_model->read_recently_product($id)->result() as $r) {
 
-			$kategori = $this->Xin_model->read_product_category($r->category_id);
-			if ($kategori) {
-				$category_name = $kategori[0]->category_name;
-			} else {
-				$category_name = "--";
+		$rp = $this->Xin_model->read_recently_product_by_id_project($id);
+		if (!is_null($rp)) {
+			foreach ($rp->result() as $r) {
+
+				$kategori = $this->Xin_model->read_product_category($r->category_id);
+				if ($kategori) {
+					$category_name = $kategori[0]->category_name;
+				} else {
+					$category_name = "--";
+				}
+
+				$unit = $this->Xin_model->read_uom($r->uom_id);
+				if ($unit == true) {
+					$uom_name = $unit[0]->uom_name;
+				} else {
+					$uom_name = "--";
+				}
+
+				$d_project = $this->Project_model->read_project_information($r->project_id);
+				// dd($d_project);
+				if (!is_null($d_project)) {
+					$project_name = $d_project[0]->title;
+				} else {
+					$project_name = "--";
+				}
+
+				$res = new stdClass;
+				$res->category = $category_name;
+				$res->product_name = $r->product_name;
+				$res->product_number = $r->product_number;
+				$res->uom = $uom_name;
+				$res->project_name = $project_name;
+				$res->qty = $r->qty;
+				$res->price = $this->Xin_model->currency_sign($r->price);
+				$res->amount = $this->Xin_model->currency_sign($r->amount);
+
+				$record[] = $res;
+				$total = $total  + ($r->qty * $r->amount);
 			}
-
-			$unit = $this->Xin_model->read_uom($r->uom_id);
-			if ($unit == true) {
-				$uom_name = $unit[0]->uom_name;
-			} else {
-				$uom_name = "--";
-			}
-
-			$d_project = $this->Project_model->read_project_information($r->project_id);
-			// dd($d_project);
-			if ($d_project) {
-				$project_name = $d_project[0]->title;
-			} else {
-				$project_name = "--";
-			}
-
-			$res = new stdClass;
-			$res->category = $category_name;
-			$res->product_name = $r->product_name;
-			$res->product_number = $r->product_number;
-			$res->uom = $uom_name;
-			$res->project_name = $project_name;
-			$res->qty = $r->qty;
-			$res->price = $this->Xin_model->currency_sign($r->price);
-			$res->amount = $this->Xin_model->currency_sign($r->amount);
-
-			$record[] = $res;
-			$total = $total  + ($r->qty * $r->amount);
+		} else {
+			$record = null;
 		}
 
 		$data = array(

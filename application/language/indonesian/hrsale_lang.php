@@ -2977,22 +2977,33 @@ $lang['ms_product_category_success_deleted'] = "Kategori Produk berhasil dihapus
 $lang['ms_error_product_category_name_field'] = "Bidang Nama Kategori diperlukan.";
 
 // global
-$lang['ms_reference'] = "Referensi.";
+$lang['ms_reference'] = "Referensi";
+$lang['ms_highlights'] = "Ikhtisar";
 $lang['ms_date'] = "Tanggal";
 $lang['ms_status'] = "Status";
 $lang['ms_invoice_number'] = "Invoice";
 $lang['ms_invoice_date'] = "Tanggal Invoice";
+$lang['ms_error_invoice_date_field'] = "Bidang Tanggal Invoice diperlukan!";
 $lang['ms_measurement_units'] = "Pilih Satuan Unit.";
 
 $lang['ms_status_pending'] = "Belum Lunas";
 $lang['ms_status_prepayment'] = "Terbayar Sebagian";
 $lang['ms_status_paid'] = "Lunas";
+$lang['ms_error_status_payment_field'] = "Bidang status diperlukan!";
 $lang['ms_prepayment'] = "Uang Muka";
 $lang['ms_amount'] = "Total";
 
 $lang['ms_trans_last_month'] = "Transaksi Bulan Terakhir";
+$lang['ms_trans_last_month_vendors'] = "Transaksi Per-vendor Bulan Terakhir";
 $lang['ms_trans_remaining_payment'] = "Sisa Tagihan Perlu Dibayarkan";
 $lang['ms_trans_prepayment'] = "Pembayaran Uang Muka";
+$lang['ms_trans_status'] = "Status Pembayaran";
+$lang['ms_trans_deleted'] = "Data transasksi dihapus!";
+$lang['ms_trans_added'] = "Data transasksi ditambahkan!";
+
+$lang['ms_go_back'] = " Kembali";
+$lang['ms_ref_code'] = " Referensi Kode";
+
 
 /////////////////////////////////////////////////// akhir hrsale v2.0.1
 

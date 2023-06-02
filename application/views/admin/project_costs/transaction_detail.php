@@ -45,34 +45,48 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
 
 <hr class="border-light m-0 mb-3">
 <div class="card <?php echo $get_animate; ?>">
-	<div class="card-header with-elements"> <span class="card-header-title mr-2"><strong><?php echo $this->lang->line('ms_project_trans_detail'); ?> &nbsp;</strong> #<?= strtoupper($result->invoice_id); ?></span>
+	<div class="card-header with-elements">
+		<a class="card-header-title" href=" <?= base_url('admin/project_costs/transactions'); ?>"><i class="fas fa-arrow-left"> </i> <?php echo $this->lang->line('ms_go_back'); ?> </a> &nbsp;
+		<div class="card-header-elements ml-md-auto">
+			<span class="card-header-title mr-2"><strong> <?php echo $this->lang->line('ms_project_trans_detail'); ?> &nbsp;</strong> #<?= strtoupper($result->invoice_id); ?></span>
+
+		</div>
 	</div>
 	<div class="card-body">
 		<div class="box-datatable table-responsive">
 			<table class="table table-borderless">
 				<tr>
-					<td>
-						<strong><?php echo $this->lang->line('xin_projects'); ?></strong> <br>
-						<?= $result->project_name; ?>
-					</td>
+
 					<td>
 						<strong><?php echo $this->lang->line('ms_vendors'); ?></strong> <br>
 						<?= $result->vendor_name; ?>
 					</td>
 					<td>
 						<strong><?php echo $this->lang->line('ms_invoice_number'); ?></strong> <br>
-						<?= $result->invoice_id; ?>
+						<?= $result->invoice_number; ?>
 					</td>
 				</tr>
 				<tr>
-					<th>
+					<td>
 						<strong><?php echo $this->lang->line('ms_date'); ?></strong> <br>
 						<?= $result->invoice_date; ?>
-					</th>
-					<th>
+					</td>
+					<td>
 						<strong> <?php echo $this->lang->line('ms_reference'); ?></strong> <br>
 						<?= $result->ref_code; ?>
-					</th>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<strong><?php echo $this->lang->line('ms_trans_status'); ?></strong> <br>
+						<?= $result->status_payment; ?>
+					</td>
+					<?php if ($result->status_payment_code == 1) { ?>
+						<td>
+							<strong><?php echo $this->lang->line('ms_trans_prepayment'); ?></strong> <br>
+							<?= $this->Xin_model->currency_sign($result->prepayment); ?>
+						</td>
+					<?php }; ?>
 				</tr>
 			</table>
 			<br>
@@ -105,17 +119,17 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
 							<td><?= $detail->qty; ?></td>
 							<td><?= $detail->uom_id; ?></td>
 							<td><?php echo $detail->price; ?></td>
-							<td><?= $this->Xin_model->currency_sign($pajak); ?></td>
+							<td><?= $this->Xin_model->currency_sign($detail->tax_rate); ?></td>
 							<td><?php echo $this->Xin_model->currency_sign($detail->amount * $detail->qty) ?> </td>
 						</tr>
 					<?php } ?>
 					<tr>
 						<td colspan="6" align="right">Pajak</td>
-						<td><?= $this->Xin_model->currency_sign($total_pajak); ?></td>
+						<td><?= $this->Xin_model->currency_sign($result->tax_total); ?></td>
 					</tr>
 					<tr>
 						<td colspan="6" align="right">Diskon</td>
-						<td><?= $this->Xin_model->currency_sign($total_diskon); ?></td>
+						<td><?= $this->Xin_model->currency_sign($result->discount); ?></td>
 					</tr>
 					<tr>
 						<td colspan="6" align="right">Total</td>

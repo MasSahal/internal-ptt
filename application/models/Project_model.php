@@ -15,6 +15,14 @@ class Project_model extends CI_Model
 		return $this->db->get("xin_projects");
 	}
 
+	public function get_projects_name()
+	{
+		$this->db->select("project_id, title");
+		$this->db->from("xin_projects");
+		$this->db->order_by("title", "asc");
+		return $this->db->get();
+	}
+
 	public function read_project_information($id)
 	{
 

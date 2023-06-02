@@ -97,41 +97,22 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
 				<!-- Daily progress chart -->
 				<div class="card mb-4">
 					<h6 class="card-header with-elements border-0 pr-0 pb-0">
-						<div class="card-header-title"><?php echo $this->lang->line('left_office_shifts'); ?></div>
+						<div class="card-header-title"><?php echo $this->lang->line('ms_trans_last_month'); ?></div>
 					</h6>
 					<div class="row">
 						<div class="col-md-6">
-							<div class="overflow-scrolls py-4 px-3" style="overflow:auto; height:200px;">
+							<div class="overflow-scrolls py-4 px-3" style="overflow:auto; height:300px;">
 								<div class="table-responsive">
-									<table class="table mb-0 table-dashboard">
+									<table class="table mb-0 table_last_month_trans">
 										<tbody>
-											<?php $c_color = array('#647c8a', '#2196f3', '#02bc77', '#d3733b', '#673AB7', '#66456e', '#b26fc2', '#a98852', '#3c8dbc', '#f39c12', '#605ca8', '#d81b60', '#001f3f', '#39cccc', '#3c8dbc', '#006400', '#dd4b39', '#a98852', '#b26fc2', '#66456e', '#c674ad', '#975df3', '#61a3ca', '#6bddbd', '#6bdd74', '#95b655', '#668b20', '#bea034', '#d3733b', '#46be8a', '#f96868', '#00c0ef', '#3c8dbc', '#f39c12', '#605ca8', '#d81b60', '#001f3f', '#39cccc', '#3c8dbc', '#006400', '#dd4b39', '#a98852', '#b26fc2', '#66456e'); ?>
-											<?php $j = 0;
-											foreach (hrsale_office_shift() as $hr_office_shift) { ?>
-												<?php
-												$condition = "office_shift_id =" . "'" . $hr_office_shift->office_shift_id . "'";
-												$this->db->select('*');
-												$this->db->from('xin_employees');
-												$this->db->where($condition);
-												$query = $this->db->get();
-												$r_row = $query->num_rows();
-												?>
-												<tr>
-													<td style="vertical-align: inherit;">
-														<div style="width:4px;border:5px solid <?php echo $c_color[$j]; ?>;"></div>
-													</td>
-													<td><?php echo htmlspecialchars_decode($hr_office_shift->shift_name); ?> (<?php echo $r_row; ?>)</td>
-												</tr>
-											<?php $j++;
-											} ?>
 										</tbody>
 									</table>
 								</div>
 							</div>
 						</div>
 						<div class="col-md-6">
-							<div style="height:120px;">
-								<canvas id="hrsale_office_shifts" style="display: block; height: 150px; width:300px;"></canvas>
+							<div style="height:250px;">
+								<canvas id="last_month_trans" style="display: block; height: 300px; width:auto;"></canvas>
 							</div>
 						</div>
 					</div>
@@ -144,41 +125,22 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
 				<!-- Daily progress chart -->
 				<div class="card mb-4">
 					<h6 class="card-header with-elements border-0 pr-0 pb-0">
-						<div class="card-header-title"><?php echo $this->lang->line('xin_roles'); ?></div>
+						<div class="card-header-title"><?php echo $this->lang->line('ms_trans_last_month_vendors'); ?></div>
 					</h6>
 					<div class="row">
 						<div class="col-md-6">
-							<div class="overflow-scrolls py-4 px-3" style="overflow:auto; height:200px;">
+							<div class="overflow-scrolls py-4 px-3" style="overflow:auto; height:300px;">
 								<div class="table-responsive">
-									<table class="table mb-0 table-dashboard">
+									<table class="table mb-0 table_last_month_trans_vendor">
 										<tbody>
-											<?php $c_color = array('#66456e', '#b26fc2', '#a98852', '#3c8dbc', '#f39c12', '#605ca8', '#d81b60', '#001f3f', '#39cccc', '#3c8dbc', '#006400', '#dd4b39', '#a98852', '#b26fc2', '#66456e', '#c674ad', '#975df3', '#61a3ca', '#6bddbd', '#6bdd74', '#95b655', '#668b20', '#bea034', '#d3733b', '#46be8a', '#f96868', '#00c0ef', '#3c8dbc', '#f39c12', '#605ca8', '#d81b60', '#001f3f', '#39cccc', '#3c8dbc', '#006400', '#dd4b39', '#a98852', '#b26fc2', '#66456e'); ?>
-											<?php $j = 0;
-											foreach (hrsale_roles() as $hr_roles) { ?>
-												<?php
-												$condition = "user_role_id =" . "'" . $hr_roles->role_id . "'";
-												$this->db->select('*');
-												$this->db->from('xin_employees');
-												$this->db->where($condition);
-												$query = $this->db->get();
-												$r_row = $query->num_rows();
-												?>
-												<tr>
-													<td style="vertical-align: inherit;">
-														<div style="width:4px;border:5px solid <?php echo $c_color[$j]; ?>;"></div>
-													</td>
-													<td><?php echo htmlspecialchars_decode($hr_roles->role_name); ?> (<?php echo $r_row; ?>)</td>
-												</tr>
-											<?php $j++;
-											} ?>
 										</tbody>
 									</table>
 								</div>
 							</div>
 						</div>
 						<div class="col-md-6">
-							<div style="height:120px;">
-								<canvas id="hrsale_roles" style="display: block; height: 150px; width:300px;"></canvas>
+							<div style="height:250px;">
+								<canvas id="last_month_trans_vendor" style="display: block; height: 300px; width:auto;"></canvas>
 							</div>
 						</div>
 					</div>
