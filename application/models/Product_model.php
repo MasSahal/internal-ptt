@@ -10,8 +10,13 @@ class Product_model extends CI_Model
 		$this->load->database();
 	}
 
-	public function gel_all_product()
+	public function gel_all_product($query = false)
 	{
+		if ($query) {
+			$this->db->like('product_name', $query);
+			$this->db->or_like('product_number', $query);
+		}
+
 		return $this->db->get("ms_products");
 	}
 
@@ -38,9 +43,24 @@ class Product_model extends CI_Model
 	}
 
 	// Function to add record in table
-	public function insert($data)
+	public function insert($data, $batch = false)
 	{
-		$this->db->insert('ms_products', $data);
+		if ($batch) {
+			$this->db->insert_batch('ms_products', $data);
+		} else {
+			$this->db->insert('ms_products', $data);
+		}
+
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	// Function to add record in table
+	public function insert_batch($data)
+	{
+		$this->db->insert_batch('ms_products', $data);
 		if ($this->db->affected_rows() > 0) {
 			return true;
 		} else {

@@ -15,18 +15,26 @@ class Project_model extends CI_Model
 		return $this->db->get("xin_projects");
 	}
 
-	public function get_projects_name()
+	public function get_projects_name($completed = false)
 	{
 		$this->db->select("project_id, title");
 		$this->db->from("xin_projects");
 		$this->db->order_by("title", "asc");
+		if ($completed) {
+			$this->db->where_not_in("status", 2);
+			// $this->db->or_where("project_progress !=", 100);
+		}
 		return $this->db->get();
 	}
 
-	public function read_project_information($id)
+	public function read_project_information($id, $completed = false)
 	{
 
-		$sql = 'SELECT * FROM xin_projects WHERE project_id = ?';
+		if ($completed) {
+			$sql = 'SELECT * FROM xin_projects WHERE project_id = ? AND project_progress != 100';
+		} else {
+			$sql = 'SELECT * FROM xin_projects WHERE project_id = ?';
+		}
 		$binds = array($id);
 		$query = $this->db->query($sql, $binds);
 
@@ -208,10 +216,14 @@ class Project_model extends CI_Model
 		return $query;
 	}
 
-	public function get_all_projects()
+	public function get_all_projects($completed = false)
 	{
-		$query = $this->db->query("SELECT * from xin_projects");
-		return $query->result();
+		if ($completed) {
+			$this->db->where_not_in("status", 2);
+			// $this->db->or_where("project_progress !=", 100);
+		}
+		$this->db->order_by('title', 'asc');
+		return $this->db->get("xin_projects")->result();
 	}
 
 	// Function to add record in table > add attachment
@@ -689,11 +701,11 @@ class Project_model extends CI_Model
 		}
 	}
 	// get company projects
-	public function get_company_projects($company_id)
+	public function get_company_projects($id)
 	{
 
 		$sql = "SELECT * FROM xin_projects WHERE company_id like '%$id,%' or company_id like '%,$id%' or company_id = '$id'";
-		$binds = array($company_id);
+		$binds = array($id);
 		$query = $this->db->query($sql, $binds);
 		return $query;
 	}

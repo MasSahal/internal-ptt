@@ -731,19 +731,27 @@ class Xin_model extends CI_Model
 		}
 	}
 
-	public function read_id_category_recently_product($id)
+	public function read_id_sub_category_recently_product($id)
 	{
-		$this->db->select('category_id');
+		$this->db->select('sub_category_id');
 		$this->db->from('ms_recently_products');
 		$this->db->where('project_cost_id', $id);
-		$this->db->group_by('category_id');
+		$this->db->group_by('sub_category_id');
 
 		$data = $this->db->get()->result();
+		foreach ($data as $r) {
+			$this->db->select('category_id');
+			$this->db->from('ms_product_categories');
+			$this->db->where('category_id', $r->category_id);
+			$this->db->group_by('category_id');
 
+			$data = $this->db->get()->result();
+		}
+		// dd($data);
 		if ($data) {
 			$res = [];
 			foreach ($data as $key => $value) {
-				$res[] = $value->category_id;
+				$res[] = $value->sub_category_id;
 			}
 			return $res;
 		} else {
@@ -765,10 +773,10 @@ class Xin_model extends CI_Model
 		}
 	}
 	// get single country
-	public function read_recently_product($id, $operand = "=")
+	public function read_recently_product($id, $field = 'recently_id', $operand = "=")
 	{
 
-		$sql = 'SELECT * FROM ms_recently_products WHERE recently_id ' .  $operand . ' ?';
+		$sql = 'SELECT * FROM ms_recently_products WHERE ' . $field . ' ' .  $operand . ' ?';
 		$binds = array($id);
 		$query = $this->db->query($sql, $binds);
 
@@ -788,6 +796,20 @@ class Xin_model extends CI_Model
 
 		if ($query->num_rows() > 0) {
 			return $query;
+		} else {
+			return null;
+		}
+	}
+
+	public function read_measurement_unit($id)
+	{
+
+		$sql = 'SELECT * FROM ms_measurement_units WHERE uom_id = ?';
+		$binds = array($id);
+		$query = $this->db->query($sql, $binds);
+
+		if ($query->num_rows() > 0) {
+			return $query->result();
 		} else {
 			return null;
 		}
@@ -2052,6 +2074,11 @@ class Xin_model extends CI_Model
 	{
 		return  $query = $this->db->query("SELECT * from xin_currencies");
 	}
+	// get all table rows 
+	public function get_measurement_unit_type()
+	{
+		return  $query = $this->db->query("SELECT * from ms_measurement_units ORDER BY uom_id DESC");
+	}
 
 
 	// update 9-5-2023
@@ -2064,7 +2091,13 @@ class Xin_model extends CI_Model
 	// get all table rows
 	public function get_all_product_categories()
 	{
-		return  $query = $this->db->query("SELECT * from ms_product_categories");
+		return  $query = $this->db->query("SELECT * from ms_product_categories ORDER BY category_id DESC");
+	}
+
+	// get all table rows
+	public function get_all_product_sub_categories()
+	{
+		return  $query = $this->db->query("SELECT * from ms_product_sub_categories ORDER BY sub_category_id DESC");
 	}
 
 	// get all table rows
@@ -2373,6 +2406,13 @@ class Xin_model extends CI_Model
 	{
 		$this->db->where('project_cost_id', $id);
 		return $this->db->delete('ms_recently_products');
+	}
+
+	// Function to Delete selected record from table
+	public function delete_measurement_unit_record($id)
+	{
+		$this->db->where('uom_id', $id);
+		return $this->db->delete('ms_measurement_units');
 	}
 
 	// get all last 5 employees
@@ -2945,6 +2985,16 @@ class Xin_model extends CI_Model
 	{
 		$this->db->where('category_id', $id);
 		if ($this->db->update('ms_product_categories', $data)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	// Function to update record in table
+	public function update_sub_category_product_record($data, $id)
+	{
+		$this->db->where('sub_category_id', $id);
+		if ($this->db->update('ms_product_sub_categories', $data)) {
 			return true;
 		} else {
 			return false;
@@ -3677,6 +3727,17 @@ ORDER BY `expiry_date`");
 		}
 	}
 
+	// Function to add record in table
+	public function add_measurement_unit($data)
+	{
+		$this->db->insert('ms_measurement_units', $data);
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public function add_recently_products($data, $batch = false)
 	{
 		if ($batch) {
@@ -3705,6 +3766,17 @@ ORDER BY `expiry_date`");
 			return null;
 		}
 	}
+	// Function to update record in table
+	public function update_measurement_unit_record($data, $id)
+	{
+		$this->db->where('uom_id', $id);
+		if ($this->db->update('ms_measurement_units', $data)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	// Function to update record in table
 	public function update_security_level_record($data, $id)
 	{
@@ -4133,11 +4205,48 @@ ORDER BY `expiry_date`");
 		}
 	}
 
+	// Function to add record in table
+	public function add_product_sub_category($data)
+	{
+		$this->db->insert('ms_product_sub_categories', $data);
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	// get single record > db table > constant
 	public function read_product_category($id)
 	{
-
 		$sql = 'SELECT * FROM ms_product_categories where category_id = ?';
+		$binds = array($id);
+		$query = $this->db->query($sql, $binds);
+
+		if ($query->num_rows() > 0) {
+			return $query->result();
+		} else {
+			return null;
+		}
+	}
+
+	public function read_product_category_by_sub_category($id)
+	{
+		$sql = 'SELECT * FROM ms_product_categories where sub_category_id = ?';
+		$binds = array($id);
+		$query = $this->db->query($sql, $binds);
+
+		if ($query->num_rows() > 0) {
+			return $query->result();
+		} else {
+			return null;
+		}
+	}
+
+	public function read_product_sub_category($id)
+	{
+
+		$sql = 'SELECT * FROM ms_product_sub_categories where sub_category_id = ?';
 		$binds = array($id);
 		$query = $this->db->query($sql, $binds);
 
@@ -4168,5 +4277,11 @@ ORDER BY `expiry_date`");
 	{
 		$this->db->where('category_id', $id);
 		return $this->db->delete('ms_product_categories');
+	}
+
+	public function delete_product_sub_category_record($id)
+	{
+		$this->db->where('sub_category_id', $id);
+		return $this->db->delete('ms_product_sub_categories');
 	}
 }

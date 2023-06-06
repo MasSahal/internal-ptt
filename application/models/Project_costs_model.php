@@ -181,4 +181,23 @@ class Project_costs_model extends CI_Model
 		$this->db->group_by('pc.category_name');
 		return $this->db->get()->result();
 	}
+	public function get_recently_sub_category_name($id)
+	{
+		$this->db->select('pc.sub_category_name, COUNT(pc.sub_category_name) as total_count');
+		$this->db->from('ms_recently_products rp');
+		// $this->db->join('ms_product_categories pc', 'rp.sub_category_id = pc.sub_category_id');
+		$this->db->where_in('rp.sub_category_id', $id);
+		$this->db->group_by('pc.sub_category_name');
+		return $this->db->get()->result();
+	}
+
+	public function get_only_field($field, $table, $id = false, $field_where = false)
+	{
+		$this->db->select($field);
+		$this->db->from($table);
+		if ($id && $field_where) {
+			$this->db->where($field_where, $id);
+		}
+		return $this->db->get()->result();
+	}
 }
