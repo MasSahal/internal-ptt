@@ -3777,6 +3777,15 @@ ORDER BY `expiry_date`");
 		}
 	}
 
+	public function update_batch_recently_products($data, $id)
+	{
+		if ($this->db->update_batch('ms_measurement_units', $data, $id)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	// Function to update record in table
 	public function update_security_level_record($data, $id)
 	{
@@ -4283,5 +4292,53 @@ ORDER BY `expiry_date`");
 	{
 		$this->db->where('sub_category_id', $id);
 		return $this->db->delete('ms_product_sub_categories');
+	}
+
+
+	// Function to add record in table
+	public function add_discount($data)
+	{
+		$this->db->insert('ms_discounts', $data);
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function get_all_discounts()
+	{
+		return $this->db->get("ms_discounts");
+	}
+
+	public function read_discount($id)
+	{
+
+		$sql = 'SELECT * FROM ms_discounts where discount_id = ?';
+		$binds = array($id);
+		$query = $this->db->query($sql, $binds);
+
+		if ($query->num_rows() > 0) {
+			return $query->result();
+		} else {
+			return null;
+		}
+	}
+
+	public function delete_discount_record($id)
+	{
+		$this->db->where('discount_id', $id);
+		return $this->db->delete('ms_discounts');
+	}
+
+	// Function to update record in table > company information
+	public function update_discount_record($data, $id)
+	{
+		$this->db->where('discount_id', $id);
+		if ($this->db->update('ms_discounts', $data)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
