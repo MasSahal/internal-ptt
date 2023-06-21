@@ -35,7 +35,7 @@ class Vendors extends MY_Controller
 
 		$data['path_url'] = 'vendors';
 		$role_resources_ids = $this->Xin_model->user_role_resource();
-		if (in_array('19', $role_resources_ids)) {
+		if (in_array('478', $role_resources_ids)) {
 			if (!empty($session)) {
 				$data['subview'] = $this->load->view("admin/vendors/vendor_list", $data, TRUE);
 				$this->load->view('admin/layout/layout_main', $data); //page load
@@ -78,14 +78,14 @@ class Vendors extends MY_Controller
 				$c_name = '--';
 			}
 
-			if (in_array('217', $role_resources_ids)) { //edit
+			if (in_array('480', $role_resources_ids)) { //edit
 				$edit = '<span data-toggle="tooltip" data-placement="top" data-state="primary" title="' . $this->lang->line('xin_edit') . '"><button type="button" class="btn icon-btn btn-sm btn-outline-secondary waves-effect waves-light"  data-toggle="modal" data-target=".edit-modal-data"  data-vendor_id="' . $r->vendor_id . '"><span class="fas fa-pencil-alt"></span></button></span>';
 			} else {
 				$edit = '';
 			}
 
 			if (in_array(
-				'218',
+				'481',
 				$role_resources_ids
 			)) { // delete
 				$delete = '<span data-toggle="tooltip" data-placement="top" data-state="danger" title="' . $this->lang->line('xin_delete') . '"><button type="button" class="btn icon-btn btn-sm btn-outline-danger waves-effect waves-light delete" data-toggle="modal" data-target=".delete-modal" data-record-id="' . $r->vendor_id . '"><span class="fas fa-trash-restore"></span></button></span>';

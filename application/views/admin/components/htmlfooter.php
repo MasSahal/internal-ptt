@@ -13,6 +13,8 @@
 <script src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/libs/popper/popper.js"></script>
 <script src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/js/bootstrap.js"></script>
 <script src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/js/sidenav.js"></script>
+<script src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/js/money_format.js"></script>
+<!-- <script src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/js/autocomplete.js"></script> -->
 
 <script src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/js/dropdown-hover.js"></script>
 <script src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/libs/bootstrap-menu/bootstrap-menu.js"></script>
@@ -54,7 +56,42 @@
 <?php } ?>
 <!-- Editor-->
 <script type="text/javascript" src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/Trumbowyg/dist/trumbowyg.min.js"></script>
+
 <script src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/libs/select2/select2.js"></script>
+
+<!-- // -->
+<?php if ($this->router->fetch_class() == 'project_costs' && $this->router->fetch_method() == 'transactions' || $this->router->fetch_method() == 'edit_transaction') { ?>
+
+	<script>
+		var form_select_tax = '<select class="form-control form-control-sm tax_type" data-plugin="select_hrm" name="tax_type[]" id="tax_type">'
+		<?php foreach ($all_taxes as $_tax) { ?>
+			<?php
+			if ($_tax->type == 'percentage') {
+				$_tax_type = $_tax->rate . '%';
+			} else {
+				$_tax_type = $this->Xin_model->currency_sign($_tax->rate);
+			}
+			?>
+				+
+				'<option tax-type="<?php echo $_tax->type; ?>" tax-rate="<?php echo $_tax->rate; ?>" value="<?php echo $_tax->tax_id; ?>"> <?php echo $_tax->name; ?> (<?php echo $_tax_type; ?>)</option>'
+		<?php } ?>
+			+
+			'</select>'
+	</script>
+
+	<script>
+		var form_select_project = '<select class="form-control form-control-sm" data-plugin="select_hrm" name="project_id[]" id="project_id">'
+		<?php foreach ($all_projects as $p) { ?> +
+				'<option value="<?php echo $p->project_id; ?>"> <?php echo $p->title; ?></option>'
+		<?php } ?>
+			+
+			'</select>'
+	</script>
+<?php } ?>
+
+
+
+
 <script src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/libs/bootstrap-tagsinput/bootstrap-tagsinput.js"></script>
 <script src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/libs/validate/validate.js"></script>
 <script src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/js/ui_tooltips.js"></script>
@@ -66,7 +103,7 @@
 <script src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/libs/spin/spin.js"></script>
 <script src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/libs/ladda/ladda.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/jquery-autocomplete@1.2.8/jquery.autocomplete.min.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery-autocomplete@1.2.8/jquery.autocomplete.min.js"></script> -->
 
 <script type="text/javascript" src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/toastr/toastr.min.js"></script>
 
@@ -199,7 +236,25 @@
 		</script>
 	<?php } ?>
 <?php } ?>
+
+// setting type currencies javascript
+<?php $currency = explode(' - ', $system[0]->default_currency_symbol); ?>
+<script type="text/javascript">
+	var type_currency = "<?= $currency[0]; ?>";
+</script>
+
 <script type="text/javascript" src="<?php echo base_url() . 'skin/hrsale_vendor/hrsale_scripts/' . $path_url . '.js'; ?>"></script>
+
+
+<script>
+	$(document).ready(function() {
+		$(".select").select2({
+			tags: true,
+			width: "100%",
+		});
+	});
+</script>
+
 <?php if ($this->router->fetch_class() == 'dashboard') { ?>
 	<?php if ($user[0]->user_role_id != 1) : ?>
 		<?php if ($system[0]->is_ssl_available == 'yes') { ?>
@@ -404,71 +459,6 @@
 	<script src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/libs/minicolors/minicolors.js"></script>
 	<script src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/libs/chartjs/chartjs.js"></script>
 
-	<!-- <script>
-		// Mengambil data vendor dan jumlah transaksi dari PHP
-		var data_vendor = <?php echo json_encode($last_month_trans_vendor['vendor']); ?>;
-		var data_jumlah_transaksi = <?php echo json_encode($last_month_trans_vendor['total']); ?>;
-		var data_color = <?php echo json_encode($last_month_trans_vendor['color']); ?>;
-	</script>
-	<script>
-		$(window).on('load', function() {
-			// Membuat doughnut chart dengan menggunakan Chart.js
-			var ctx = document.getElementById("last_month_trans_vendor").getContext("2d");
-			var doughnutChart = new Chart(ctx, {
-				type: "doughnut",
-				data: {
-					labels: data_vendor,
-					datasets: [{
-						data: data_jumlah_transaksi,
-						backgroundColor: data_color,
-					}, ],
-				},
-				options: {
-					responsive: true,
-					maintainAspectRatio: false,
-					legend: {
-						display: false
-					}
-				}
-			});
-		});
-
-		// function generateRandomColors(count) {
-		// 	var colors = [];
-		// 	for (var i = 0; i < count; i++) {
-		// 		var color = '#' + Math.floor(Math.random() * 16777215).toString(16);
-		// 		colors.push(color);
-		// 	}
-		// 	return colors;
-		// }
-	</script> -->
 <?php } ?>
-<?php if ($this->router->fetch_class() == 'project_costs' && $this->router->fetch_method() == 'transactions') { ?>
 
-	<script>
-		var form_select_tax = '<select class="form-control form-control-sm tax_type" name="tax_type[]" id="tax_type">'
-		<?php foreach ($all_taxes as $_tax) { ?>
-			<?php
-			if ($_tax->type == 'percentage') {
-				$_tax_type = $_tax->rate . '%';
-			} else {
-				$_tax_type = $this->Xin_model->currency_sign($_tax->rate);
-			}
-			?>
-				+
-				'<option tax-type="<?php echo $_tax->type; ?>" tax-rate="<?php echo $_tax->rate; ?>" value="<?php echo $_tax->tax_id; ?>"> <?php echo $_tax->name; ?> (<?php echo $_tax_type; ?>)</option>'
-		<?php } ?>
-			+
-			'</select>'
-	</script>
 
-	<script>
-		var form_select_project = '<select class="form-control form-control-sm" data-plugin="select_hrm" name="project_id[]" id="project_id">'
-		<?php foreach ($projects as $p) { ?> +
-				'<option value="<?php echo $p->project_id; ?>"> <?php echo $p->title; ?></option>'
-		<?php } ?>
-			+
-			'</select>'
-	</script>
-
-<?php } ?>

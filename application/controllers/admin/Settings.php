@@ -595,6 +595,86 @@ class Settings extends MY_Controller
 		exit();
 	}
 
+	// security level type > list
+	public function discount_list()
+	{
+
+		$data['title'] = $this->Xin_model->site_title();
+		$session = $this->session->userdata('username');
+		if (empty($session)) {
+			redirect('admin/');
+		}
+		// Datatables Variables
+		$draw = intval($this->input->get("draw"));
+		$start = intval($this->input->get("start"));
+		$length = intval($this->input->get("length"));
+
+
+		$discount = $this->Xin_model->get_all_discounts();
+
+		$data = array();
+
+		foreach ($discount->result() as $r) {
+
+			$data[] = array(
+				'<span data-toggle="tooltip" data-placement="top" title="' . $this->lang->line('xin_edit') . '"><button type="button" class="btn icon-btn btn-sm btn-outline-secondary waves-effect waves-light" data-toggle="modal" data-target=".edit_setting_datail" data-field_id="' . $r->discount_id . '" data-field_type="discounts"><span class="fas fa-pencil-alt"></span></button></span> <span data-toggle="tooltip" data-placement="top" title="' . $this->lang->line('xin_delete') . '"><button type="button" class="btn icon-btn btn-sm btn-outline-danger waves-effect waves-light delete" data-toggle="modal" data-target=".delete-modal" data-record-id="' . $r->discount_id . '" data-token_type="discounts"><span class="fas fa-trash-restore"></span></button></span>',
+				$r->discount_name,
+				$r->discount_type == 0 ? $this->lang->line('ms_discount_title_flat') : $this->lang->line('ms_discount_title_percentage'),
+				$r->discount_value,
+			);
+		}
+
+		$output = array(
+			"draw" => $draw,
+			"recordsTotal" => $discount->num_rows(),
+			"recordsFiltered" => $discount->num_rows(),
+			"data" => $data
+		);
+
+		$this->output($output);
+		exit();
+	}
+
+	// security level type > list
+	public function measurement_unit_list()
+	{
+
+		$data['title'] = $this->Xin_model->site_title();
+		$session = $this->session->userdata('username');
+		if (!empty($session)) {
+			$this->load->view("admin/settings/settings", $data);
+		} else {
+			redirect('admin/');
+		}
+		// Datatables Variables
+		$draw = intval($this->input->get("draw"));
+		$start = intval($this->input->get("start"));
+		$length = intval($this->input->get("length"));
+
+
+		$constant = $this->Xin_model->get_measurement_unit_type();
+
+		$data = array();
+
+		foreach ($constant->result() as $r) {
+
+			$data[] = array(
+				'<span data-toggle="tooltip" data-placement="top" title="' . $this->lang->line('xin_edit') . '"><button type="button" class="btn icon-btn btn-sm btn-outline-secondary waves-effect waves-light" data-toggle="modal" data-target=".edit_setting_datail" data-field_id="' . $r->uom_id . '" data-field_type="measurement_units"><span class="fas fa-pencil-alt"></span></button></span> <span data-toggle="tooltip" data-placement="top" title="' . $this->lang->line('xin_delete') . '"><button type="button" class="btn icon-btn btn-sm btn-outline-danger waves-effect waves-light delete" data-toggle="modal" data-target=".delete-modal" data-record-id="' . $r->uom_id . '" data-token_type="measurement_units"><span class="fas fa-trash-restore"></span></button></span>',
+				$r->uom_name
+			);
+		}
+
+		$output = array(
+			"draw" => $draw,
+			"recordsTotal" => $constant->num_rows(),
+			"recordsFiltered" => $constant->num_rows(),
+			"data" => $data
+		);
+
+		echo json_encode($output);
+		exit();
+	}
+
 	public function read_tempalte()
 	{
 		$data['title'] = $this->Xin_model->site_title();
@@ -2172,6 +2252,7 @@ class Settings extends MY_Controller
 	// Validate and add info in database
 	public function contract_type_info()
 	{
+		$this->output($this->input->post());
 
 		if ($this->input->post('type') == 'contract_type_info') {
 			/* Define return | here result is used to return user data and error for error message */
@@ -2862,50 +2943,37 @@ class Settings extends MY_Controller
 
 	// // update feature 9-5-2023
 	// // Validate and add info in database
-	// public function vendors()
-	// {
+	public function measurement_unit_info()
+	{
 
-	// 	if ($this->input->post('type') == 'vendors') {
-	// 		/* Define return | here result is used to return user data and error for error message */
-	// 		$Return = array('result' => '', 'error' => '', 'csrf_hash' => '');
-	// 		$Return['csrf_hash'] = $this->security->get_csrf_hash();
+		if ($this->input->post('type') == 'measurement_unit_info') {
+			/* Define return | here result is used to return user data and error for error message */
+			$Return = array('result' => '', 'error' => '', 'csrf_hash' => '');
+			$Return['csrf_hash'] = $this->security->get_csrf_hash();
 
-	// 		/* Server side PHP input validation */
-	// 		if ($this->input->post('vendor_name') === '') {
-	// 			$Return['error'] = $this->lang->line('ms_error_vendor_name_field');
-	// 		} else if ($this->input->post('vendor_name') === '') {
-	// 			$Return['error'] = $this->lang->line('ms_error_vendor_name_field');
-	// 		} else if ($this->input->post('vendor_contact') === '') {
-	// 			$Return['error'] = $this->lang->line('ms_error_vendor_contact_field');
-	// 		} else if ($this->input->post('vendor_address') === '') {
-	// 			$Return['error'] = $this->lang->line('ms_error_vendor_address_field');
-	// 		}
+			/* Server side PHP input validation */
+			if ($this->input->post('uom_name') === '') {
+				$Return['error'] = $this->lang->line('ms_error_uom_name_field');
+			}
 
-	// 		if ($Return['error'] != '') {
-	// 			$this->output($Return);
-	// 		}
+			if ($Return['error'] != '') {
+				$this->output($Return);
+			}
 
-	// 		$data = array(
-	// 			'vendor_name' => $this->input->post('vendor_name'),
-	// 			'vendor_contact' => $this->input->post('vendor_contact'),
-	// 			'vendor_address' => $this->input->post('vendor_address'),
-	// 			'city' => $this->input->post('city'),
-	// 			'state' => $this->input->post('state'),
-	// 			'zipcode' => $this->input->post('zipcode'),
-	// 			'country' => $this->input->post('country'),
-	// 			'created_at' => date('d-m-Y h:i:s')
-	// 		);
+			$data = array(
+				'uom_name' => $this->input->post('uom_name'),
+			);
 
-	// 		$result = $this->Xin_model->add_vendor($data);
-	// 		if ($result == TRUE) {
-	// 			$Return['result'] = $this->lang->line('ms_vendor_added');
-	// 		} else {
-	// 			$Return['error'] = $this->lang->line('xin_error_msg');
-	// 		}
-	// 		$this->output($Return);
-	// 		exit;
-	// 	}
-	// }
+			$result = $this->Xin_model->add_measurement_unit($data);
+			if ($result == TRUE) {
+				$Return['result'] = $this->lang->line('ms_uom_added');
+			} else {
+				$Return['error'] = $this->lang->line('xin_error_msg');
+			}
+			$this->output($Return);
+			exit;
+		}
+	}
 
 	// // Validate and add info in database
 	// public function cost_categories_info()
@@ -3320,7 +3388,42 @@ class Settings extends MY_Controller
 		}
 	}
 
-	
+	// delete constant record > table
+	public function delete_measurement_units()
+	{
+		if ($this->input->post('type') == 'delete_record') {
+			/* Define return | here result is used to return user data and error for error message */
+			$Return = array('result' => '', 'error' => '', 'csrf_hash' => '');
+			$id = $this->uri->segment(4);
+			$Return['csrf_hash'] = $this->security->get_csrf_hash();
+			$result = $this->Xin_model->delete_measurement_unit_record($id);
+			if (isset($id)) {
+				$Return['result'] = $this->lang->line('ms_uom_deleted');
+			} else {
+				$Return['error'] = $this->lang->line('xin_error_msg');
+			}
+			$this->output($Return);
+		}
+	}
+	// delete constant record > table
+	public function delete_discounts()
+	{
+		if ($this->input->post('type') == 'delete_record') {
+			/* Define return | here result is used to return user data and error for error message */
+			$Return = array('result' => '', 'error' => '', 'csrf_hash' => '');
+			$id = $this->uri->segment(4);
+			$Return['csrf_hash'] = $this->security->get_csrf_hash();
+			$result = $this->Xin_model->delete_discount_record($id);
+			if (isset($id)) {
+				$Return['result'] = $this->lang->line('ms_discount_deleted');
+			} else {
+				$Return['error'] = $this->lang->line('xin_error_msg');
+			}
+			$this->output($Return);
+		}
+	}
+
+
 
 	// delete constant record > table
 	public function delete_cost_categories()
@@ -4155,6 +4258,44 @@ class Settings extends MY_Controller
 			exit;
 		}
 	}
+
+	// Validate and update info in database
+	public function update_measurement_unit()
+	{
+
+		if ($this->input->post('type') == 'edit_record') {
+
+			$id = $this->uri->segment(4);
+
+			/* Define return | here result is used to return user data and error for error message */
+			$Return = array('result' => '', 'error' => '', 'csrf_hash' => '');
+			$Return['csrf_hash'] = $this->security->get_csrf_hash();
+
+			/* Server side PHP input validation */
+			if ($this->input->post('uom_name') === '') {
+				$Return['error'] = $this->lang->line('ms_error_uom_name_field');
+			}
+
+			if ($Return['error'] != '') {
+				$this->output($Return);
+			}
+
+			$data = array(
+				'uom_name' => $this->input->post('uom_name')
+			);
+
+			$result = $this->Xin_model->update_measurement_unit_record($data, $id);
+
+			if ($result == TRUE) {
+				$Return['result'] = $this->lang->line('ms_uom_deleted');
+			} else {
+				$Return['error'] = $this->lang->line('xin_error_msg');
+			}
+			$this->output($Return);
+			exit;
+		}
+	}
+
 	// Validate and update info in database
 	public function performance_info()
 	{
@@ -4188,6 +4329,88 @@ class Settings extends MY_Controller
 
 			if ($result == TRUE) {
 				$Return['result'] = $this->lang->line('xin_success_performance_config_updated');
+			} else {
+				$Return['error'] = $this->lang->line('xin_error_msg');
+			}
+			$this->output($Return);
+			exit;
+		}
+	}
+
+	// Validate and update info in database
+	public function update_discount()
+	{
+
+		if ($this->input->post('type') == 'edit_record') {
+
+			/* Define return | here result is used to return user data and error for error message */
+			$Return = array('result' => '', 'error' => '', 'csrf_hash' => '');
+			$Return['csrf_hash'] = $this->security->get_csrf_hash();
+
+			$id = $this->uri->segment(4);
+
+			/* Server side PHP input validation */
+			if ($this->input->post('discount_name') === '') {
+				$Return['error'] = $this->lang->line('ms_error_discount_name_field');
+			} else if ($this->input->post('discount_type') === '') {
+				$Return['error'] = $this->lang->line('ms_error_discount_type_field');
+			} else if ($this->input->post('discount_value') === '') {
+				$Return['error'] = $this->lang->line('ms_error_discount_value_field');
+			}
+
+			if ($Return['error'] != '') {
+				$hrm_f->output($Return);
+			}
+
+			$data = array(
+				'discount_name' => $this->input->post('discount_name'),
+				'discount_type' => $this->input->post('discount_type'),
+				'discount_value' => $this->input->post('discount_value'),
+			);
+
+			$result = $this->Xin_model->update_discount_record($data, $id);
+
+			if ($result == TRUE) {
+				$Return['result'] = $this->lang->line('ms_discount_updated');
+			} else {
+				$Return['error'] = $this->lang->line('xin_error_msg');
+			}
+			$this->output($Return);
+			exit;
+		}
+	}
+
+	// 
+	public function insert_discount()
+	{
+
+		if ($this->input->post('type') == 'discounts') {
+			/* Define return | here result is used to return user data and error for error message */
+			$Return = array('result' => '', 'error' => '', 'csrf_hash' => '');
+			$Return['csrf_hash'] = $this->security->get_csrf_hash();
+
+			/* Server side PHP input validation */
+			if ($this->input->post('discount_name') === '') {
+				$Return['error'] = $this->lang->line('ms_error_discount_name_field');
+			} else if ($this->input->post('discount_type') === '') {
+				$Return['error'] = $this->lang->line('ms_error_discount_type_field');
+			} else if ($this->input->post('discount_value') === '') {
+				$Return['error'] = $this->lang->line('ms_error_discount_value_field');
+			}
+
+			if ($Return['error'] != '') {
+				$this->output($Return);
+			}
+
+			$data = array(
+				'discount_name' => $this->input->post('discount_name'),
+				'discount_type' => $this->input->post('discount_type'),
+				'discount_value' => $this->input->post('discount_value'),
+			);
+
+			$result = $this->Xin_model->add_discount($data);
+			if ($result == TRUE) {
+				$Return['result'] = $this->lang->line('ms_discount_added');
 			} else {
 				$Return['error'] = $this->lang->line('xin_error_msg');
 			}

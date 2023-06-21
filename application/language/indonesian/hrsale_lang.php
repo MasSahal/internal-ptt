@@ -50,7 +50,7 @@ $lang['dashboard_designation'] = 'Penunjukan';
 $lang['dashboard_dob'] = 'DOB';
 $lang['dashboard_contact'] = 'Kontak';
 $lang['dashboard_my_projects'] = 'Proyek Saya';
-$lang['dashboard_xin_title'] = 'Judul';
+$lang['dashboard_title_taxtitle'] = 'Judul';
 $lang['dashboard_project_date'] = 'Tanggal Proyek';
 $lang['dashboard_employees'] = 'Karyawan';
 $lang['dashboard_show_more'] = 'Tampilkan lebih banyak';
@@ -902,6 +902,8 @@ $lang['xin_sunday'] = 'Minggu';
 $lang['xin_clear'] = 'Hapus';
 $lang['xin_option'] = 'Opsi';
 $lang['xin_day'] = 'Hari';
+$lang['xin_month'] = 'Bulan';
+$lang['xin_year'] = 'Tahun';
 $lang['xin_create_edit_delete_role'] = 'Buat / Edit / Hapus';
 $lang['xin_update_view_role'] = 'Perbarui / Lihat';
 $lang['xin_generate_view'] = 'Buat / Lihat';
@@ -2143,6 +2145,7 @@ $lang['xin_role_add'] = 'Tambah';
 $lang['xin_role_edit'] = 'Edit';
 $lang['xin_role_delete'] = 'Hapus';
 $lang['xin_role_import'] = 'Impor';
+$lang['xin_role_detail'] = 'Detail';
 $lang['xin_role_view'] = 'Lihat Perusahaan';
 $lang['xin_role_view_own'] = 'Lihat Sendiri';
 $lang['xin_role_dwn_resume'] = 'Unduh Resume';
@@ -2941,6 +2944,8 @@ $lang['xin_tab_menu'] = "";
 $lang['ms_cost'] = "Pembelian";
 $lang['ms_cost_dashboard'] = "Dashbor Pembelian";
 $lang['ms_cost_category'] = "Kategori";
+$lang['ms_error_invoice_number_field'] = "Bidang Invoice Number diperlukan.";
+$lang['ms_error_status_field'] = "Bidang Status diperlukan.";
 
 // product
 $lang['ms_products'] = "Produk";
@@ -2962,11 +2967,13 @@ $lang['ms_product_success_deleted'] = "Produk berhasil dihapus!";
 $lang['ms_product_success_added'] = "Produk berhasil ditambahkan!";
 $lang['ms_edit_product'] = "Edit Produk";
 $lang['ms_product_success_updated'] = "Produk berhasil diperbarui!";
+$lang['ms_product_empty_data'] = "Harap isi bidang item product!";
 
 // product transaksi
 $lang['ms_project_trans'] = "Transaksi Projek";
 $lang['ms_project_status_trans'] = "Status Transaksi";
 $lang['ms_project_trans_detail'] = "Detail Transaksi";
+$lang['ms_project_trans_edit'] = "Edit Transaksi";
 
 // product cat
 $lang['ms_product_categories'] = "Kategori Produk";
@@ -2975,6 +2982,15 @@ $lang['ms_product_category_added'] = "Kategori Produk ditambahkan";
 $lang['ms_product_category_updated'] = "Kategori Produk diperbarui";
 $lang['ms_product_category_success_deleted'] = "Kategori Produk berhasil dihapus!";
 $lang['ms_error_product_category_name_field'] = "Bidang Nama Kategori diperlukan.";
+
+// product cat
+$lang['ms_product_sub_categories'] = "Sub-Kategori Produk";
+$lang['ms_product_sub_category'] = "Kategori Produk";
+$lang['ms_edit_sub_sub_product_category'] = "Edit Sub-Kategori Produk";
+$lang['ms_product_sub_category_added'] = "Sub-Kategori Produk ditambahkan";
+$lang['ms_product_sub_category_updated'] = "Sub-Kategori Produk diperbarui";
+$lang['ms_product_sub_category_success_deleted'] = "Sub-Kategori Produk berhasil dihapus!";
+$lang['ms_error_product_sub_category_name_field'] = "Bidang Nama Sub-Kategori diperlukan.";
 
 // global
 $lang['ms_reference'] = "Referensi";
@@ -2985,6 +3001,17 @@ $lang['ms_invoice_number'] = "Invoice";
 $lang['ms_invoice_date'] = "Tanggal Invoice";
 $lang['ms_error_invoice_date_field'] = "Bidang Tanggal Invoice diperlukan!";
 $lang['ms_measurement_units'] = "Pilih Satuan Unit.";
+$lang['ms_parent'] = "Parent";
+$lang['ms_child'] = "Child";
+$lang['ms_year'] = "Tahun";
+$lang['ms_month'] = "Bulan";
+$lang['ms_custom'] = "Kustom";
+
+$lang['ms_priority_status'] = "Prioritas";
+$lang['ms_priority_heigh'] = "HIGH";
+$lang['ms_priority_medium'] = "MEDIUM";
+$lang['ms_priority_low'] = "LOW";
+
 
 $lang['ms_status_pending'] = "Belum Lunas";
 $lang['ms_status_prepayment'] = "Terbayar Sebagian";
@@ -3000,10 +3027,76 @@ $lang['ms_trans_prepayment'] = "Pembayaran Uang Muka";
 $lang['ms_trans_status'] = "Status Pembayaran";
 $lang['ms_trans_deleted'] = "Data transasksi dihapus!";
 $lang['ms_trans_added'] = "Data transasksi ditambahkan!";
+$lang['ms_trans_total'] = "Total transasksi";
 
+$lang['ms_uoms'] = "Jenis Satuan Baku";
+$lang['ms_uom_name'] = "Nama Satuan Baku";
+$lang['ms_error_uom_name_field'] = "Bagian Nama Satuan Baku diperlukan!";
+$lang['ms_uom_added'] = "Satuan berhasil ditambahkan!";
+$lang['ms_uom_deleted'] = "Satuan berhasil dihapus!";
+$lang['ms_uom_updated'] = "Satuan berhasil diperbarui!";
+$lang['ms_edit_uom'] = "Edit Satuan Baku";
+
+
+$lang['ms_add_edit_delete_role_info'] = " Kembali";
 $lang['ms_go_back'] = " Kembali";
 $lang['ms_ref_code'] = " Referensi Kode";
+$lang['ms_reload'] = "Muat Ulang";
+$lang['ms_trans_info'] = "Pastikan hitungan <b>" . $lang['xin_amount'] . "</b> sudah muncul, jika belum muncul harap muat ulang halaman ini!";
 
+
+$lang['ms_discounts'] = "Jenis Diskon";
+$lang['ms_discount_name'] = "Nama Diskon";
+$lang['ms_discount_title'] = "Diskon";
+$lang['ms_discount_title_flat'] = "Diskon Tetap";
+$lang['ms_discount_title_percentage'] = "Diskon Persentase";
+$lang['ms_discount_type'] = "Tipe Diskon";
+$lang['ms_discount_value'] = "Jumlah Diskon";
+$lang['ms_error_discount_name_field'] = "Kolom Nama Diskon Deperlukan!";
+$lang['ms_error_discount_type_field'] = "Kolom Tipe Diskon Deperlukan!";
+$lang['ms_error_discount_value_field'] = "Kolom Value Diskon Deperlukan!";
+$lang['ms_discount_added'] = "Diskon berhasil ditambahkan!";
+$lang['ms_discount_deleted'] = "Diskon berhasil dihapus!";
+$lang['ms_discount_updated'] = "Diskon berhasil diperbarui!";
+
+
+$lang['ms_purchase_transactions'] = "Transaksi";
+$lang['ms_purchase_requisitions'] = "Permintan Pembelian";
+$lang['ms_purchase_number'] = "Nomor";
+$lang['ms_purchase_issue_date'] = "Tanggal Pengajuan";
+$lang['ms_purchase_due_approval_date'] = "Tanggal Aproval";
+$lang['ms_purchase_shipping_date'] = "Tanggal Pengiriman";
+$lang['ms_purchase_shipping_information'] = "Informasi Pengiriman";
+$lang['ms_purchase_expedition_name'] = "Nama Ekspedisi";
+
+$lang['ms_purchase_items'] = "Item/Produk";
+$lang['ms_purporse'] = "Keperluan";
+$lang['ms_purchase_status'] = "Status";
+
+
+$lang['ms_purchase_orders'] = "Order Pembelian";
+
+
+$lang['ms_purchase_deliveries'] = "Pengiriman";
+
+
+$lang['ms_purchase_invoices'] = "Invoice Pembelian";
+
+
+$lang['ms_purchase_dashboard'] = "Dashbaord";
+$lang['ms_purchasing'] = "Pembelian";
+
+
+
+//error status
+$lang['ms_error_priority_status_field'] = "Kolom prioritas diperlukan!";
+$lang['ms_error_purpose_field'] = "Kolom keperluan diperlukan!";
+$lang['ms_error_item_empty_data'] = "Item data diperlukan!";
+
+
+// /ref title
+$lang['ms_ref_title_unit_price'] = "Refrensi Harga Satuan";
+$lang['ms_ref_delivery_fee'] = "Refrensi Harga Pengiriman";
 
 /////////////////////////////////////////////////// akhir hrsale v2.0.1
 

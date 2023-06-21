@@ -46,7 +46,7 @@ class Project_costs extends MY_Controller
 
 		// dd(array_keys($this->Project_costs_model->get_latest_month_trans_vendor()->result()));
 
-		if (in_array('19', $role_resources_ids)) {
+		if (in_array('470', $role_resources_ids)) {
 			if (!empty($session)) {
 				$data['subview'] = $this->load->view("admin/project_costs/dashboard", $data, TRUE);
 				$this->load->view('admin/layout/layout_main', $data); //page load
@@ -60,103 +60,114 @@ class Project_costs extends MY_Controller
 
 	public function create_transaction()
 	{
-		// if ($this->input->post('type') == 'transaction') {
-		/* Define return | here result is used to return user data and error for error message */
-		$Return = array('result' => '', 'error' => '', 'csrf_hash' => '');
-		$Return['csrf_hash'] = $this->security->get_csrf_hash();
+		if ($this->input->post('type') == 'transaction') {
+			/* Define return | here result is used to return user data and error for error message */
+			$Return = array('result' => '', 'error' => '', 'csrf_hash' => '');
+			$Return['csrf_hash'] = $this->security->get_csrf_hash();
 
-		/* Server side PHP input validation */
-		if ($this->input->post('vendor_name') === '') {
-			$Return['error'] = $this->lang->line('ms_error_vendor_name_field');
-		} else if ($this->input->post('vendor_name') === '') {
-			$Return['error'] = $this->lang->line('ms_error_vendor_name_field');
-		} else if ($this->input->post('vendor_contact') === '') {
-			$Return['error'] = $this->lang->line('ms_error_vendor_contact_field');
-		} else if ($this->input->post('vendor_address') === '') {
-			$Return['error'] = $this->lang->line('ms_error_vendor_address_field');
-		}
-
-
-		$data_project_cost = array(
-			'user_id' 				=> 0,
-			'invoice_id' 			=> "PTT" . time(),
-			'invoice_number'		=> $this->input->post('invoice_number'),
-			'invoice_date' 			=> $this->input->post('invoice_date') ?? date("Y-m-d"),
-			'vendor_id' 			=> $this->input->post('vendor'),
-			'status' 				=> $this->input->post('status'),
-			'prepayment' 			=> $this->input->post('prepayment') ?? 0,
-			'discount_type' 		=> $this->input->post('discount_type'),
-			'discount' 				=> $this->input->post('discount_amount'),
-			'tax_total' 			=> $this->input->post('ftax_total') ?? 0,
-			'amount' 				=> $this->input->post('fgrand_total') ?? 0,
-			'ref_code' 				=> $this->input->post('ref_code'),
-			'created_at' 			=> date('Y-m-d h:i:s')
-		);
-
-		$insert_project_cost = $this->Project_costs_model->insert($data_project_cost);
-
-		if ($insert_project_cost) {
-			//
-			$data_insert = [];
-
-			for ($i = 0; $i < count($this->input->post('item_name')); $i++) {
-				$product_id 	= $this->input->post('product_id');
-				// $category_id 	= $this->input->post('category_id');
-				$product_name 	= $this->input->post('item_name');
-				// $product_number = $this->input->post('product_number');
-				$tax_type 		= $this->input->post('tax_type');
-				$tax_rate_item	= $this->input->post('tax_rate_item');
-				// $uom_id 		= $this->input->post('uom_id');
-				$project_id		= $this->input->post('project_id');
-				$qty			= $this->input->post('qty');
-				$price			= $this->input->post('price');
-				$sub_total_item	= $this->input->post('sub-total-item');
-
-				$product_data = $this->Product_model->read_info($product_id[$i]);
-				if (!is_null($product_data)) {
-					$data_insert[] = [
-						'product_id' 		=> $product_data[0]->product_id,
-						'project_cost_id'	=> $insert_project_cost,
-						'category_id' 		=> $product_data[0]->category_id,
-						'product_name' 		=> $product_name[$i],
-						'product_number' 	=> $product_data[0]->product_number,
-						'uom_id' 			=> $product_data[0]->uom_id,
-						'project_id' 		=> $project_id[$i],
-						'tax_id' 			=> $tax_type[$i],
-						'tax_rate' 			=> $tax_rate_item[$i],
-						'qty' 				=> $qty[$i],
-						'price' 			=> $price[$i],
-						'amount' 			=> $sub_total_item[$i],
-					];
-				} else {
-					$data_insert[] = [
-						'product_id' 		=> 0,
-						'category_id' 		=> 0,
-						'project_cost_id'	=> $insert_project_cost,
-						'product_name' 		=> $product_name[$i],
-						'product_number' 	=> 0,
-						'uom_id' 			=> 0,
-						'project_id' 		=> $project_id[$i],
-						'tax_id' 			=> $tax_type[$i],
-						'tax_rate' 			=> $tax_rate_item[$i],
-						'qty' 				=> $qty[$i],
-						'price' 			=> $price[$i],
-						'amount' 			=> $sub_total_item[$i],
-					];
-				}
+			/* Server side PHP input validation */
+			if ($this->input->post('vendor') === '') {
+				$Return['error'] = $this->lang->line('ms_error_vendor_name_field');
+			} else if ($this->input->post('invoice_number') === '') {
+				$Return['error'] = $this->lang->line('ms_error_invoice_number_field');
+			} else if ($this->input->post('status') === '') {
+				$Return['error'] = $this->lang->line('ms_error_status_field');
+			} else if ($this->input->post('invoice_due_date') === '') {
+				$Return['error'] = $this->lang->line('ms_error_invoice_date_field');
 			}
 
-			$result = $this->Xin_model->add_recently_products($data_insert, true);
-			if ($result) {
-				$Return['result'] = $this->lang->line('ms_trans_added');
+			if (is_null($this->input->post('item_name'))) {
+				$Return['error'] = $this->lang->line('ms_product_empty_data');
+			}
+
+			if ($Return['error'] != '') {
+				$this->output($Return);
+				exit();
+			}
+
+			// dd($this->input->post());
+			$data_project_cost = array(
+				'user_id' 				=> 0,
+				'invoice_id' 			=> "PTT" . time(),
+				'invoice_number'		=> $this->input->post('invoice_number'),
+				'invoice_date' 			=> $this->input->post('invoice_date') ?? date("Y-m-d"),
+				'invoice_due_date'		=> $this->input->post('invoice_due_date') ?? date("Y-m-d"),
+				'due_date_type'			=> $this->input->post('select_due_date'),
+				'vendor_id' 			=> $this->input->post('vendor'),
+				'status' 				=> $this->input->post('status'),
+				'prepayment' 			=> $this->input->post('prepayment') ?? 0,
+				'tax_total' 			=> $this->input->post('ftax_total') ?? 0,
+				'amount' 				=> $this->input->post('fgrand_total') ?? 0,
+				'ref_code' 				=> $this->input->post('ref_code'),
+				'created_at' 			=> date('Y-m-d h:i:s')
+			);
+
+			$insert_project_cost = $this->Project_costs_model->insert($data_project_cost);
+
+			if ($insert_project_cost) {
+				//
+				$data_insert = [];
+
+				for ($i = 0; $i < count($this->input->post('item_name')); $i++) {
+
+					$product_id 		= $this->input->post('product_id');
+					$sub_category_id	= $this->input->post('sub_category_id');
+					$product_name 		= $this->input->post('item_name');
+					$product_number 	= $this->input->post('product_number');
+					$tax_type 			= $this->input->post('tax_type');
+					$tax_rate_item		= $this->input->post('tax_rate_item');
+					$discount_type		= $this->input->post('discount_type');
+					$discount_rate_item	= $this->input->post('discount_rate_item');
+					$uom_id 			= $this->input->post('uom_id');
+					$project_id			= $this->input->post('project_id');
+					$qty				= $this->input->post('qty');
+					$price				= $this->input->post('price');
+					$sub_total_item		= $this->input->post('sub-total-item');
+
+					$data_insert[] = [
+						'product_id' 		=> $product_id[$i],
+						'project_cost_id'	=> $insert_project_cost,
+						'sub_category_id'	=> $sub_category_id[$i],
+						'product_name' 		=> $product_name[$i],
+						'product_number' 	=> $product_number[$i],
+						'uom_id' 			=> $uom_id[$i],
+						'project_id' 		=> $project_id[$i],
+						'tax_id' 			=> $tax_type[$i],
+						'tax_rate' 			=> $tax_rate_item[$i],
+						'discount_id'		=> $discount_type[$i],
+						'discount_rate'		=> $discount_rate_item[$i],
+						'qty' 				=>	$qty[$i],
+						'price' 			=> $price[$i],
+						'amount' 			=> $sub_total_item[$i],
+					];
+
+
+					// jika id produk = 0 -> berarti kosong
+					if ($product_id[$i] == 0) {
+						$this->Product_model->insert(
+							[
+								'sub_category_id'	=> 0,
+								'product_name' 		=> $product_name[$i],
+								'product_number' 	=> "KD" . time() . rand(100, 990),
+								'uom_id' 			=> 0,
+								'price' 			=> $price[$i],
+							]
+						);
+					}
+				}
+
+				$result = $this->Xin_model->add_recently_products($data_insert, true);
+				if ($result) {
+					$Return['result'] = $this->lang->line('ms_trans_added');
+				} else {
+					$Return['error'] = $this->lang->line('xin_error_msg');
+				}
+				$this->output($Return);
+				exit;
 			} else {
 				$Return['error'] = $this->lang->line('xin_error_msg');
+				$this->output($Return);
 			}
-			$this->output($Return);
-			exit;
-		} else {
-			$Return['error'] = $this->lang->line('xin_error_msg');
-			$this->output($Return);
 		}
 	}
 
@@ -352,7 +363,7 @@ class Project_costs extends MY_Controller
 		$data['title'] = $this->lang->line('ms_project_trans') . ' | ' . $this->Xin_model->site_title();
 		// $data['all_employees'] = $this->Xin_model->all_employees();
 		// $data['get_all_companies'] = $this->Xin_model->get_companies();
-		$data['projects'] = $this->Project_model->get_projects_name()->result();
+		$data['all_projects'] = $this->Project_model->get_projects_name()->result();
 		$data['breadcrumbs'] = $this->lang->line('ms_project_trans');
 		$data['path_url'] = 'project_costs';
 
@@ -360,7 +371,7 @@ class Project_costs extends MY_Controller
 
 		// dd($data);
 		$role_resources_ids = $this->Xin_model->user_role_resource();
-		if (in_array('19', $role_resources_ids)) {
+		if (in_array('473', $role_resources_ids)) {
 			if (!empty($session)) {
 				$data['subview'] = $this->load->view("admin/project_costs/transaction_list", $data, TRUE);
 				$this->load->view('admin/layout/layout_main', $data); //page load
@@ -401,27 +412,30 @@ class Project_costs extends MY_Controller
 				$vendor_name = '--';
 			}
 
-			// recently product
-			$rp = $this->Xin_model->read_id_category_recently_product($r->project_cost_id);
-			// dd($rp);
-			$category_res = $this->Project_costs_model->get_recently_category_name($rp);
-			if (!is_null($category_res)) {
+			// // recently product
+			// $rp = $this->Xin_model->read_id_sub_category_recently_product($r->project_cost_id);
+			// // dd($rp);
+			// $sub_category_res = $this->Project_costs_model->get_recently_sub_category_name($rp);
+			// // dd($category_res);
 
+			// $res_category = [];
+			// if (!is_null($sub_category_res)) {
 
-				$category_name = "<ul style='padding-left:0'>";
-				$total_count = 0;
+			// 	$category_name = "<ul style='padding-left:0'>";
 
-				foreach ($category_res as $cr) {
-					$total_count += $cr->total_count;
-				}
+			// 	foreach ($sub_category_res as $key => $scr) {
+			// 		$category = $this->Xin_model->read_product_category($scr);
 
-				foreach ($category_res as $cr) {
-					$category_name .= '<li><small>' . $cr->total_count / $total_count * 100 . '%' . ' - ' . $cr->category_name  . '</small></li>';
-				}
-				$category_name .= "</ul>";
-			} else {
-				$category_name = '--';
-			}
+			// 		$res_category[] = [
+			// 			'category_name' => $category[0]->category_name,
+			// 		];
+			// 		$category_name .= '<li><small>' . $category_name  . '</small></li>';
+			// 	}
+			// 	$category_name .= "</ul>";
+			// } else {
+			// 	$category_name = '--';
+			// }
+			$category_name = '--';
 
 			// dd($category_name);
 			// dd($category_name);
@@ -430,23 +444,23 @@ class Project_costs extends MY_Controller
 
 			//invoice_number
 			$invoice_id = '';
-			if (in_array('330', $role_resources_ids)) { //view
-				$invoice_id = '<a href="' . site_url() . 'admin/project_costs/view/' . $r->project_cost_id . '/">' . $r->invoice_id . '</a>';
+			if (in_array('475', $role_resources_ids)) { //view
+				$invoice_id = '<a href="' . site_url() . 'admin/project_costs/view/' . $r->project_cost_id . '/">' . $r->invoice_number . '</a>';
 			} else {
-				$invoice_id = $r->invoice_id;
+				$invoice_id = $r->invoice_number;
 			}
 
-			if (in_array('329', $role_resources_ids)) { //edit
-				$edit = '<span data-toggle="tooltip" data-placement="top" title="' . $this->lang->line('xin_edit') . '"><a href="' . site_url() . 'admin/quotes/edit/' . $r->project_cost_id . '/"><button type="button" class="btn icon-btn btn-sm btn-outline-secondary waves-effect waves-light"><span class="fas fa-pencil-alt"></span></button></a></span>';
+			if (in_array('476', $role_resources_ids)) { //edit
+				$edit = '<span data-toggle="tooltip" data-placement="top" title="' . $this->lang->line('xin_edit') . '"><a href="' . site_url() . 'admin/project_costs/edit_transaction/' . $r->project_cost_id . '/"><button type="button" class="btn icon-btn btn-sm btn-outline-secondary waves-effect waves-light"><span class="fas fa-pencil-alt"></span></button></a></span>';
 			} else {
 				$edit = '';
 			}
-			if (in_array('329', $role_resources_ids)) { // delete
+			if (in_array('477', $role_resources_ids)) { // delete
 				$delete = '<span data-toggle="tooltip" data-placement="top" title="' . $this->lang->line('xin_delete') . '"><button type="button" class="btn icon-btn btn-sm btn-outline-danger waves-effect waves-light delete" data-toggle="modal" data-target=".delete-modal" data-record-id="' . $r->project_cost_id . '"><span class="fas fa-trash-restore"></span></button></span>';
 			} else {
 				$delete = '';
 			}
-			if (in_array('330', $role_resources_ids)) { //view
+			if (in_array('475', $role_resources_ids)) { //view
 				$view = '<span data-toggle="tooltip" data-placement="top" title="' . $this->lang->line('xin_view') . '"><a href="' . site_url() . 'admin/project_costs/view/' . $r->project_cost_id . '/"><button type="button" class="btn icon-btn btn-sm btn-outline-secondary waves-effect waves-light""><span class="fa fa-arrow-circle-right"></span></button></a></span>';
 			} else {
 				$view = '';
@@ -514,6 +528,7 @@ class Project_costs extends MY_Controller
 		}
 
 		$date = '<i class="far fa-calendar-alt position-left"></i> ' . $this->Xin_model->set_date_format($result[0]->invoice_date);
+		$due_date = '<i class="far fa-calendar-alt position-left"></i> ' . $this->Xin_model->set_date_format($result[0]->invoice_due_date);
 
 		if ($result[0]->status == 0) {
 			$status = '<span class="badge badge-danger">' . $this->lang->line('ms_status_pending') . '</span>';
@@ -522,7 +537,7 @@ class Project_costs extends MY_Controller
 		} else {
 			$status = '<span class="badge badge-success">' . $this->lang->line('ms_status_paid') . '</span>';
 		}
-		$category_res = $this->Project_costs_model->get_recently_category_name($result[0]->project_cost_id);
+		// $category_res = $this->Project_costs_model->get_recently_category_name($result[0]->project_cost_id);
 		// dd($category_res);
 		// dd($result);
 		$hasil = new stdClass();
@@ -531,6 +546,7 @@ class Project_costs extends MY_Controller
 		$hasil->invoice_id = $result[0]->invoice_id;
 		$hasil->invoice_number = $result[0]->invoice_number;
 		$hasil->invoice_date = $date;
+		$hasil->invoice_due_date = $due_date;
 		$hasil->vendor_name = $vendor_name;
 		$hasil->ref_code = $result[0]->ref_code;
 		$hasil->category_name = "--";
@@ -547,14 +563,12 @@ class Project_costs extends MY_Controller
 		$record = [];
 		$total = 0;
 		$result2 = $this->Xin_model->read_recently_products($result[0]->project_cost_id);
-		// dd($result2->result());
-
-		// dd($result2->result());
+		// if (!is_null($$result2->result())) {
 		foreach ($result2->result() as $r) {
 
-			$kategori = $this->Xin_model->read_product_category($r->category_id);
+			$kategori = $this->Xin_model->read_product_sub_category($r->sub_category_id);
 			if ($kategori) {
-				$category_name = $kategori[0]->category_name;
+				$category_name = $kategori[0]->sub_category_name;
 			} else {
 				$category_name = "--";
 			}
@@ -601,9 +615,13 @@ class Project_costs extends MY_Controller
 
 		$data['record'] = $record;
 		$data['total'] = $total;
+		// } else {
+		// 	$data['record'] = null;
+		// 	$data['total'] = 0;
+		// }
 		$data['total_diskon'] = $result[0]->discount;
 		$role_resources_ids = $this->Xin_model->user_role_resource();
-		if (in_array('19', $role_resources_ids)) {
+		if (in_array('475', $role_resources_ids)) {
 			if (!empty($session)) {
 				$data['subview'] = $this->load->view("admin/project_costs/transaction_detail", $data, TRUE);
 				$this->load->view('admin/layout/layout_main', $data); //page load
@@ -721,6 +739,156 @@ class Project_costs extends MY_Controller
 				$Return['error'] = $this->lang->line('xin_error_msg');
 			}
 			$this->output($Return);
+		}
+	}
+
+	public function edit_transaction()
+	{
+		$session = $this->session->userdata('username');
+		if (empty($session)) {
+			redirect('admin/');
+		}
+		$data['title'] = $this->lang->line('ms_cost_dashboard') . ' | ' . $this->Xin_model->site_title();
+		// $data['all_employees'] = $this->Xin_model->all_employees();
+		// $data['get_all_companies'] = $this->Xin_model->get_companies();
+		$data['breadcrumbs'] = $this->lang->line('ms_cost_dashboard');
+		$data['path_url'] = 'project_costs';
+		$role_resources_ids = $this->Xin_model->user_role_resource();
+
+		$id = $this->uri->segment(4);
+		$result = $this->Project_costs_model->read_info($id);
+
+		$data['record'] = $result[0];
+		$data['res_products'] = $this->Xin_model->read_recently_products($result[0]->project_cost_id)->result();
+		// dd($data);
+		$data['all_taxes'] = $this->Tax_model->get_all_taxes();
+		$data['all_discount'] = $this->Xin_model->get_all_discounts()->result();
+		$data['all_projects'] = $this->Project_model->get_all_projects(true);
+		// dd($result);
+
+		$session = $this->session->userdata('username');
+		if (!empty($session)) {
+			$data['subview'] = $this->load->view("admin/project_costs/dialog_transaction", $data, TRUE);
+			$this->load->view('admin/layout/layout_main', $data); //page load
+		} else {
+			redirect('admin/');
+		}
+	}
+
+	public function update_transaction()
+	{
+		if ($this->input->post('edit_type') == 'transactions') {
+			/* Define return | here result is used to return user data and error for error message */
+			$Return = array('result' => '', 'error' => '', 'csrf_hash' => '');
+			$Return['csrf_hash'] = $this->security->get_csrf_hash();
+
+			$id = $this->uri->segment(4);
+
+			/* Server side PHP input validation */
+			if ($this->input->post('vendor') === '') {
+				$Return['error'] = $this->lang->line('ms_error_vendor_name_field');
+			} else if ($this->input->post('invoice_number') === '') {
+				$Return['error'] = $this->lang->line('ms_error_invoice_number_field');
+			} else if ($this->input->post('status') === '') {
+				$Return['error'] = $this->lang->line('ms_error_status_field');
+			} else if ($this->input->post('invoice_due_date') === '') {
+				$Return['error'] = $this->lang->line('ms_error_invoice_date_field');
+			}
+
+			if (is_null($this->input->post('item_name'))) {
+				$Return['error'] = $this->lang->line('ms_product_empty_data');
+			}
+
+			if ($Return['error'] != '') {
+				$this->output($Return);
+				exit();
+			}
+
+			// dd($this->input->post());
+			$data_project_cost = array(
+				'user_id' 				=> 0,
+				'invoice_id' 			=> "PTT" . time(),
+				'invoice_number'		=> $this->input->post('invoice_number'),
+				'invoice_date' 			=> $this->input->post('invoice_date') ?? date("Y-m-d"),
+				'invoice_due_date'		=> $this->input->post('invoice_due_date') ?? date("Y-m-d"),
+				'due_date_type'			=> $this->input->post('select_due_date'),
+				'vendor_id' 			=> $this->input->post('vendor'),
+				'status' 				=> $this->input->post('status'),
+				'prepayment' 			=> $this->input->post('prepayment') ?? 0,
+				'tax_total' 			=> $this->input->post('ftax_total') ?? 0,
+				'amount' 				=> $this->input->post('fgrand_total') ?? 0,
+				'ref_code' 				=> $this->input->post('ref_code'),
+				'created_at' 			=> date('Y-m-d h:i:s')
+			);
+
+			$insert_project_cost = $this->Project_costs_model->update_record($data_project_cost, $id);
+
+			if ($insert_project_cost) {
+				//
+				$data_insert = [];
+
+				for ($i = 0; $i < count($this->input->post('item_name')); $i++) {
+
+					$recently_id 		= $this->input->post('recently_id');
+					$product_id 		= $this->input->post('product_id');
+					$sub_category_id	= $this->input->post('sub_category_id');
+					$product_name 		= $this->input->post('item_name');
+					$product_number 	= $this->input->post('product_number');
+					$tax_type 			= $this->input->post('tax_type');
+					$tax_rate_item		= $this->input->post('tax_rate_item');
+					$discount_type		= $this->input->post('discount_type');
+					$discount_rate_item	= $this->input->post('discount_rate_item');
+					$uom_id 			= $this->input->post('uom_id');
+					$project_id			= $this->input->post('project_id');
+					$qty				= $this->input->post('qty');
+					$price				= $this->input->post('price');
+					$sub_total_item		= $this->input->post('sub-total-item');
+
+					$data_insert[] = [
+						'recently_id' 		=> $recently_id[$i],
+						'product_id' 		=> $product_id[$i],
+						'project_cost_id'	=> $insert_project_cost,
+						'sub_category_id'	=> $sub_category_id[$i],
+						'product_name' 		=> $product_name[$i],
+						'product_number' 	=> $product_number[$i],
+						'uom_id' 			=> $uom_id[$i],
+						'project_id' 		=> $project_id[$i],
+						'tax_id' 			=> $tax_type[$i],
+						'tax_rate' 			=> $tax_rate_item[$i],
+						'discount_id'		=> $discount_type[$i],
+						'discount_rate'		=> $discount_rate_item[$i],
+						'qty' 				=>	$qty[$i],
+						'price' 			=> $price[$i],
+						'amount' 			=> $sub_total_item[$i],
+					];
+
+
+					// jika id produk = 0 -> berarti kosong
+					if ($product_id[$i] == 0) {
+						$this->Product_model->insert(
+							[
+								'sub_category_id'	=> 0,
+								'product_name' 		=> $product_name[$i],
+								'product_number' 	=> "KD" . time() . rand(100, 990),
+								'uom_id' 			=> 0,
+								'price' 			=> $price[$i],
+							]
+						);
+					}
+				}
+
+				$result = $this->Xin_model->update_batch_recently_products($data_insert, 'recently_id');
+				if ($result) {
+					$Return['result'] = $this->lang->line('ms_trans_updated');
+				} else {
+					$Return['error'] = $this->lang->line('xin_error_msg');
+				}
+				$this->output($Return);
+				exit;
+			} else {
+				$Return['error'] = $this->lang->line('xin_error_msg');
+				$this->output($Return);
+			}
 		}
 	}
 }

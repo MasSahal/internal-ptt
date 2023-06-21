@@ -5000,6 +5000,15 @@ a.bg-dark-darker:focus {
 .rounded-0 {
 	border-radius: 0 !important;
 }
+.rounded-1 {
+	border-radius: 5px !important;
+}
+.rounded-2 {
+	border-radius: 10px !important;
+}
+.rounded-3 {
+	border-radius: 15px !important;
+}
 .clearfix::after {
 	display: block;
 	clear: both;

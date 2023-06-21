@@ -396,9 +396,9 @@ class Project extends MY_Controller
 		if (!is_null($rp)) {
 			foreach ($rp->result() as $r) {
 
-				$kategori = $this->Xin_model->read_product_category($r->category_id);
+				$kategori = $this->Xin_model->read_product_sub_category($r->sub_category_id);
 				if ($kategori) {
-					$category_name = $kategori[0]->category_name;
+					$category_name = $kategori[0]->sub_category_name;
 				} else {
 					$category_name = "--";
 				}
@@ -429,7 +429,7 @@ class Project extends MY_Controller
 				$res->amount = $this->Xin_model->currency_sign($r->amount);
 
 				$record[] = $res;
-				$total = $total  + ($r->qty * $r->amount);
+				$total = $total  + ($r->qty * $r->price);
 			}
 		} else {
 			$record = null;
@@ -1861,7 +1861,7 @@ class Project extends MY_Controller
 			$timelogs = $this->Project_model->get_all_project_employee_timelogs($session['user_id']);
 		}
 		$role_resources_ids = $this->Xin_model->user_role_resource();
-		// var_dump($timelogs->result());
+		// dd($timelogs->result());
 		// die;
 		$data = array();
 
@@ -1881,6 +1881,7 @@ class Project extends MY_Controller
 			} else {
 				$project_name = '--';
 			}
+
 			$start_date = $this->Xin_model->set_date_format($r->start_date);
 			$end_date = $this->Xin_model->set_date_format($r->end_date);
 			$edit = '<span data-toggle="tooltip" data-placement="top" data-state="primary" title="' . $this->lang->line('xin_edit') . '"><button type="button" class="btn icon-btn btn-sm btn-outline-secondary waves-effect waves-light"  data-toggle="modal" data-target=".edit-modal-timelog-data"  data-timelogs_id="' . $r->timelogs_id . '"><span class="fas fa-pencil-alt"></span></button></span>';
@@ -1917,11 +1918,11 @@ class Project extends MY_Controller
 
 		$data['title'] = $this->Xin_model->site_title();
 		$session = $this->session->userdata('username');
-		if (!empty($session)) {
-			$this->load->view("admin/project/project_details", $data);
-		} else {
-			redirect('admin/');
-		}
+		// if (!empty($session)) {
+		// 	$this->load->view("admin/project/project_details", $data);
+		// } else {
+		// 	redirect('admin/');
+		// }
 		// Datatables Variables
 		$draw = intval($this->input->get("draw"));
 		$start = intval($this->input->get("start"));
@@ -1929,6 +1930,7 @@ class Project extends MY_Controller
 
 		$id = $this->uri->segment(4);
 		$timelogs = $this->Project_model->get_project_timelogs($id);
+		$project = $this->Project_model->read_project_information($id);
 		$user_info = $this->Xin_model->read_user_info($session['user_id']);
 		$role_resources_ids = $this->Xin_model->user_role_resource();
 		$data = array();
@@ -1943,6 +1945,13 @@ class Project extends MY_Controller
 			} else {
 				$full_name = '--';
 			}
+
+			if (!is_null($project)) {
+				$project_name = '<a target="_blank" href="' . site_url('admin/project/detail/') . $project[0]->project_id . '">' . $project[0]->title . '</a>';
+			} else {
+				$project_name = '--';
+			}
+
 			$start_date = $this->Xin_model->set_date_format($r->start_date);
 			$end_date = $this->Xin_model->set_date_format($r->end_date);
 			//if(in_array('346',$role_resources_ids)) { //edit
@@ -1963,6 +1972,7 @@ class Project extends MY_Controller
 
 			$data[] = array(
 				$combhr,
+				$project_name,
 				$full_name,
 				$start_date,
 				$end_date,

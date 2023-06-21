@@ -1,10 +1,11 @@
+<?php
+/* User Roles view
+*/
+?>
 <?php $session = $this->session->userdata('username'); ?>
 <?php $get_animate = $this->Xin_model->get_content_animate(); ?>
 <?php $role_resources_ids = $this->Xin_model->user_role_resource(); ?>
 <?php $user_info = $this->Xin_model->read_user_info($session['user_id']); ?>
-<?php $uoms = $this->Xin_model->get_all_uoms(); ?>
-<?php $sub_categories = $this->Xin_model->get_all_product_sub_categories(); ?>
-
 <?php
 // reports to 
 $reports_to = get_reports_team_data($session['user_id']); ?>
@@ -43,12 +44,10 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
 	</ul>
 </div>
 <hr class="border-light m-0 mb-3">
-
-<?php if (in_array('483', $role_resources_ids)) { ?>
-
+<?php if (in_array('491', $role_resources_ids)) { ?>
 	<div class="card mb-4 <?php echo $get_animate; ?>">
 		<div id="accordion">
-			<div class="card-header with-elements"> <span class="card-header-title mr-2"><strong><?php echo $this->lang->line('xin_add_new'); ?></strong> <?php echo $this->lang->line('ms_products'); ?></span>
+			<div class="card-header with-elements"> <span class="card-header-title mr-2"><strong><?php echo $this->lang->line('xin_add_new'); ?></strong> <?php echo $this->lang->line('ms_product_sub_categories'); ?></span>
 				<div class="card-header-elements ml-md-auto"> <a class="text-dark collapsed" data-toggle="collapse" href="#add_role_form" aria-expanded="false">
 						<button type="button" class="btn btn-xs btn-primary"> <span class="ion ion-md-add"></span> <?php echo $this->lang->line('xin_add_new'); ?></button>
 					</a> </div>
@@ -57,66 +56,32 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
 				<div class="card-body">
 					<div class="row m-b-1">
 						<div class="col-md-12">
-							<?php $attributes = array('name' => 'products', 'id' => 'products', 'autocomplete' => 'off', 'class' => 'm-b-1 add'); ?>
-							<?php $hidden = array('method_type' => 'INSERT'); ?>
-							<?php echo form_open('admin/products/add_product', $attributes, $hidden); ?>
+							<?php $attributes = array('name' => 'product_sub_categories', 'id' => 'product_sub_categories', 'autocomplete' => 'off', 'class' => 'm-b-1 add'); ?>
+							<?php $hidden = array('product_sub_categories' => 'CREATE'); ?>
+							<?php echo form_open('admin/product_categories/create_sub/', $attributes, $hidden); ?>
 							<div class="form-body">
 								<div class="row">
 									<div class="col-md-6">
 										<div class="form-group">
-											<label class="form-label"><?php echo $this->lang->line('ms_product_number'); ?></label>
-											<input type="text" class="form-control" name="product_number" id="product_number" placeholder="<?php echo $this->lang->line('ms_product_number'); ?>" value="KD<?= time() ?>" readonly>
-										</div>
-									</div>
-									<div class="col-md-6">
-										<div class="form-group">
-											<label class="form-label"><?php echo $this->lang->line('ms_product_name'); ?></label>
-											<input type="text" class="form-control" name="product_name" id="product_name" placeholder="<?php echo $this->lang->line('ms_product_name'); ?>">
-										</div>
-									</div>
-
-									<div class="col-md-6">
-										<div class="form-group">
-											<label class="form-label"><?php echo $this->lang->line('ms_product_uom'); ?></label>
-											<select class="form-control" name="uom_id" data-plugin="select_hrm" data-placeholder="<?php echo $this->lang->line('ms_measurement_units'); ?>">
+											<label class="form-label"><?php echo $this->lang->line('ms_product_categories'); ?></label>
+											<select class="form-control" name="category_id" data-plugin="select_hrm" data-placeholder="<?php echo $this->lang->line('ms_product_categories'); ?>">
 												<option value=""><?php echo $this->lang->line('xin_select_one'); ?></option>
-												<?php foreach ($uoms->result() as $u) { ?>
-													<option value="<?php echo $u->uom_id; ?>"> <?php echo $u->uom_name; ?></option>
+												<?php foreach ($categories->result() as $c) { ?>
+													<option value="<?php echo $c->category_id; ?>"> <?php echo $c->category_name; ?></option>
 												<?php } ?>
 											</select>
 										</div>
 									</div>
 									<div class="col-md-6">
+
 										<div class="form-group">
 											<label class="form-label"><?php echo $this->lang->line('ms_product_sub_categories'); ?></label>
-											<select class="form-control" name="sub_category_id" data-plugin="select_hrm" data-placeholder="<?php echo $this->lang->line('ms_product_sub_categories'); ?>">
-												<option value=""><?php echo $this->lang->line('xin_select_one'); ?></option>
-												<?php foreach ($sub_categories->result() as $c) { ?>
-													<option value="<?php echo $c->sub_category_id; ?>"> <?php echo $c->sub_category_name; ?></option>
-												<?php } ?>
-											</select>
+											<input type="text" class="form-control" name="sub_category_name" placeholder="<?php echo $this->lang->line('ms_product_sub_categories'); ?>">
 										</div>
 									</div>
-
-									<div class="col-md-6">
-										<div class="form-group">
-											<label class="form-label"><?php echo $this->lang->line('ms_product_price'); ?></label>
-											<input type="number" class="form-control" name="price" placeholder="<?php echo $this->lang->line('ms_product_price'); ?>">
-										</div>
-									</div>
-									<div class="col-md-6">
-										<div class="form-group">
-											<label class="form-label"><?php echo $this->lang->line('ms_product_desc'); ?></label>
-											<input type="text" class="form-control" name="product_desc" placeholder="<?php echo $this->lang->line('ms_product_desc'); ?>">
-										</div>
-									</div>
-									<div class="col-md-12">
-
-										<div class="form-actions box-footer">
-											<button type="submit" class="btn btn-primary"> <i class="far fa-check-square"></i> <?php echo $this->lang->line('xin_save'); ?> </button>
-										</div>
-
-									</div>
+								</div>
+								<div class="form-actions box-footer">
+									<button type="submit" class="btn btn-primary"> <i class="far fa-check-square"></i> <?php echo $this->lang->line('xin_save'); ?> </button>
 								</div>
 							</div>
 							<?php echo form_close(); ?>
@@ -126,25 +91,20 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
 			</div>
 		</div>
 	</div>
-
 <?php }; ?>
+
 <div class="card <?php echo $get_animate; ?>">
-	<div class="card-header with-elements"> <span class="card-header-title mr-2"><strong><?php echo $this->lang->line('xin_list_all'); ?></strong> <?php echo $this->lang->line('ms_products'); ?></span>
-		<div class="card-header-elements ml-md-auto"> <a href="<?php echo site_url('admin/reports/'); ?>" class="text-dark collapsed">
-			</a> </div>
+	<div class="card-header with-elements"> <span class="card-header-title mr-2"><strong><?php echo $this->lang->line('xin_list_all'); ?></strong> <?php echo $this->lang->line('ms_product_sub_categories'); ?></span>
 	</div>
 	<div class="card-body">
 		<div class="box-datatable table-responsive">
-			<table class="datatables-demo table table-striped table-bordered" id="xin_table_products">
+			<table class="datatables-demo table table-striped table-bordered" id="xin_table_product_sub_categories">
 				<thead>
 					<tr>
 						<th><?php echo $this->lang->line('xin_action'); ?></th>
-						<th><?php echo $this->lang->line('ms_product_number'); ?></th>
-						<th><?php echo $this->lang->line('ms_product_name'); ?></th>
-						<th><?php echo $this->lang->line('ms_product_price'); ?></th>
-						<th><?php echo $this->lang->line('ms_product_uom'); ?></th>
-						<th><?php echo $this->lang->line('ms_product_sub_category'); ?></th>
-						<th><?php echo $this->lang->line('ms_product_desc'); ?></th>
+						<th><?php echo $this->lang->line('ms_product_categories'); ?> | <?php echo $this->lang->line('ms_parent'); ?></th>
+						<th><?php echo $this->lang->line('ms_product_sub_categories'); ?> | <?php echo $this->lang->line('ms_child'); ?></th>
+						<th><?php echo $this->lang->line('xin_created_at'); ?></th>
 					</tr>
 				</thead>
 			</table>

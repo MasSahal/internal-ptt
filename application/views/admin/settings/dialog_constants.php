@@ -1438,24 +1438,20 @@ if (isset($_GET['jd']) && isset($_GET['field_id']) && $_GET['data'] == 'ed_docum
 	</script>
 
 	<!-- //update 5-8-2023 -->
-<?php } else if (isset($_GET['jd']) && isset($_GET['field_id']) && $_GET['data'] == 'ed_vendors' && $_GET['type'] == 'ed_vendors') {
-	$row = $this->Xin_model->read_vendor($_GET['field_id']);
+<?php } else if (isset($_GET['jd']) && isset($_GET['field_id']) && $_GET['data'] == 'ed_measurement_units' && $_GET['type'] == 'ed_measurement_units') {
+	$row = $this->Xin_model->read_measurement_unit($_GET['field_id']);
 ?>
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">×</span> </button>
-		<h4 class="modal-title" id="edit-modal-data"><?php echo $this->lang->line('xin_edit_vendor'); ?></h4>
+		<h4 class="modal-title" id="edit-modal-data"><?php echo $this->lang->line('ms_edit_uom'); ?></h4>
 	</div>
-	<?php $attributes = array('name' => 'ed_vendor', 'id' => 'ed_vendor', 'autocomplete' => 'off', 'class' => 'm-b-1'); ?>
-	<?php $hidden = array('_method' => 'EDIT', '_token' => $row[0]->vendor_id, 'ext_name' => $row[0]->vendor_name); ?>
-	<?php echo form_open('admin/settings/update_vendor/' . $row[0]->vendor_id, $attributes, $hidden); ?>
+	<?php $attributes = array('name' => 'ed_measurement_units', 'id' => 'ed_measurement_units', 'autocomplete' => 'off', 'class' => 'm-b-1'); ?>
+	<?php $hidden = array('_method' => 'EDIT', '_token' => $row[0]->uom_id, 'ext_name' => $row[0]->uom_name); ?>
+	<?php echo form_open('admin/settings/update_measurement_unit/' . $row[0]->uom_id, $attributes, $hidden); ?>
 	<div class="modal-body">
 		<div class="form-group">
-			<label for="name" class="form-control-label"><?php echo $this->lang->line('ms_vendor_name'); ?>:</label>
-			<input type="text" class="form-control" name="vendor_name" placeholder="<?php echo $this->lang->line('ms_vendor_name'); ?>" value="<?php echo $row[0]->vendor_name; ?>">
-		</div>
-		<div class="form-group">
-			<label for="name" class="form-control-label"><?php echo $this->lang->line('ms_vendor_name'); ?>:</label>
-			<input type="text" class="form-control" name="vendor_name" placeholder="<?php echo $this->lang->line('ms_vendor_name'); ?>" value="<?php echo $row[0]->vendor_name; ?>">
+			<label for="name" class="form-control-label"><?php echo $this->lang->line('ms_uom_name'); ?>:</label>
+			<input type="text" class="form-control" name="uom_name" placeholder="<?php echo $this->lang->line('ms_uom_name'); ?>" value="<?php echo $row[0]->uom_name; ?>">
 		</div>
 	</div>
 	<div class="modal-footer">
@@ -1471,7 +1467,7 @@ if (isset($_GET['jd']) && isset($_GET['field_id']) && $_GET['data'] == 'ed_docum
 			});
 			Ladda.bind('button[type=submit]');
 			/* Edit data */
-			$("#ed_security_level_info").submit(function(e) {
+			$("#ed_measurement_units").submit(function(e) {
 				/*Form Submit*/
 				e.preventDefault();
 				var obj = $(this),
@@ -1480,7 +1476,7 @@ if (isset($_GET['jd']) && isset($_GET['field_id']) && $_GET['data'] == 'ed_docum
 				$.ajax({
 					type: "POST",
 					url: e.target.action,
-					data: obj.serialize() + "&is_ajax=46&type=edit_record&data=ed_security_level_info&form=" + action,
+					data: obj.serialize() + "&is_ajax=46&type=edit_record&data=ed_measurement_units&form=" + action,
 					cache: false,
 					success: function(JSON) {
 						if (JSON.error != '') {
@@ -1491,7 +1487,7 @@ if (isset($_GET['jd']) && isset($_GET['field_id']) && $_GET['data'] == 'ed_docum
 						} else {
 							$('.edit_setting_datail').modal('toggle');
 							// On page load: datatable
-							var exin_table_security_level = $('#xin_table_security_level').dataTable({
+							var exin_table_security_level = $('#xin_table_measurement_units').dataTable({
 								"bDestroy": true,
 								"bFilter": false,
 								"iDisplayLength": 5,
@@ -1500,7 +1496,7 @@ if (isset($_GET['jd']) && isset($_GET['field_id']) && $_GET['data'] == 'ed_docum
 									[5, 10, 30, 50, 100, "All"]
 								],
 								"ajax": {
-									url: "<?php echo site_url("admin/settings/security_level_list") ?>",
+									url: "<?php echo site_url("admin/settings/measurement_unit_list") ?>",
 									type: 'GET'
 								},
 								"fnDrawCallback": function(settings) {
@@ -1515,6 +1511,111 @@ if (isset($_GET['jd']) && isset($_GET['field_id']) && $_GET['data'] == 'ed_docum
 							Ladda.stopAll();
 						}
 					}
+				});
+			});
+		});
+	</script>
+
+	<!-- //update 5-8-2023 -->
+<?php } else if (isset($_GET['jd']) && isset($_GET['field_id']) && $_GET['data'] == 'ed_discounts' && $_GET['type'] == 'ed_discounts') {
+	$row = $this->Xin_model->read_discount($_GET['field_id']);
+?>
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">×</span> </button>
+		<h4 class="modal-title" id="edit-modal-data"><?php echo $this->lang->line('ms_edit_uom'); ?></h4>
+	</div>
+	<?php $attributes = array('name' => 'ed_discounts', 'id' => 'ed_discounts', 'autocomplete' => 'off', 'class' => 'm-b-1'); ?>
+	<?php $hidden = array('_method' => 'EDIT', '_token' => $row[0]->discount_id, 'ext_name' => $row[0]->discount_name); ?>
+	<?php echo form_open('admin/settings/update_discount/' . $row[0]->discount_id, $attributes, $hidden); ?>
+	<div class="modal-body">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="form-label"><?php echo $this->lang->line('ms_discount_name'); ?></label>
+					<input type="text" class="form-control" name="discount_name" placeholder="<?php echo $this->lang->line('ms_discount_name'); ?>" value="<?php echo $row[0]->discount_name; ?>">
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="form-label" for="discount_type"><?php echo $this->lang->line('ms_discount_type'); ?></label>
+					<select class="form-control" id="discount_type" data-plugin="select_hrm" name="discount_type">
+						<option value="0" <?php echo $row[0]->discount_type == 0 ? 'selected' : ''; ?>><?php echo $this->lang->line('ms_discount_title_flat'); ?></option>
+						<option value="1" <?php echo $row[0]->discount_type == 1 ? 'selected' : ''; ?>><?php echo $this->lang->line('ms_discount_title_percentage'); ?></option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="form-label"><?php echo $this->lang->line('ms_discount_value'); ?></label>
+					<input type="number" min="0" class="form-control" name="discount_value" placeholder="<?php echo $this->lang->line('ms_discount_value'); ?>" value="<?php echo $row[0]->discount_value; ?>">
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo $this->lang->line('xin_close'); ?></button>
+		<button type="submit" class="btn btn-primary"><?php echo $this->lang->line('xin_update'); ?></button>
+	</div>
+	<?php echo form_close(); ?>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('[data-plugin="select_hrm"]').select2($(this).attr('data-options'));
+			$('[data-plugin="select_hrm"]').select2({
+				width: '100%'
+			});
+			Ladda.bind('button[type=submit]');
+			/* Edit data */
+			$("#ed_discounts").submit(function(e) {
+				/*Form Submit*/
+				e.preventDefault();
+				var obj = $(this),
+					action = obj.attr('name');
+				$('.save').prop('disabled', true);
+				$.ajax({
+					type: "POST",
+					url: e.target.action,
+					data: obj.serialize() + "&is_ajax=46&type=edit_record&data=ed_discounts&form=" + action,
+					cache: false,
+					success: function(JSON) {
+						if (JSON.error != '') {
+							toastr.error(JSON.error);
+							$('input[name="csrf_hrsale"]').val(JSON.csrf_hash);
+							$('.save').prop('disabled', false);
+							Ladda.stopAll();
+						} else {
+							$('.edit_setting_datail').modal('toggle');
+							// On page load: datatable
+							var exin_table_security_level = $('#ms_table_discounts').dataTable({
+								"bDestroy": true,
+								"bFilter": false,
+								"iDisplayLength": 5,
+								"aLengthMenu": [
+									[5, 10, 30, 50, 100, -1],
+									[5, 10, 30, 50, 100, "All"]
+								],
+								"ajax": {
+									url: "<?php echo site_url("admin/settings/discount_list") ?>",
+									type: 'GET'
+								},
+								"fnDrawCallback": function(settings) {
+									$('[data-toggle="tooltip"]').tooltip();
+								}
+							});
+							exin_table_security_level.api().ajax.reload(function() {
+								toastr.success(JSON.result);
+							}, true);
+							$('input[name="csrf_hrsale"]').val(JSON.csrf_hash);
+							$('.save').prop('disabled', false);
+							Ladda.stopAll();
+						}
+					},
+					error: function(xhr, status, error) {
+						// Handle AJAX error
+						toastr.error("Error: " + error);
+						jQuery(".save").prop("disabled", false);
+						$(".icon-spinner3").hide();
+						Ladda.stopAll();
+					},
 				});
 			});
 		});
@@ -1579,7 +1680,8 @@ if (isset($_GET['jd']) && isset($_GET['field_id']) && $_GET['data'] == 'ed_docum
 							jQuery('.save').prop('disabled', false);
 							Ladda.stopAll();
 						}
-					}
+					},
+
 				});
 			});
 		});

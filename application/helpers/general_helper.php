@@ -1905,3 +1905,38 @@ if (!function_exists('dd')) {
 		die();
 	}
 }
+
+if (!function_exists('priority_stats')) {
+	function priority_stats($status)
+	{
+		$CI = &get_instance();
+
+		if ($status == 1) {
+			$text = '<strong class="text-small text-danger">' . $CI->lang->line('xin_high') . '</strong>';
+		} elseif ($status == 2) {
+			$text = '<strong class="text-small text-warning">' . $CI->lang->line('xin_medium') . '</strong>';
+		} elseif ($status == 3) {
+			$text = '<strong class="text-small text-success">' . $CI->lang->line('xin_low') . '</strong>';
+		} else {
+			$text = '--';
+		}
+
+		return $text;
+	}
+}
+
+if (!function_exists('purchase_stats')) {
+	function purchase_stats($status)
+	{
+		$CI = &get_instance();
+		if ($status == 0) {
+			$text = '<strong class="text-small text-danger">' . $CI->lang->line('xin_closed') . '</strong>';
+		} elseif ($status == 1) {
+			$text = '<strong class="text-small text-success">' . $CI->lang->line('xin_open') . '</strong>';
+		} else {
+			$text = '--';
+		}
+
+		return $text;
+	}
+}

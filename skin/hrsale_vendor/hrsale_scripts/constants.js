@@ -365,7 +365,7 @@ $(document).ready(function () {
 	});
 
 	// update 9-5-2023
-	var ms_vendor_list = $("#xin_table_vendors").dataTable({
+	var ms_measurement_unit_list = $("#xin_table_measurement_units").dataTable({
 		bDestroy: true,
 		bFilter: false,
 		bLengthChange: false,
@@ -375,7 +375,7 @@ $(document).ready(function () {
 			[5, 10, 30, 50, 100, "All"],
 		],
 		ajax: {
-			url: site_url + "settings/vendor_list/",
+			url: site_url + "settings/measurement_unit_list/",
 			type: "GET",
 		},
 		fnDrawCallback: function (settings) {
@@ -383,17 +383,17 @@ $(document).ready(function () {
 		},
 	});
 
-	var xin_table_cost_categories = $("#xin_table_cost_categories").dataTable({
+	var ms_table_discounts = $("#ms_table_discounts").dataTable({
 		bDestroy: true,
 		bFilter: false,
 		bLengthChange: false,
-		iDisplayLength: 10,
+		iDisplayLength: 5,
 		aLengthMenu: [
-			[10, 30, 50, 100, -1],
-			[10, 30, 50, 100, "All"],
+			[5, 10, 30, 50, 100, -1],
+			[5, 10, 30, 50, 100, "All"],
 		],
 		ajax: {
-			url: site_url + "settings/cost_categories_list/",
+			url: site_url + "settings/discount_list/",
 			type: "GET",
 		},
 		fnDrawCallback: function (settings) {
@@ -1156,7 +1156,7 @@ $(document).ready(function () {
 	});
 
 	// update 9-5-2023
-	jQuery("#vendors").submit(function (e) {
+	jQuery("#measurement_units").submit(function (e) {
 		/*Form Submit*/
 		e.preventDefault();
 		var obj = jQuery(this),
@@ -1168,7 +1168,7 @@ $(document).ready(function () {
 			url: e.target.action,
 			data:
 				obj.serialize() +
-				"&is_ajax=471&data=vendors&type=vendors&form=" +
+				"&is_ajax=471&data=measurement_unit_info&type=measurement_unit_info&form=" +
 				action,
 			cache: false,
 			success: function (JSON) {
@@ -1179,12 +1179,12 @@ $(document).ready(function () {
 					$(".icon-spinner3").hide();
 					Ladda.stopAll();
 				} else {
-					ms_vendor_list.api().ajax.reload(function () {
+					ms_measurement_unit_list.api().ajax.reload(function () {
 						toastr.success(JSON.result);
 					}, true);
 					$('input[name="csrf_hrsale"]').val(JSON.csrf_hash);
 					$(".icon-spinner3").hide();
-					jQuery("#vendors")[0].reset(); // To reset form fields
+					jQuery("#measurement_units")[0].reset(); // To reset form fields
 					jQuery(".save").prop("disabled", false);
 					Ladda.stopAll();
 				}
@@ -1192,7 +1192,7 @@ $(document).ready(function () {
 		});
 	});
 
-	jQuery("#cost_categories_info").submit(function (e) {
+	jQuery("#discounts").submit(function (e) {
 		/*Form Submit*/
 		e.preventDefault();
 		var obj = jQuery(this),
@@ -1204,7 +1204,7 @@ $(document).ready(function () {
 			url: e.target.action,
 			data:
 				obj.serialize() +
-				"&is_ajax=475&data=cost_categories_info&type=cost_categories_info&form=" +
+				"&is_ajax=471&data=discounts&type=discounts&form=" +
 				action,
 			cache: false,
 			success: function (JSON) {
@@ -1215,15 +1215,19 @@ $(document).ready(function () {
 					$(".icon-spinner3").hide();
 					Ladda.stopAll();
 				} else {
-					xin_table_cost_categories.api().ajax.reload(function () {
+					ms_table_discounts.api().ajax.reload(function () {
 						toastr.success(JSON.result);
 					}, true);
 					$('input[name="csrf_hrsale"]').val(JSON.csrf_hash);
 					$(".icon-spinner3").hide();
-					jQuery("#vendors")[0].reset(); // To reset form fields
+					jQuery("#discounts")[0].reset(); // To reset form fields
 					jQuery(".save").prop("disabled", false);
 					Ladda.stopAll();
 				}
+			},
+			error: function (xhr, status, error) {
+				// Handle AJAX error
+				toastr.error("Error: " + error);
 			},
 		});
 	});
@@ -1310,9 +1314,14 @@ $(document).ready(function () {
 			var tb_name = "xin_table_" + tk_type;
 
 			// update 9-5-2023
-		} else if (tk_type == "vendors") {
-			var field_add = "&is_ajax=473&data=delete_vendors&type=delete_record&";
+		} else if (tk_type == "measurement_units") {
+			var field_add =
+				"&is_ajax=473&data=delete_measurement_units&type=delete_record&";
 			var tb_name = "xin_table_" + tk_type; // nama id tabel view record
+			//
+		} else if (tk_type == "discounts") {
+			var field_add = "&is_ajax=473&data=delete_discounts&type=delete_record&";
+			var tb_name = "ms_table_" + tk_type; // nama id tabel view record
 			//
 		} else if (tk_type == "cost_categories") {
 			var field_add =
@@ -1399,8 +1408,10 @@ $(document).ready(function () {
 			var field_add = "&data=ed_security_level&type=ed_security_level&";
 
 			// update feature 9-5-2023
-		} else if (field_type == "vendor") {
-			var field_add = "&data=ed_vendors&type=ed_vendors&";
+		} else if (field_type == "discounts") {
+			var field_add = "&data=ed_discounts&type=ed_discounts&";
+		} else if (field_type == "measurement_units") {
+			var field_add = "&data=ed_measurement_units&type=ed_measurement_units&";
 		}
 
 		var modal = $(this);

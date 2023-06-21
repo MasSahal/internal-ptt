@@ -1,6 +1,4 @@
 $(document).ready(function () {
-	$('[data-plugin="select_hrm"]').select2($(this).attr("data-options"));
-	$('[data-plugin="select_hrm"]').select2({ width: "100%" });
 	// listing
 	// On page load:
 
@@ -15,7 +13,7 @@ $(document).ready(function () {
 	// });
 	var ms_table_project_costs = $("#xin_table_project_costs").dataTable({
 		bDestroy: true,
-		iDisplayLength: 100,
+		iDisplayLength: 10,
 		aLengthMenu: [
 			[5, 10, 30, 50, 100, -1],
 			[5, 10, 30, 50, 100, "All"],
@@ -74,7 +72,7 @@ $(document).ready(function () {
 					$(".icon-spinner3").hide();
 					Ladda.stopAll();
 				} else {
-					ms_detail_trans.api().ajax.reload(function () {
+					ms_table_project_costs.api().ajax.reload(function () {
 						toastr.success(JSON.result);
 					}, true);
 					$('input[name="csrf_hrsale"]').val(JSON.csrf_hash);
@@ -86,13 +84,6 @@ $(document).ready(function () {
 					jQuery(".save").prop("disabled", false);
 					Ladda.stopAll();
 				}
-			},
-			error: function (xhr, status, error) {
-				// Handle AJAX error
-				toastr.error("Error: " + error);
-				jQuery(".save").prop("disabled", false);
-				$(".icon-spinner3").hide();
-				Ladda.stopAll();
 			},
 		});
 	});
@@ -133,6 +124,113 @@ $(document).on("click", ".delete", function () {
 	);
 });
 
+function setupAutocomplete(element) {
+	element.autocomplete({
+		source: function (request, response) {
+			$.ajax({
+				url: site_url + "products/get_ajax_products", // Change this to the appropriate URL for your server-side code
+				method: "get",
+				data: { query: request.term },
+				dataType: "json",
+				success: function (data) {
+					response(data);
+				},
+			});
+		},
+		select: function (event, ui) {
+			var row = $(this).closest("tr");
+			row.find("input[name='qty[]']").val(ui.qty);
+		},
+	});
+}
+
+// function searchProduct(element) {
+// 	var searchTerm = element.value;
+// 	var row = $(element).closest("tr");
+// 	var quantityInput = row.find("input[name='item_name[]']");
+
+// 	$.ajax({
+// 		url: site_url + "products/get_ajax_products", // Change this to the appropriate URL for your server-side code
+// 		method: "GET",
+// 		data: { query: searchTerm },
+// 		dataType: "json",
+// 		success: function (data) {
+// 			if (data.length > 0) {
+// 				var selectedProduct = data[0];
+// 				quantityInput.val(selectedProduct.product_name);
+// 			} else {
+// 				quantityInput.val("");
+// 			}
+// 		},
+// 	});
+// }
+// // Inisialisasi autocomplete pada input pertama
+// setupAutocomplete($(".item_name"));
+
+$(document).ready(function () {
+	// Autocomplete function
+	function setupAutocomplete(element) {
+		element.on("input", function () {
+			var searchTerm = $(this).val();
+			var container = $(this).closest(".autocomplete-container");
+			var list = container.find(".autocomplete-list");
+			var quantityInput = container
+				.closest("tr")
+				.find("input[name='quantity[]']");
+
+			$.ajax({
+				url: site_url + "products/get_ajax_products", // Change this to the appropriate URL for your server-side code
+				method: "get",
+				data: { query: searchTerm },
+				dataType: "json",
+				success: function (data) {
+					var suggestions = "";
+					if (data.length > 0) {
+						for (var i = 0; i < data.length; i++) {
+							suggestions +=
+								"<li data-product='" +
+								JSON.stringify(data[i]) +
+								"'>" +
+								data[i].product_name +
+								"</li>";
+						}
+						list.html(suggestions);
+						list.show();
+					} else {
+						list.hide();
+					}
+				},
+			});
+		});
+
+		// Selecting a suggestion from the list
+		element
+			.closest(".autocomplete-container")
+			.on("click", ".autocomplete-list li", function () {
+				var selectedProduct = JSON.parse($(this).attr("data-product"));
+				var container = $(this).closest(".autocomplete-container");
+				var quantityInput = container
+					.closest("tr")
+					.find("input[name='price[]']");
+
+				element.val(selectedProduct.value);
+				quantityInput.val(selectedProduct.price);
+				container.find(".autocomplete-list").hide();
+			});
+	}
+
+	// Initialize autocomplete for the first input
+	setupAutocomplete($(".autocomplete"));
+
+	// Add a new row when "Add Row" button is clicked
+	// $(document).on("click", "#addRowBtn", function () {
+	// 	var newRow =
+	// 		'<tr><td><div class="autocomplete-container"><input type="text" class="autocomplete" name="product[]" placeholder="Product"><ul class="autocomplete-list"></ul></div></td><td><input type="text" name="quantity[]" placeholder="Quantity"></td></tr>';
+	// 	$("#formrow").append(newRow);
+	// 	setupAutocomplete($("#formrow").find("tr:last .autocomplete"));
+	// });
+});
+
 $(".edit-modal-data").on("show.bs.modal", function (event) {
 	var button = $(event.relatedTarget);
 	var vendor_id = button.data("vendor_id");
@@ -156,6 +254,11 @@ $(".edit-modal-data").on("show.bs.modal", function (event) {
 // 	/
 // 	/
 // 	//
+// ajax get tax and project, products
+
+var form_select_product = "";
+var form_select_project = "";
+var form_select_tax = "";
 
 function set_tax(id) {
 	$.ajax({
@@ -169,46 +272,17 @@ function set_tax(id) {
 				// Membuat opsi baru dengan menggunakan data
 				res +=
 					'<option value="' +
-					parseInt(value.tax_id) +
+					value.tax_id +
 					'" tax-type="' +
 					value.type +
 					'" tax-rate="' +
-					parseInt(value.rate) +
+					value.rate +
 					'">' +
 					value.name +
 					"</option>";
 			});
 			var i = "#tax-" + id;
-			$(i).append(res);
-		},
-		error: function (xhr, status, error) {
-			console.log(error); // Menampilkan pesan kesalahan jika terjadi error
-		},
-	});
-}
-function set_discount(id) {
-	$.ajax({
-		url: site_url + "ajax_request/get_discounts", // Ubah 'get_data.php' sesuai dengan URL yang sesuai untuk memperoleh data dari PHP
-		type: "GET",
-		dataType: "json",
-		success: function (data) {
-			var res = "";
-			// Melakukan perulangan untuk setiap data yang diperoleh
-			$.each(data, function (key, value) {
-				// Membuat opsi baru dengan menggunakan data
-				res +=
-					'<option value="' +
-					parseInt(value.discount_id) +
-					'" discount-type="' +
-					value.discount_type +
-					'" discount-rate="' +
-					parseInt(value.discount_value) +
-					'">' +
-					value.discount_name +
-					"</option>";
-			});
-			var i = "#discount-" + id;
-			$(i).append(res);
+			$(i).html(res);
 		},
 		error: function (xhr, status, error) {
 			console.log(error); // Menampilkan pesan kesalahan jika terjadi error
@@ -225,11 +299,10 @@ function set_project(id) {
 			// Melakukan perulangan untuk setiap data yang diperoleh
 			$.each(data, function (key, val) {
 				// Membuat opsi baru dengan menggunakan data
-				res +=
-					'<option value="' + parseInt(val.id) + '">' + val.value + "</option>";
+				res += '<option value="' + val.id + '">' + val.value + "</option>";
 			});
 			var i = "#project-" + id;
-			$(i).append(res);
+			$(i).html(res);
 		},
 		error: function (xhr, status, error) {
 			console.log(error); // Menampilkan pesan kesalahan jika terjadi error
@@ -237,118 +310,110 @@ function set_project(id) {
 	});
 }
 
-// //
-// 	/
-// 	/
-// 	/
-// 	/
-// 	/
+// $(function () {
+// 	$("input").autocomplete({
+// 		source: ["halo", "haha", "hihi"],
+// 	});
+// });
 
 var rowCounter = $("#item_product >tbody >tr").length;
 function addRow() {
 	const table = document.getElementById("item_product");
 	// let rowCounter = 1;
 	const rowId = "row-" + rowCounter;
-
 	const newRow = document.createElement("tr");
 	newRow.setAttribute("class", "item-row");
 	newRow.id = rowId;
 	newRow.innerHTML =
-		"</td > " +
-		'<td><input type="hidden" name="product_id[]" value="0" class="product_id">' +
-		'<input type="hidden" name="sub_category_id[]" value="0" class="sub_category_id">' +
-		'<input type="hidden" name="uom_id[]" value="0" class="uom_id">' +
-		'<input type="hidden" name="product_number[]" value="0" class="product_number">' +
-		'<input type="text" class="form-control form-control-sm item_name" name="item_name[]" id="item_name" placeholder="Item Name"><span class="product_number font-weight-bold" style="font-size:10px;margin-top:2px"></span></td>' +
+		"</td>" +
+		'<td><input type="hidden" name="product_id[]" value="11">' +
+		// '<td><input type="hidden" name="category_id[]" value="0">' +
+		'<input type="text" class="form-control form-control-sm item_name" name="item_name[]" id="item-' +
+		rowCounter +
+		'" placeholder="Item Name"></td>' +
 		"<td>" +
-		"<select class='form-control form-control-sm' name='project_id[]' id='project-" +
+		"<select class='form-control form-control-sm' id='project-" +
+		rowCounter +
+		"'></select>" +
+		// form_select_project +
+		"</td>" +
+		"<td>" +
+		"<select class='form-control form-control-sm' id='tax-" +
 		rowCounter +
 		"'></select>" +
 		"</td>" +
-		"<td>" +
-		"<select class='form-control form-control-sm tax_type' name='tax_type[]'id='tax-" +
-		rowCounter +
-		"'></select>" +
 		'<td><input type="number" readonly="readonly" class="form-control form-control-sm tax-rate-item" name="tax_rate_item[]" value="0" /></td>' +
-		"<td>" +
-		"<select class='form-control form-control-sm discount_type' name='discount_type[]' id='discount-" +
-		rowCounter +
-		"'></select>" +
-		'<td><input type="number" class="form-control form-control-sm discount-rate-item" readonly="readonly" name="discount_rate_item[]" value="0" /></td>' +
-		'<td><input type="number" name="price[]" class="form-control form-control-sm price" value="0" id="price" /></td>' +
 		'<td><input type="number" class="form-control form-control-sm qty" name="qty[]" id="qty" value="1"></td>' +
-		'<td><input type="number" class="form-control form-control-sm sub-total-item" name="sub-total-item[]" readonly="readonly" value="0" /></td>' +
-		'<td style="text-align:center"><button type="button" class="btn icon-btn btn-xs btn-danger waves-effect waves-light remove-item" data-repeater-delete="" onclick="removeRow(' +
-		rowId +
-		')"> <span class="fa fa-trash"></span></button></td>';
+		'<td><input type="number" name="price[]" class="form-control form-control-sm price" value="0" id="price"/></td>' +
+		'<td><input type="number" class="form-control form-control-sm sub-total-item" readonly="readonly" name="sub-total-item[]" value="0" /></td>' +
+		'<td style="text-align:center"><button type="button" class="btn icon-btn btn-xs btn-danger waves-effect waves-light remove-item" data-repeater-delete=""> <span class="fa fa-trash"></span></button></td>';
 	table.appendChild(newRow);
 	set_project(rowCounter);
 	set_tax(rowCounter);
-	set_discount(rowCounter);
+	// set_item(rowCounter);
+
 	rowCounter++;
 }
 
-$(function () {
-	// Event delegation for dynamically added elements
-	$("#item_product").on("focus", ".item_name", function () {
-		var row = $(this).closest("tr");
-		$(this).autocomplete({
-			source: function (request, response) {
-				// Make your AJAX request here based on the input value
-				// and get the autocomplete options
-				var inputVal = request.term;
-				// Example AJAX request (replace with your own implementation)
-				$.ajax({
-					url: site_url + "ajax_request/get_products", // Ubah 'get_data.php' sesuai dengan URL yang sesuai untuk memperoleh data dari PHP
-					type: "GET",
-					dataType: "json",
-					cache: false,
-					data: {
-						query: inputVal,
-					},
-					success: function (data) {
-						response(data);
-					},
-					error: function (jqXHR, textStatus, errorThrown) {
-						// Handle error
-						console.error(
-							"AJAX request failed: " + textStatus + ", " + errorThrown
-						);
-					},
-				});
-			},
-			minLength: 2,
-			select: function (event, ui) {
-				row.find(".product_id").val(parseInt(ui.item.product_id));
-				row.find(".sub_category_id").val(parseInt(ui.item.sub_category_id));
-				row.find(".price").val(parseInt(ui.item.price));
-				row.find(".uom_id").val(parseInt(ui.item.uom_id));
-				row.find(".product_number").val(ui.item.product_number);
-				row.find(".product_number").html(ui.item.product_number);
-				update_total();
-			},
-		});
-	});
-});
+// $(function () {
+// 	// Event delegation for dynamically added elements
+// 	$("#item_product").on("focus", ".item_name", function () {
+// 		var row = $(this).closest("tr");
+// 		$(this).autocomplete({
+// 			source: function (request, response) {
+// 				// Make your AJAX request here based on the input value
+// 				// and get the autocomplete options
+// 				var inputVal = request.term;
+// 				// Example AJAX request (replace with your own implementation)
+// 				$.ajax({
+// 					url: site_url + "ajax_request/get_products", // Ubah 'get_data.php' sesuai dengan URL yang sesuai untuk memperoleh data dari PHP
+// 					type: "GET",
+// 					dataType: "json",
+// 					cache: false,
+// 					data: {
+// 						query: inputVal,
+// 					},
+// 					success: function (data) {
+// 						response(data);
+// 					},
+// 					error: function (jqXHR, textStatus, errorThrown) {
+// 						// Handle error
+// 						console.error(
+// 							"AJAX request failed: " + textStatus + ", " + errorThrown
+// 						);
+// 					},
+// 				});
+// 			},
+// 			minLength: 2,
+// 			select: function (event, ui) {
+// 				// Get the corresponding selected-value input in the same row
+// 				var prices = row.find(".price");
+// 				var res_price = parseFloat(ui.item.price);
+// 				// Set the value of the selected-value input
+// 				console.log(prices.val());
+// 				prices.val(90);
+// 				console.log(prices.val());
+// 			},
+// 		});
+
+// 		console.log($(".price").val());
+// 	});
+// });
 
 // Fungsi untuk menghapus baris tabel
 $(document).on("click", ".remove-item", function () {
 	$(this).closest("tr").remove();
 	// updateFormCount();
 });
-
-// Fungsi edit otomatic kaluasi saat load
-$(document).on("load", function () {
-	update_total();
+$(document).ready(function () {
+	$(".select").select2({
+		tags: true,
+		width: "100%",
+	});
 });
+// Fungsi edit otomatic kaluasi saat load
 
-//
-// /
-// //
-// 	/
-// //
-// //
-/// Fungsi untuk memperbarui nomor urutan form
+// Fungsi untuk memperbarui nomor urutan form
 function updateFormCount() {
 	$(".row").each(function (index) {
 		let formCount = index + 1;
@@ -396,8 +461,25 @@ function update_total() {
 	//alert(st_tax);
 	//$('.items-tax-total').val(st_tax.toFixed(2));
 	$(".items-sub-total").val(item_sub_total.toFixed(2));
-	$(".fgrand_total").val(item_sub_total.toFixed(2));
-	$(".grand_total").html(item_sub_total.toFixed(2));
+
+	//var discount_type = $('.discount_type').val();
+	//var sub_total = $('.items-sub-total').val();
+
+	if ($(".discount_type").val() == "1") {
+		var fsub_total = item_sub_total - discount_figure;
+		//var discount_amval = discount_figure;//.toFixed(2);
+		$(".discount_amount").val(discount_figure);
+		//$('.grand_total').html(grand_total.toFixed(2));
+	} else {
+		var discount_percent = (item_sub_total / 100) * discount_figure;
+		var fsub_total = item_sub_total - discount_percent;
+		// var discount_amval = discount_percent.toFixed(2);
+		$(".discount_amount").val(discount_percent.toFixed(2));
+		//$('.grand_total').html(grand_total.toFixed(2));
+	}
+
+	$(".fgrand_total").val(fsub_total.toFixed(2));
+	$(".grand_total").html(fsub_total.toFixed(2));
 } //Update total function ends here.
 jQuery(document).on("click", ".remove-invoice-item", function () {
 	$(this)
@@ -422,20 +504,15 @@ jQuery(document).on("click", ".remove-item", function () {
 			update_total();
 		});
 });
+
 // for qty
 jQuery(document).on("click keyup change", ".qty, .price", function () {
 	var qty = 0;
 	var price = 0;
 	var tax_rate = 0;
 	var qty = $(this).closest(".item-row").find(".qty").val();
-	var price = $(this).closest(".item-row").find(".price").val();
-
-	var tax_rate_item = $(this).closest(".item-row").find(".tax-rate-item").val();
-	var discount_rate = $(this)
-		.closest(".item-row")
-		.find(".discount-rate-item")
-		.val();
-
+	var price = parseInt($(this).closest(".item-row").find(".price").val());
+	var tax_rate = $(this).closest(".item-row").find(".tax_type").val();
 	var element = $(this)
 		.closest(".item-row")
 		.find(".tax_type")
@@ -451,50 +528,13 @@ jQuery(document).on("click keyup change", ".qty, .price", function () {
 	if (tax_rate == "") {
 		var tax_rate = 0;
 	}
-	if (discount_rate == "") {
-		var discount_rate = 0;
-	}
-	if (tax_rate_item == "") {
-		var tax_rate_item = 0;
-	}
-
-	var element2 = $(this)
-		.closest(".item-row")
-		.find(".discount_type")
-		.find("option:selected");
-	var discount_type = parseInt(element2.attr("discount-type"));
-	var discount_rate = parseInt(element2.attr("discount-rate"));
-
 	// calculation
-	var sbT = parseInt(qty * price);
-
-	if (discount_type === 0) {
-		var discountPP = (1 / 1) * discount_rate;
-		var singleDiscount = discountPP;
-		var sub = sbT - discountPP;
-		// var subTotal = sub + parseInt(tax_rate_item);
-		// var sub_total = subTotal.toFixed(2);
-		jQuery(this)
-			.closest(".item-row")
-			.find(".discount-rate-item")
-			.val(singleDiscount.toFixed(2));
-	} else {
-		var discountPP = (sbT / 100) * discount_rate;
-		var singleDiscount = discountPP;
-		var sub = sbT - discountPP;
-		// var subTotal = sub + parseInt(tax_rate_item);
-		// var sub_total = subTotal.toFixed(2);
-		jQuery(this)
-			.closest(".item-row")
-			.find(".discount-rate-item")
-			.val(singleDiscount.toFixed(2));
-	}
-
+	var sbT = qty * parseInt(price);
 	if (tax_type === "fixed") {
 		var taxPP = (1 / 1) * tax_rate;
 		var singleTax = taxPP;
-		// var subTotal = sbT + taxPP;
-		// var sub_total = subTotal.toFixed(2);
+		var subTotal = sbT + taxPP;
+		var sub_total = subTotal.toFixed(2);
 		jQuery(this)
 			.closest(".item-row")
 			.find(".tax-rate-item")
@@ -502,44 +542,32 @@ jQuery(document).on("click keyup change", ".qty, .price", function () {
 	} else {
 		var taxPP = (sbT / 100) * tax_rate;
 		var singleTax = taxPP;
-		// var subTotal = sbT + taxPP;
-		// var sub_total = subTotal.toFixed(2);
+		var subTotal = sbT + taxPP;
+		var sub_total = subTotal.toFixed(2);
 		jQuery(this)
 			.closest(".item-row")
 			.find(".tax-rate-item")
 			.val(singleTax.toFixed(2));
 	}
-
-	var sub1 = sbT - singleDiscount;
-	var sub2 = sub1 + singleTax;
-	var sub_total = sub2.toFixed(2);
-
 	jQuery(this).closest(".item-row").find(".items-tax-total").val(tax_rate);
 	jQuery(this).closest(".item-row").find(".sub-total-item").val(sub_total);
 	jQuery(this).closest(".item-row").find(".sub-total-item").val(sub_total);
 	update_total();
 	//$('.tax-rate-item').html(taxPP.toFixed(2));
 });
-
 jQuery(document).on("change click", ".tax_type", function () {
 	var qty = 0;
 	var price = 0;
 	var tax_rate = 0;
 	var qty = $(this).closest(".item-row").find(".qty").val();
-	var price = $(this).closest(".item-row").find(".price").val();
-	var tax_rate_item = $(this).closest(".item-row").find(".tax-rate-item").val();
-	var discount_rate = $(this)
-		.closest(".item-row")
-		.find(".discount-rate-item")
-		.val();
-
+	var price = parseInt($(this).closest(".item-row").find(".price").val());
+	var tax_rate = $(this).closest(".item-row").find(".tax_type").val();
 	var element = $(this)
 		.closest(".item-row")
 		.find(".tax_type")
 		.find("option:selected");
 	var tax_type = element.attr("tax-type");
 	var tax_rate = element.attr("tax-rate");
-
 	if (qty == "") {
 		var qty = 0;
 	}
@@ -549,13 +577,8 @@ jQuery(document).on("change click", ".tax_type", function () {
 	if (tax_rate == "") {
 		var tax_rate = 0;
 	}
-
-	if (discount_rate == "") {
-		var discount_rate = 0;
-	}
 	// calculation
-	var sbT = parseInt(qty * price) - parseInt(discount_rate);
-
+	var sbT = qty * price;
 	if (tax_type === "fixed") {
 		var taxPP = (1 / 1) * tax_rate;
 		var singleTax = taxPP;
@@ -583,101 +606,60 @@ jQuery(document).on("change click", ".tax_type", function () {
 	jQuery(this).closest(".item-row").find(".sub-total-item").val(sub_total);
 	update_total();
 });
+jQuery(document).on("click keyup change", ".discount_figure", function () {
+	var qty = 0;
+	var price = 0;
+	var tax_rate = 0;
+	var discount_figure = $(".discount_figure").val();
+	var discount_type = $(".discount_type").val();
+	var sub_total = $(".items-sub-total").val();
 
+	if (parseFloat(discount_figure) <= parseFloat(sub_total)) {
+		if ($(".discount_type").val() == "1") {
+			var grand_total = sub_total - discount_figure;
+			var discount_amval = discount_figure; //.toFixed(2);
+			$(".discount_amount").val(discount_amval);
+			$(".grand_total").html(grand_total.toFixed(2));
+		} else {
+			var discount_percent = (sub_total / 100) * discount_figure;
+			var grand_total = sub_total - discount_percent;
+			var discount_amval = discount_percent.toFixed(2);
+			$(".discount_amount").val(discount_amval);
+			$(".grand_total").html(grand_total.toFixed(2));
+		}
+	} else {
+		//
+		$(".discount_amount").val(0);
+		$(".discount_figure").val(0);
+		//	var grand_total = sub_total;
+		$(".grand_total").html(sub_total);
+		alert("Discount price should be less than Sub Total.");
+	}
+	update_total();
+});
 jQuery(document).on("change click", ".discount_type", function () {
 	var qty = 0;
 	var price = 0;
 	var tax_rate = 0;
-	var discount_rate = 0;
-	var qty = $(this).closest(".item-row").find(".qty").val();
-	var price = $(this).closest(".item-row").find(".price").val();
-	var tax_rate_item = $(this).closest(".item-row").find(".tax-rate-item").val();
-	var discount_rate = $(this).closest(".item-row").find(".discount_type").val();
+	var discount_figure = $(".discount_figure").val();
+	var discount_type = $(".discount_type").val();
+	var sub_total = $(".items-sub-total").val();
 
-	var element = $(this)
-		.closest(".item-row")
-		.find(".discount_type")
-		.find("option:selected");
-	var discount_type = parseInt(element.attr("discount-type"));
-	var discount_rate = parseInt(element.attr("discount-rate"));
-	if (qty == "") {
-		var qty = 0;
-	}
-	if (price == "") {
-		var price = 0;
-	}
-	if (tax_rate == "") {
-		var tax_rate = 0;
-	}
-	if (discount_rate == "") {
-		var discount_rate = 0;
-	}
-
-	// calculation
-	var sbT = parseInt(qty * price);
-
-	if (discount_type === 0) {
-		var discountPP = (1 / 1) * discount_rate;
-		var singleDiscount = discountPP;
-		var sub = sbT - discountPP;
-		var subTotal = sub + parseInt(tax_rate_item);
-		var sub_total = subTotal.toFixed(2);
-		jQuery(this)
-			.closest(".item-row")
-			.find(".discount-rate-item")
-			.val(singleDiscount.toFixed(2));
-		jQuery(this).closest(".item-row").find(".sub-total-item").val(sub_total);
-		update_total();
+	if ($(".discount_type").val() == "1") {
+		var grand_total = sub_total - discount_figure;
+		var discount_amval = discount_figure; //.toFixed(2);
+		$(".discount_amount").val(discount_amval);
+		$(".grand_total").html(grand_total.toFixed(2));
 	} else {
-		var discountPP = (sbT / 100) * discount_rate;
-		var singleDiscount = discountPP;
-		var sub = sbT - discountPP;
-		var subTotal = sub + parseInt(tax_rate_item);
-		var sub_total = subTotal.toFixed(2);
-		jQuery(this)
-			.closest(".item-row")
-			.find(".discount-rate-item")
-			.val(singleDiscount.toFixed(2));
-		jQuery(this).closest(".item-row").find(".sub-total-item").val(sub_total);
-		update_total();
+		var discount_percent = (sub_total / 100) * discount_figure;
+		var grand_total = sub_total - discount_percent;
+		var discount_amval = discount_percent.toFixed(2);
+		$(".discount_amount").val(discount_amval);
+		$(".grand_total").html(grand_total.toFixed(2));
 	}
 
-	jQuery(this).closest(".item-row").find(".sub-total-item").val(sub_total);
 	update_total();
 });
-
-$(document).ready(function () {
-	$("#select_due_date").change(function () {
-		var duration = parseInt($("#select_due_date").val());
-		var startDate = new Date($("#invoice_date").val());
-		var durationType = $("#select_due_date").find(":selected").data("type");
-
-		if (isNaN(duration) || isNaN(startDate.getTime())) {
-			alert("Please enter valid input");
-			return;
-		}
-
-		var dueDate = calculateDueDate(startDate, duration, durationType);
-		$("#invoice_due_date").val(dueDate.toISOString().split("T")[0]);
-	});
-	$("#invoice_due_date").change(function () {
-		$("#select_due_date").val(0).change();
-	});
-});
-
-function calculateDueDate(startDate, duration, durationType) {
-	var dueDate = new Date(startDate);
-
-	if (durationType === "days") {
-		dueDate.setDate(dueDate.getDate() + duration);
-	} else if (durationType === "months") {
-		dueDate.setMonth(dueDate.getMonth() + duration);
-	} else if (durationType === "years") {
-		dueDate.setFullYear(dueDate.getFullYear() + duration);
-	}
-
-	return dueDate;
-}
 
 // chart
 $(window).on("load", function () {
@@ -689,7 +671,6 @@ $(window).on("load", function () {
 		contentType: "application/json; charset=utf-8",
 		dataType: "json",
 		success: function (response_tv) {
-			// console.log(response_tv);
 			var bgcolor_tv = [];
 			var final_tv = [];
 			var final_tv2 = [];
@@ -726,10 +707,10 @@ $(window).on("load", function () {
 				var bgcolor_tv = item.bgcolor;
 
 				var row_tv =
-					"<tr class='align-baseline'>" +
-					"<td><span class='badge badge-pill' style='background: " +
+					"<tr>" +
+					"<td style='width:20px;height:20px;background: " +
 					bgcolor_tv +
-					"'>&nbsp;</span></td><td>" +
+					"'></td><td>" +
 					label_tv +
 					" (" +
 					value_tv +
@@ -791,10 +772,10 @@ $(window).on("load", function () {
 				var bgcolor_t = item.bgcolor;
 
 				var row_t =
-					"<tr class='align-baseline'>" +
-					"<td><span class='badge badge-pill' style='background: " +
+					"<tr>" +
+					"<td style='width:20px;height:20px;background: " +
 					bgcolor_t +
-					"'>&nbsp;</span></td><td>" +
+					"'></td><td>" +
 					label_t +
 					"<br><small>" +
 					value_t +
@@ -809,4 +790,8 @@ $(window).on("load", function () {
 			console.error(data);
 		},
 	});
+});
+
+$(document).ready(function () {
+	$('[data-plugin="select_hrm"]').select2({ width: "100%" });
 });

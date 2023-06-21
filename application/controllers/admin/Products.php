@@ -34,7 +34,7 @@ class Products extends MY_Controller
 
 		$data['path_url'] = 'products';
 		$role_resources_ids = $this->Xin_model->user_role_resource();
-		if (in_array('19', $role_resources_ids)) {
+		if (in_array('482', $role_resources_ids)) {
 			if (!empty($session)) {
 				$data['subview'] = $this->load->view("admin/products/product_list", $data, TRUE);
 				$this->load->view('admin/layout/layout_main', $data); //page load
@@ -87,8 +87,8 @@ class Products extends MY_Controller
 				$Return['error'] = $this->lang->line('ms_product_error_product_name');
 			} else if ($this->input->post('uom_id') === '') {
 				$Return['error'] = $this->lang->line('ms_product_error_uom_id');
-			} else if ($this->input->post('category_id') === '') {
-				$Return['error'] = $this->lang->line('ms_product_error_category_id');
+			} else if ($this->input->post('sub_category_id') === '') {
+				$Return['error'] = $this->lang->line('ms_product_error_sub_category_id');
 			} else if ($this->input->post('price') === '') {
 				$Return['error'] = $this->lang->line('ms_product_error_price');
 			}
@@ -101,7 +101,7 @@ class Products extends MY_Controller
 				'product_number' => $this->input->post('product_number'),
 				'product_name' => $this->input->post('product_name'),
 				'uom_id' => $this->input->post('uom_id'),
-				'category_id' => $this->input->post('category_id'),
+				'sub_category_id' => $this->input->post('sub_category_id'),
 				'price' => $this->input->post('price'),
 				'product_desc' => $this->input->post('product_desc'),
 				'created_at' => date('Y-m-d H:i:s')
@@ -140,17 +140,18 @@ class Products extends MY_Controller
 		$query = $this->Product_model->gel_all_product();
 
 		$data = array();
-
+		// dd($query->result());
 		foreach ($query->result() as $r) {
 
 			$price = $this->Xin_model->currency_sign($r->price);
 
 			// get category
-			$category = $this->Xin_model->read_product_category($r->product_id);
-			if (!is_null($category)) {
-				$category_name = $category[0]->category_name;
+			$sub_category = $this->Xin_model->read_product_sub_category($r->sub_category_id);
+			if (!is_null($sub_category)) {
+
+				$sub_category_name = $sub_category[0]->sub_category_name;
 			} else {
-				$category_name = '--';
+				$sub_category_name = '--';
 			}
 
 			// get uom
@@ -161,12 +162,12 @@ class Products extends MY_Controller
 				$uom_name = '--';
 			}
 
-			if (in_array('217', $role_resources_ids)) { //edit
+			if (in_array('484', $role_resources_ids)) { //edit
 				$edit = '<span data-toggle="tooltip" data-placement="top" data-state="primary" title="' . $this->lang->line('xin_edit') . '"><button type="button" class="btn icon-btn btn-sm btn-outline-secondary waves-effect waves-light"  data-toggle="modal" data-target=".edit-modal-data"  data-product_id="' . $r->product_id . '"><span class="fas fa-pencil-alt"></span></button></span>';
 			} else {
 				$edit = '';
 			}
-			if (in_array('218', $role_resources_ids)) { // delete
+			if (in_array('485', $role_resources_ids)) { // delete
 				$delete = '<span data-toggle="tooltip" data-placement="top" data-state="danger" title="' . $this->lang->line('xin_delete') . '"><button type="button" class="btn icon-btn btn-sm btn-outline-danger waves-effect waves-light delete" data-toggle="modal" data-target=".delete-modal" data-record-id="' . $r->product_id . '"><span class="fas fa-trash-restore"></span></button></span>';
 			} else {
 				$delete = '';
@@ -180,7 +181,7 @@ class Products extends MY_Controller
 				$r->product_name,
 				$price,
 				$uom_name,
-				$category_name,
+				$sub_category_name,
 				$r->product_desc,
 			);
 		}
@@ -223,12 +224,12 @@ class Products extends MY_Controller
 		$data = array(
 			'product_id' => $result[0]->product_id,
 			'uom_id' => $result[0]->uom_id,
-			'category_id' => $result[0]->category_id,
+			'sub_category_id' => $result[0]->sub_category_id,
 			'product_name' => $result[0]->product_name,
 			'price' => $result[0]->price,
 			'product_number' => $result[0]->product_number,
 			'product_desc' => $result[0]->product_desc,
-			'categories' => $this->Xin_model->get_all_product_categories(),
+			'sub_categories' => $this->Xin_model->get_all_product_sub_categories(),
 			'uoms' => $this->Xin_model->get_all_uoms(),
 		);
 		$session = $this->session->userdata('username');
@@ -256,8 +257,8 @@ class Products extends MY_Controller
 				$Return['error'] = $this->lang->line('ms_product_error_product_name');
 			} else if ($this->input->post('uom_id') === '') {
 				$Return['error'] = $this->lang->line('ms_product_error_uom_id');
-			} else if ($this->input->post('category_id') === '') {
-				$Return['error'] = $this->lang->line('ms_product_error_category_id');
+			} else if ($this->input->post('sub_category_id') === '') {
+				$Return['error'] = $this->lang->line('ms_product_error_sub_category_id');
 			} else if ($this->input->post('price') === '') {
 				$Return['error'] = $this->lang->line('ms_product_error_price');
 			}
@@ -268,7 +269,7 @@ class Products extends MY_Controller
 				'product_number' => $this->input->post('product_number'),
 				'product_name' => $this->input->post('product_name'),
 				'uom_id' => $this->input->post('uom_id'),
-				'category_id' => $this->input->post('category_id'),
+				'sub_category_id' => $this->input->post('sub_category_id'),
 				'price' => $this->input->post('price'),
 				'product_desc' => $this->input->post('product_desc')
 			);

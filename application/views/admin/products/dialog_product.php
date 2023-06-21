@@ -36,11 +36,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
 		</div>
 		<div class="col-md-6">
 			<div class="form-group">
-				<label class="form-label"><?php echo $this->lang->line('ms_product_categories'); ?></label>
-				<select class="form-control" name="category_id" data-plugin="select_hrm" data-placeholder="<?php echo $this->lang->line('ms_product_categories'); ?>">
+				<label class="form-label"><?php echo $this->lang->line('ms_product_sub_categories'); ?></label>
+				<select class="form-control" name="sub_category_id" data-plugin="select_hrm" data-placeholder="<?php echo $this->lang->line('ms_product_sub_categories'); ?>">
 					<option value=""><?php echo $this->lang->line('xin_select_one'); ?></option>
-					<?php foreach ($categories->result() as $c) { ?>
-						<option value="<?php echo $c->category_id; ?>" <?= $category_id == $c->category_id ? 'selected' : '' ?>> <?php echo $c->category_name; ?></option>
+					<?php foreach ($sub_categories->result() as $c) { ?>
+						<option value="<?php echo $c->sub_category_id; ?>" <?= $c->sub_category_id == $sub_category_id ? 'selected' : ''; ?>> <?php echo $c->sub_category_name; ?></option>
 					<?php } ?>
 				</select>
 			</div>

@@ -554,6 +554,7 @@ $projectBugs = $this->Project_model->completed_project_bugs($project_id);
 							</tr>
 						</thead>
 					</table>
+					div*1000
 				</div>
 			</div>
 		</div>

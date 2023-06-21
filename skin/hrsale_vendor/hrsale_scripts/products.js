@@ -7,7 +7,7 @@ $(document).ready(function () {
 	// update 9-5-2023
 	var xin_table_products = $("#xin_table_products").dataTable({
 		bDestroy: true,
-		iDisplayLength: 10,
+		iDisplayLength: 100,
 		aLengthMenu: [
 			[5, 10, 30, 50, 100, -1],
 			[5, 10, 30, 50, 100, "All"],
