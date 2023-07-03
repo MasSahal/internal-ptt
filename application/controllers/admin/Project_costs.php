@@ -603,7 +603,7 @@ class Project_costs extends MY_Controller
 			$res->uom_id = $uom_name;
 			$res->project_name = $project_name;
 			$res->qty = $r->qty;
-			$res->price = $this->Xin_model->currency_sign($r->price);
+			$res->price = number_format($r->price, 2, ",", ".");
 			$res->tax_rate = $r->tax_rate;
 			$res->amount = $r->amount;
 			array_push($record, $res);

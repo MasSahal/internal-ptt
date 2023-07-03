@@ -143,7 +143,8 @@ class Products extends MY_Controller
 		// dd($query->result());
 		foreach ($query->result() as $r) {
 
-			$price = $this->Xin_model->currency_sign($r->price);
+			// $price = $this->Xin_model->currency_sign($r->price);
+			$price = "Rp " . number_format($r->price, 2, ",", ".");
 
 			// get category
 			$sub_category = $this->Xin_model->read_product_sub_category($r->sub_category_id);

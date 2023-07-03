@@ -15,6 +15,7 @@ class Purchase_orders extends MY_Controller
 		$this->load->model("Product_model");
 		$this->load->model("Project_model");
 		$this->load->model("Department_model");
+		$this->load->model("Purchase_items_model");
 		$this->load->model("Purchase_model");
 	}
 
@@ -30,11 +31,11 @@ class Purchase_orders extends MY_Controller
 
 	public function po_number()
 	{
-		$query = $this->Purchase_model->get_last_pr_number();
+		$query = $this->Purchase_model->get_last_po_number();
 
 		if (!is_null($query)) {
 			// Extract the numeric part of the invoice number
-			$numericPart = intval(substr($query->pr_number, 3));
+			$numericPart = intval(substr($query->po_number, 3));
 
 			// Increment the numeric part
 			$nextNumericPart = $numericPart + 1;
@@ -43,7 +44,7 @@ class Purchase_orders extends MY_Controller
 		}
 
 		// Create the new invoice number with the prefix and padded numeric part
-		return sprintf("PR-%05d", $nextNumericPart);
+		return sprintf("PO-%05d", $nextNumericPart);
 	}
 
 	public function index()
@@ -52,15 +53,26 @@ class Purchase_orders extends MY_Controller
 		if (empty($session)) {
 			redirect('admin/');
 		}
+
+		$selected_pr = $this->input->get('id') ?? "PR";
+		$pr_data = $this->Purchase_model->read_pr_by_pr_number($selected_pr);
+		// dd($pr_data);
+		if ($pr_data) {
+			$data['pr_number'] = $pr_data->pr_number;
+		} else {
+			$data['pr_number'] = false;
+		}
+
 		$data['title'] = $this->lang->line('ms_purchase_orders') . ' | ' . $this->Xin_model->site_title();
 		$data['breadcrumbs'] = $this->lang->line('ms_purchase_orders');
-		$data['path_url'] = 'purchase_requisition';
-		$data['pr_number'] = $this->pr_number();
+		$data['path_url'] = 'purchase_order';
+		$data['po_number'] = $this->po_number();
+
 		$role_resources_ids = $this->Xin_model->user_role_resource();
 		// dd($data);
 		if (in_array('470', $role_resources_ids)) {
 			if (!empty($session)) {
-				$data['subview'] = $this->load->view("admin/purchase_orders/requisition_list", $data, TRUE);
+				$data['subview'] = $this->load->view("admin/purchase_orders/order_list", $data, TRUE);
 				$this->load->view('admin/layout/layout_main', $data); //page load
 			} else {
 				redirect('admin/');
@@ -70,6 +82,24 @@ class Purchase_orders extends MY_Controller
 		}
 	}
 
+	public function get_ajax_pr()
+	{
+		$pr_number = $this->input->get('pr_number');
+		$pr_data = $this->Purchase_model->read_pr_by_pr_number($pr_number);
+		$pr_items = $this->Purchase_items_model->read_items_pr_by_pr_number($pr_number)->result();
+
+		// dd($pr_data);
+		if (!is_null($pr_data) && !is_null($pr_items)) {
+			$output = [
+				'data' => $pr_data,
+				'items' => $pr_items
+			];
+		} else {
+			$output = false;
+		}
+		echo json_encode($output);
+		exit();
+	}
 	public function insert()
 	{
 		// Get the input data

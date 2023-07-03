@@ -29,6 +29,13 @@ class Vendor_model extends CI_Model
 		}
 	}
 
+	public function find_vendor($query)
+	{
+
+		$this->db->like('vendor_name', $query);
+		return $this->db->get('ms_vendors')->result();
+	}
+
 	// Function to add record in table
 	public function add($data)
 	{

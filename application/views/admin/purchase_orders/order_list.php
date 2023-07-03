@@ -43,43 +43,67 @@
 							<input type="hidden" class="items-tax-total" name="items_tax_total" value="0" />
 							<div class="form-body">
 								<div class="row mb-3">
-									<?php if ($user_info[0]->user_role_id == 10) { ?>
-										<div class="col-md-6">
-											<div class="form-group" id="employee_ajax">
-												<label for="employee" required><?php echo $this->lang->line('xin_project_manager'); ?></label>
-												<select name="assigned_to[]" class="form-control" data-plugin="select_hrm" data-placeholder="<?php echo $this->lang->line('xin_project_manager'); ?>" required>
-													<option value=""></option>
-												</select>
-											</div>
-										</div>
-									<?php }; ?>
 									<div class="col-md-6">
 										<div class="form-group">
-											<label for="pr_number"><?php echo $this->lang->line('ms_purchase_number'); ?></label>
-											<input class="form-control" placeholder="<?php echo $this->lang->line('ms_purchase_number'); ?>" id="pr_number" name="pr_number" type="text" value="<?= $pr_number; ?>" readonly required>
-										</div>
-									</div>
-									<div class="col-md-6">
-										<div class="form-group">
-											<label for="priority_status"><?php echo $this->lang->line('xin_p_priority'); ?></label>
-											<select name="priority_status" id="priority_status" class="form-control select" data-plugin="select_hrm" data-placeholder="<?php echo $this->lang->line('xin_p_priority'); ?>" required>
-												<!-- <option value="1"><?php echo $this->lang->line('xin_highest'); ?></option> -->
-												<option value="1"><?php echo $this->lang->line('xin_high'); ?></option>
-												<option value="2"><?php echo $this->lang->line('xin_normal'); ?></option>
-												<option value="3"><?php echo $this->lang->line('xin_low'); ?></option>
+											<label for="ms_vendor" class="control-label"><?php echo $this->lang->line('ms_vendor_name'); ?></label>
+											<select class="form-control" name="vendor" data-plugin="select_vendor" data-placeholder="<?php echo $this->lang->line('ms_vendor_name'); ?>">
 											</select>
+											<input id="pr_number" name="pr_number" type="hidden" value="<?= $pr_number; ?>">
+
+										</div>
+										<!-- <option value=""></option>
+										<?php foreach ($vresult as $vendor) { ?>
+											<option value="<?php echo $vendor->vendor_id ?>"> <?php echo $vendor->vendor_name ?></option>
+										<?php } ?> -->
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="po_number"><?php echo $this->lang->line('ms_purchase_faktur_number'); ?></label>
+											<input class="form-control" placeholder="<?php echo $this->lang->line('ms_purchase_faktur_number'); ?>" id="po_number" name="po_number" type="text" value="<?= $pr_number; ?>" readonly required>
 										</div>
 									</div>
 									<div class="col-md-6">
 										<div class="form-group">
-											<label for="issue_date"><?php echo $this->lang->line('ms_purchase_issue_date'); ?></label>
-											<input class="form-control" placeholder="<?php echo $this->lang->line('ms_purchase_issue_date'); ?>" id="issue_date" name=" issue_date" type="date" required>
+											<label for="faktur_number"><?php echo $this->lang->line('ms_purchase_faktur_number'); ?></label>
+											<input class="form-control" placeholder="<?php echo $this->lang->line('ms_purchase_faktur_number'); ?>" id="faktur_number" name="faktur_number" type="text" required>
 										</div>
 									</div>
 									<div class="col-md-6">
 										<div class="form-group">
-											<label for="due_approval_date"><?php echo $this->lang->line('ms_purchase_due_approval_date'); ?></label>
-											<input class="form-control" placeholder="<?php echo $this->lang->line('ms_purchase_due_approval_date'); ?>" id="due_approval_date" name=" due_approval_date" type="date" required>
+											<label for="warehouse_assign"><?php echo $this->lang->line('ms_warehouse_assign'); ?></label>
+											<input class="form-control" placeholder="<?php echo $this->lang->line('ms_warehouse_assign'); ?>" id="warehouse_assign" name="warehouse_assign" type="text" required>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label for="transaction_date"><?php echo $this->lang->line('ms_purchase_date'); ?></label>
+											<input class="form-control" placeholder="<?php echo $this->lang->line('ms_purchase_date'); ?>" id="transaction_date" name="transaction_date" type="date" required>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label for="due_date"><?php echo $this->lang->line('xin_invoice_due_date'); ?></label>
+											<input class="form-control" placeholder="<?php echo $this->lang->line('xin_invoice_due_date'); ?>" id="due_date" name=" due_date" type="date" required>
+										</div>
+									</div>
+									<div class=" col-md-4">
+										<div class="form-group">
+											<label for="select_due_date" class="control-label"><?php echo $this->lang->line('xin_select'); ?> <?php echo $this->lang->line('xin_invoice_due_date'); ?></label>
+											<select class="form-control" name="select_due_date" id="select_due_date" data-plugin="select_hrm" data-placeholder="<?php echo $this->lang->line('xin_invoice_due_date'); ?>">
+												<option value="0" selected><?= $this->lang->line('ms_custom'); ?></option>
+												<option value="1" data-type="days">1 <?= $this->lang->line('xin_day'); ?></option>
+												<option value="3" data-type="days">3 <?= $this->lang->line('xin_day'); ?></option>
+												<option value="7" data-type="days">7 <?= $this->lang->line('xin_day'); ?></option>
+												<option value="10" data-type="days">10 <?= $this->lang->line('xin_day'); ?></option>
+												<option value="15" data-type="days">15 <?= $this->lang->line('xin_day'); ?></option>
+												<option value="20" data-type="days">20 <?= $this->lang->line('xin_day'); ?></option>
+												<option value="1" data-type="months">1 <?= $this->lang->line('xin_month'); ?></option>
+												<option value="3" data-type="months">3 <?= $this->lang->line('xin_month'); ?></option>
+												<option value="6" data-type="months">6 <?= $this->lang->line('xin_month'); ?></option>
+												<option value="9" data-type="months">9 <?= $this->lang->line('xin_month'); ?></option>
+												<option value="1" data-type="years">1 <?= $this->lang->line('xin_year'); ?></option>
+												<option value="2" data-type="years">2 <?= $this->lang->line('xin_year'); ?></option>
+											</select>
 										</div>
 									</div>
 								</div>
@@ -108,14 +132,15 @@
 												<thead class="thead-light">
 													<tr>
 														<th style="min-width:100px"><?php echo $this->lang->line('xin_title_item'); ?></th>
-														<th style="min-width:150px;"><?php echo $this->lang->line('xin_project'); ?></th>
-														<th style="min-width:50px"><?php echo $this->lang->line('xin_title_qty'); ?></th>
+														<th><?php echo $this->lang->line('xin_project'); ?></th>
+														<th><?php echo $this->lang->line('xin_title_taxes'); ?></th>
+														<th><?php echo $this->lang->line('xin_discount'); ?></th>
+														<th style="width:100px"><?php echo $this->lang->line('xin_title_qty'); ?></th>
 														<th style="min-width:100px"><?php echo $this->lang->line('ms_ref_title_unit_price'); ?></th>
-														<th style="min-width:100px"><?php echo $this->lang->line('xin_title_sub_total'); ?></th>
+														<th style="min-width:150px"><?php echo $this->lang->line('xin_title_sub_total'); ?></th>
 														<th class="text-center"><?php echo $this->lang->line('xin_action'); ?></th>
 													</tr>
 												</thead>
-
 												<tbody id="formRow">
 												</tbody>
 												<tfoot>
@@ -145,9 +170,9 @@
 									<div class="col-md-6">
 										<table class="table table-borderless">
 											<tr>
-												<td class="text-right"><strong><?php echo $this->lang->line('ms_ref_delivery_fee'); ?></strong></td>
+												<td class="text-right"><strong><?php echo $this->lang->line('ms_delivery_fee'); ?></strong></td>
 												<td class="text-right">
-													<input type="number" min="0" class="form-control ref_delivery_fee" data-type="currency" data-inputmask="'alias': 'datetime'" name="ref_delivery_fee" value="0" id="ref_delivery_fee">
+													<input type="number" min="0" class="form-control delivery_fee" data-type="currency" data-inputmask="'alias': 'datetime'" name="delivery_fee" value="0" id="delivery_fee">
 													<!-- <strong id="ref_delivery_fee_show" class="currency">0</strong> -->
 												</td>
 											</tr>

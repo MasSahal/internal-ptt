@@ -2508,7 +2508,9 @@ $lang['xin_title_tax_percent'] = 'Persentase';
 $lang['xin_title_edit_tax'] = 'Edit Pajak Produk';
 $lang['xin_title_taxes'] = 'Pajak';
 $lang['xin_title_item'] = 'Item';
+// $lang['xin_title_qty_hrs'] = 'Qty / Hr';
 $lang['xin_title_qty_hrs'] = 'Qty / Hr';
+$lang['xin_title_qty'] = 'Qty';
 $lang['xin_title_unit_price'] = 'Harga Satuan';
 $lang['xin_title_sub_total'] = 'Subtotal';
 $lang['xin_title_add_item'] = 'Tambah Item';
@@ -3041,6 +3043,7 @@ $lang['ms_edit_uom'] = "Edit Satuan Baku";
 $lang['ms_add_edit_delete_role_info'] = " Kembali";
 $lang['ms_go_back'] = " Kembali";
 $lang['ms_ref_code'] = " Referensi Kode";
+$lang['ms_detail'] = "Detail ";
 $lang['ms_reload'] = "Muat Ulang";
 $lang['ms_trans_info'] = "Pastikan hitungan <b>" . $lang['xin_amount'] . "</b> sudah muncul, jika belum muncul harap muat ulang halaman ini!";
 
@@ -3061,20 +3064,27 @@ $lang['ms_discount_updated'] = "Diskon berhasil diperbarui!";
 
 
 $lang['ms_purchase_transactions'] = "Transaksi";
-$lang['ms_purchase_requisitions'] = "Permintan Pembelian";
+$lang['ms_purchase_requisitions'] = "Permintaan Pembelian";
 $lang['ms_purchase_number'] = "Nomor";
 $lang['ms_purchase_issue_date'] = "Tanggal Pengajuan";
-$lang['ms_purchase_due_approval_date'] = "Tanggal Aproval";
+$lang['ms_purchase_due_approval_date'] = "Tanggal Jatuh Tempo Disetujui";
 $lang['ms_purchase_shipping_date'] = "Tanggal Pengiriman";
 $lang['ms_purchase_shipping_information'] = "Informasi Pengiriman";
-$lang['ms_purchase_expedition_name'] = "Nama Ekspedisi";
+$lang['ms_purchase_ref_expedition_name'] = "Refrensi Ekspedisi";
+$lang['ms_success_pr_deleted'] = "Permintaan Pembelian dihapus!";
 
 $lang['ms_purchase_items'] = "Item/Produk";
-$lang['ms_purporse'] = "Keperluan";
+$lang['ms_purpose'] = "Keperluan";
 $lang['ms_purchase_status'] = "Status";
+$lang['ms_reject_purchase'] = "Tolak";
+$lang['ms_confirm_reject_purchase'] = "Yakin ingin menolak " . $lang['ms_purchase_requisitions'] . " ini?";
 
 
 $lang['ms_purchase_orders'] = "Order Pembelian";
+$lang['ms_purchase_faktur_number'] = "Nomor Faktur";
+$lang['ms_create_purchase_orders'] = "Buat Order";
+$lang['ms_purchase_date'] = "Tanggal Transaksi";
+$lang['ms_warehouse_assign'] = "Gudang Ditugaskan";
 
 
 $lang['ms_purchase_deliveries'] = "Pengiriman";
@@ -3083,7 +3093,7 @@ $lang['ms_purchase_deliveries'] = "Pengiriman";
 $lang['ms_purchase_invoices'] = "Invoice Pembelian";
 
 
-$lang['ms_purchase_dashboard'] = "Dashbaord";
+$lang['ms_purchase_dashboard'] = "Dashboard";
 $lang['ms_purchasing'] = "Pembelian";
 
 
@@ -3096,7 +3106,10 @@ $lang['ms_error_item_empty_data'] = "Item data diperlukan!";
 
 // /ref title
 $lang['ms_ref_title_unit_price'] = "Refrensi Harga Satuan";
-$lang['ms_ref_delivery_fee'] = "Refrensi Harga Pengiriman";
+$lang['ms_ref_delivery_fee'] = "Refrensi Biaya Pengiriman";
+$lang['ms_select_item'] = "Pilih Item/Produk";
+$lang['ms_select_project'] = "Pilih Proyek";
+$lang['ms_delivery_fee'] = "Biaya Pengiriman";
 
 /////////////////////////////////////////////////// akhir hrsale v2.0.1
 

@@ -63,6 +63,8 @@ class Dashboard extends MY_Controller
 		if (empty($session)) {
 			redirect('admin/');
 		}
+		// dd($this->session->userdata()['username']);
+
 		$system = $this->Xin_model->read_setting_info(1);
 		if ($system[0]->module_projects_tasks == 'true') {
 			// get user > added by

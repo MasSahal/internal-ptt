@@ -95,4 +95,17 @@ class Product_model extends CI_Model
 		$result = $this->db->get('ms_products');
 		return $result->result();
 	}
+
+	public function find_product($query)
+	{
+		$this->db->like('product_name', $query);
+		$this->db->or_like('product_name', $query);
+		return $this->db->get('ms_products', 10, 0)->result();
+	}
+
+	public function find_product_by_id($query)
+	{
+		$this->db->where('product_id', $query);
+		return $this->db->get('ms_products')->row();
+	}
 }

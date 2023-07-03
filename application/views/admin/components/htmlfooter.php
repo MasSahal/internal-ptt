@@ -241,8 +241,13 @@
 <?php $currency = explode(' - ', $system[0]->default_currency_symbol); ?>
 <script type="text/javascript">
 	var type_currency = "<?= $currency[0]; ?>";
+	var code_currency = "<?= $currency[1]; ?>";
+	var ms_select_item = "<?= $this->lang->line('ms_select_item') ?>";
+	var ms_select_project = "<?= $this->lang->line('ms_select_project') ?>";
 </script>
 
+<script type="text/javascript" src="<?php echo base_url() . 'skin/vendor/inputmask/jquery.inputmask.js'; ?>"></script>
+<script type="text/javascript" src="<?php echo base_url() . 'skin/vendor/inputmask/bindings/inputmask.binding.js'; ?>"></script>
 <script type="text/javascript" src="<?php echo base_url() . 'skin/hrsale_vendor/hrsale_scripts/' . $path_url . '.js'; ?>"></script>
 
 
@@ -460,5 +465,3 @@
 	<script src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/libs/chartjs/chartjs.js"></script>
 
 <?php } ?>
-
-

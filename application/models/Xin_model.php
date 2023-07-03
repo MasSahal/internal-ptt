@@ -1320,7 +1320,7 @@ class Xin_model extends CI_Model
 		$binds = array(0);
 		$query = $this->db->query($sql, $binds);
 	}
-	public function money_format($format, $number)
+	public function money_format1($format, $number)
 	{
 		$regex  = '/%((?:[\^!\-]|\+|\(|\=.)*)([0-9]+)?' .
 			'(?:#([0-9]+))?(?:\.([0-9]+))?([in%])/';
@@ -1350,7 +1350,7 @@ class Xin_model extends CI_Model
 				$positive = false;
 				$value  *= -1;
 			}
-			$letter = $positive ? 'p' : 'n';
+			$letter = $positive ? 'p' : 'n'; // check positive or negative
 
 			$prefix = $suffix = $cprefix = $csuffix = $signal = '';
 
@@ -1374,6 +1374,7 @@ class Xin_model extends CI_Model
 					$suffix = ')';
 					break;
 			}
+			dd($matches);
 			if (!$flags['nosimbol']) {
 				$currency = $cprefix .
 					($conversion == 'i' ? $locale['int_curr_symbol'] : $locale['currency_symbol']) .
@@ -1409,6 +1410,26 @@ class Xin_model extends CI_Model
 			$format = str_replace($fmatch[0], $value, $format);
 		}
 		return $format;
+	}
+
+	public function money_format($code, $number)
+	{
+		if ($code == "IDR") {
+			$locale = "id-ID";
+		} elseif ($code == "USD") {
+			$locale = "en-US";
+		} else if ($code == "EUR") {
+			$locale = "de-DE";
+		} else {
+			$locale = "id-ID";
+		}
+
+		$fmt = new NumberFormatter($locale, NumberFormatter::DECIMAL);
+		// $fmt = new NumberFormatter($locale, NumberFormatter::CURRENCY_CODE);
+
+		// dd($fmt->formatCurrency($number, $code));
+		// return $fmt->formatCurrency($number, $code);
+		return $fmt->format($number);
 	}
 	public function convertNumberToWord($num = false)
 	{
@@ -1458,8 +1479,6 @@ class Xin_model extends CI_Model
 	//set currency sign
 	public function currency_sign($number)
 	{
-
-
 		// get details
 		$system_setting = $this->read_setting_info(1);
 		$default_locale = 'en_US';
@@ -1471,18 +1490,22 @@ class Xin_model extends CI_Model
 		setlocale(LC_MONETARY, $default_locale);
 		// currency code/symbol
 		if ($system_setting[0]->show_currency == 'code') {
-			$ar_sc = explode(' -', $system_setting[0]->default_currency_symbol);
+			$ar_sc = explode(' - ', $system_setting[0]->default_currency_symbol);
 			$sc_show = $ar_sc[0];
+			$type = $ar_sc[0];
 		} else {
-			$ar_sc = explode('- ', $system_setting[0]->default_currency_symbol);
+			$ar_sc = explode(' - ', $system_setting[0]->default_currency_symbol);
 			$sc_show = $ar_sc[1];
+			$type = $ar_sc[0];
 		}
+
 		if ($system_setting[0]->currency_position == 'Prefix') {
-			$number = $this->money_format('%i', $number);
-			$sign_value = $sc_show . '' . $number;
+			// $number = $this->money_format('%i', $number);
+			$number = $this->money_format($type, $number);
+			$sign_value = $sc_show . ' ' . $number;
 		} else {
-			$number = $this->money_format('%i', $number);
-			$sign_value = $number . '' . $sc_show;
+			$number = $this->money_format($type, $number);
+			$sign_value = $number . ' ' . $sc_show;
 		}
 
 		return $sign_value;
@@ -4340,5 +4363,25 @@ ORDER BY `expiry_date`");
 		} else {
 			return false;
 		}
+	}
+
+	public function get_field($table, $field, $where, $where_val)
+	{
+		return $this->db->select($field)->from($table)->where($where, $where_val)->get();
+	}
+
+
+	function currency_format($amount, $country_code)
+	{
+		$locale = setlocale(LC_MONETARY, $country_code);
+		$formatted_amount = number_format($amount, 2);
+
+		return money_format('%i', $amount);
+	}
+
+	public function find_project($query)
+	{
+		$this->db->like('title', $query);
+		return $this->db->get('xin_projects', 10, 0)->result();
 	}
 }
