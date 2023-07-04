@@ -57,7 +57,8 @@
 <!-- Editor-->
 <script type="text/javascript" src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/Trumbowyg/dist/trumbowyg.min.js"></script>
 
-<script src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/libs/select2/select2.js"></script>
+<!-- <script src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/libs/select2/select2.js"></script> old  -->
+<script src="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/libs/select2/dist/js/select2.js"></script>
 
 <!-- // -->
 <?php if ($this->router->fetch_class() == 'project_costs' && $this->router->fetch_method() == 'transactions' || $this->router->fetch_method() == 'edit_transaction') { ?>
@@ -244,6 +245,8 @@
 	var code_currency = "<?= $currency[1]; ?>";
 	var ms_select_item = "<?= $this->lang->line('ms_select_item') ?>";
 	var ms_select_project = "<?= $this->lang->line('ms_select_project') ?>";
+	var ms_select_tax = "<?= $this->lang->line('ms_select_tax') ?>";
+	var ms_select_discount = "<?= $this->lang->line('ms_select_discount') ?>";
 </script>
 
 <script type="text/javascript" src="<?php echo base_url() . 'skin/vendor/inputmask/jquery.inputmask.js'; ?>"></script>

@@ -63,6 +63,7 @@
 	<link rel="stylesheet" href="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/toastr/toastr.min.css">
 	<link media="all" type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>skin/hrsale_vendor/assets/css/animate.css">
 	<link rel="stylesheet" href="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/libs/datatables/datatables.css">
+	<!-- <link rel="stylesheet" href="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/libs/select2/select2.css"> old -->
 	<link rel="stylesheet" href="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/libs/select2/select2.css">
 	<!-- <link rel="stylesheet" href="<?php echo base_url(); ?>skin/hrsale_vendor/assets/vendor/libs/select2/select2-bootstrap.css"> -->
 

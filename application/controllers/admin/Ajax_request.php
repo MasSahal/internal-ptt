@@ -200,4 +200,66 @@ class Ajax_request extends MY_Controller
 		echo $this->output($data);
 		exit();
 	}
+
+	public function find_tax()
+	{
+		$query = $this->input->get('query');
+		$res = $this->Xin_model->find_tax($query);
+		$data = [];
+
+		foreach ($res as $key => $r) {
+			if ($r->type == "fixed") {
+				$text = $this->Xin_model->currency_sign($r->rate);
+			} else {
+				$text = $r->rate . "%";
+			}
+
+			$data[] = array(
+				'id' => $r->tax_id,
+				'text' => $r->name . " ($text)",
+				'rate' => $r->rate,
+			);
+		}
+		echo $this->output($data);
+		exit();
+	}
+
+	public function find_tax_by_id()
+	{
+		$query = $this->input->get('query');
+		$res = $this->Xin_model->find_tax_by_id($query);
+		echo $this->output($res);
+		exit();
+	}
+
+
+	public function find_discount()
+	{
+		$query = $this->input->get('query');
+		$res = $this->Xin_model->find_discount($query);
+		$data = [];
+
+		foreach ($res as $key => $r) {
+			if ($r->discount_type == 0) {
+				$text = $this->Xin_model->currency_sign($r->discount_value);
+			} else {
+				$text = $r->discount_value . "%";
+			}
+
+			$data[] = array(
+				'id' => $r->discount_id,
+				'text' => $r->discount_name . " ($text)",
+			);
+		}
+		echo $this->output($data);
+		exit();
+	}
+
+	public function find_discount_by_id()
+	{
+		$query = $this->input->get('query');
+		$res = $this->Xin_model->find_discount_by_id($query);
+		echo $this->output($res);
+		exit();
+	}
 }

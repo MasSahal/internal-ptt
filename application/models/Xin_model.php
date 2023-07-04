@@ -4384,4 +4384,29 @@ ORDER BY `expiry_date`");
 		$this->db->like('title', $query);
 		return $this->db->get('xin_projects', 10, 0)->result();
 	}
+
+	public function find_tax($query)
+	{
+		$this->db->like('name', $query);
+		$this->db->or_like('rate', $query);
+		return $this->db->get('xin_tax_types', 10, 0)->result();
+	}
+
+	public function find_tax_by_id($query)
+	{
+		$this->db->where('tax_id', $query);
+		return $this->db->get('xin_tax_types')->row();
+	}
+
+	public function find_discount($query)
+	{
+		$this->db->like('discount_name', $query);
+		return $this->db->get('ms_discounts', 10, 0)->result();
+	}
+
+	public function find_discount_by_id($query)
+	{
+		$this->db->where('discount_id', $query);
+		return $this->db->get('ms_discounts')->row();
+	}
 }

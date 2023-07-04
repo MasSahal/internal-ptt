@@ -3109,6 +3109,8 @@ $lang['ms_ref_title_unit_price'] = "Refrensi Harga Satuan";
 $lang['ms_ref_delivery_fee'] = "Refrensi Biaya Pengiriman";
 $lang['ms_select_item'] = "Pilih Item/Produk";
 $lang['ms_select_project'] = "Pilih Proyek";
+$lang['ms_select_tax'] = "Pilih Pajak";
+$lang['ms_select_discount'] = "Pilih Diskon";
 $lang['ms_delivery_fee'] = "Biaya Pengiriman";
 
 /////////////////////////////////////////////////// akhir hrsale v2.0.1

@@ -367,8 +367,6 @@ $(document).on(
 		row.find(".row_amount_show").text(formatCurrency(subtotal));
 
 		update_total();
-		// alert(formatCurrencyNumber(subtotal));
-		// row.find(".currency").text(formatCurrency(subtotal.toFixed(2)));
 	}
 );
 
@@ -403,10 +401,3 @@ function select_product(x) {
 		update_total();
 	}
 }
-
-// $(function () {
-// 	$('[data-plugin="select_item"]').on("change", function () {
-// 		var selectedRow = $(this).closest("tr");
-// 		var query = $(this).val();
-// 	});
-// });
